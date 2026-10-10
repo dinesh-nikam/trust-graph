@@ -1,7 +1,8 @@
 /**
- * Deployment script for TrustGraphRegistry on Monad Testnet (Chain ID: 10143)
+ * Deployment script for TrustGraph registries on Monad Testnet (Chain ID: 10143)
  * Usage:
- *   DEPLOYER_PRIVATE_KEY=0x... node scripts/deploy.cjs
+ *   DEPLOYER_PRIVATE_KEY=0x... node scripts/deploy.cjs trust
+ *   DEPLOYER_PRIVATE_KEY=0x... node scripts/deploy.cjs work
  */
 
 const fs = require('fs');
@@ -13,6 +14,14 @@ const { defineChain } = require('viem');
 
 const MONAD_TESTNET_CHAIN_ID = 10143;
 const RPC_URL = process.env.VITE_MONAD_RPC_URL || 'https://testnet-rpc.monad.xyz';
+const registryTarget = process.argv[2] || 'trust';
+const deployment = registryTarget === 'work'
+  ? { file: 'ProofOfWorkRegistry.sol', name: 'ProofOfWorkRegistry', envKey: 'VITE_PROOF_OF_WORK_REGISTRY_ADDRESS' }
+  : registryTarget === 'trust'
+    ? { file: 'TrustGraphRegistry.sol', name: 'TrustGraphRegistry', envKey: 'VITE_TRUST_GRAPH_REGISTRY_ADDRESS' }
+    : null;
+
+if (!deployment) throw new Error('Select a registry to deploy: trust or work.');
 
 const monadTestnet = defineChain({
   id: MONAD_TESTNET_CHAIN_ID,
@@ -54,13 +63,13 @@ async function main() {
     process.exit(1);
   }
 
-  // Compile TrustGraphRegistry.sol
-  console.log('📦 Compiling TrustGraphRegistry.sol...');
-  const contractPath = path.join(__dirname, '../contracts/TrustGraphRegistry.sol');
+  // Compile the explicitly selected registry.
+  console.log(`Compiling ${deployment.file}...`);
+  const contractPath = path.join(__dirname, '../contracts', deployment.file);
   const source = fs.readFileSync(contractPath, 'utf8');
   const input = {
     language: 'Solidity',
-    sources: { 'TrustGraphRegistry.sol': { content: source } },
+    sources: { [deployment.file]: { content: source } },
     settings: {
       optimizer: { enabled: true, runs: 200 },
       outputSelection: { '*': { '*': ['abi', 'evm.bytecode'] } },
@@ -76,7 +85,7 @@ async function main() {
     }
   }
 
-  const compiled = output.contracts['TrustGraphRegistry.sol']['TrustGraphRegistry'];
+  const compiled = output.contracts[deployment.file][deployment.name];
   const abi = compiled.abi;
   const bytecode = '0x' + compiled.evm.bytecode.object;
 
@@ -92,12 +101,17 @@ async function main() {
   const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
   const contractAddress = receipt.contractAddress;
 
-  if (!contractAddress) {
-    console.error('❌ Deployment transaction reverted or failed to return contract address.');
+  if (receipt.status !== 'success' || !contractAddress) {
+    console.error('Deployment transaction reverted or failed to return contract address.');
     process.exit(1);
   }
 
-  console.log(`\n🎉 TrustGraphRegistry successfully deployed!`);
+  const deployedCode = await publicClient.getCode({ address: contractAddress });
+  if (!deployedCode || deployedCode === '0x') {
+    throw new Error(`Deployment returned ${contractAddress}, but Monad RPC reports no contract bytecode.`);
+  }
+
+  console.log(`\n${deployment.name} successfully deployed!`);
   console.log(`📍 Contract Address: ${contractAddress}`);
   console.log(`🔗 Explorer: https://testnet.monadexplorer.com/address/${contractAddress}`);
 
@@ -107,13 +121,13 @@ async function main() {
   if (fs.existsSync(envPath)) {
     envContent = fs.readFileSync(envPath, 'utf8');
   }
-  if (envContent.includes('VITE_TRUST_GRAPH_REGISTRY_ADDRESS=')) {
-    envContent = envContent.replace(/VITE_TRUST_GRAPH_REGISTRY_ADDRESS=.*/g, `VITE_TRUST_GRAPH_REGISTRY_ADDRESS=${contractAddress}`);
+  if (envContent.includes(`${deployment.envKey}=`)) {
+    envContent = envContent.replace(new RegExp(`${deployment.envKey}=.*`, 'g'), `${deployment.envKey}=${contractAddress}`);
   } else {
-    envContent += `\nVITE_TRUST_GRAPH_REGISTRY_ADDRESS=${contractAddress}\n`;
+    envContent += `\n${deployment.envKey}=${contractAddress}\n`;
   }
   fs.writeFileSync(envPath, envContent.trim() + '\n');
-  console.log(`📝 Updated .env with VITE_TRUST_GRAPH_REGISTRY_ADDRESS=${contractAddress}`);
+  console.log(`Updated .env with ${deployment.envKey}=${contractAddress}`);
 }
 
 main().catch((err) => {

@@ -177,6 +177,99 @@ export function stringToBytes32(str: string): `0x${string}` {
 }
 
 /**
+ * Deterministic Canonical Normalization Protocol (AGENTS.md Section 6.2)
+ * Lexicographical key ordering & deterministic hashing
+ */
+export async function computeCanonicalEvidenceHash(evidence: {
+  title: string;
+  workType: string;
+  primaryUrl: string;
+  description: string;
+  worker: string;
+}): Promise<`0x${string}`> {
+  const canonicalManifest = JSON.stringify({
+    description: evidence.description.trim(),
+    primaryUrl: evidence.primaryUrl.trim().toLowerCase(),
+    title: evidence.title.trim(),
+    workType: evidence.workType.trim().toUpperCase(),
+    worker: evidence.worker.trim().toLowerCase(),
+  });
+  return computeSha256(canonicalManifest);
+}
+
+/**
+ * Computes deterministic workId from worker, title, and timestamp
+ */
+export async function computeDeterministicWorkId(
+  worker: string,
+  title: string,
+  timestamp = Math.floor(Date.now() / 1000)
+): Promise<`0x${string}`> {
+  const seed = `trustgraph-work-${worker.trim().toLowerCase()}-${title.trim().toLowerCase()}-${timestamp}`;
+  return computeSha256(seed);
+}
+
+export function workTypeToEnumIndex(type: string): number {
+  switch (type.toUpperCase()) {
+    case 'SMART_CONTRACT':
+    case 'CONTRACT_DEPLOYED':
+      return 0;
+    case 'GITHUB_CONTRIBUTION':
+    case 'CONTRIBUTION_VERIFIED':
+      return 1;
+    case 'HACKATHON_PROJECT':
+    case 'CHALLENGE_COMPLETED':
+      return 2;
+    default:
+      return 0;
+  }
+}
+
+export function enumIndexToWorkType(index: number): 'SMART_CONTRACT' | 'GITHUB_CONTRIBUTION' | 'HACKATHON_PROJECT' {
+  switch (index) {
+    case 0:
+      return 'SMART_CONTRACT';
+    case 1:
+      return 'GITHUB_CONTRIBUTION';
+    case 2:
+      return 'HACKATHON_PROJECT';
+    default:
+      return 'SMART_CONTRACT';
+  }
+}
+
+export function statusToEnumIndex(status: string): number {
+  switch (status.toUpperCase()) {
+    case 'PENDING':
+      return 0;
+    case 'VERIFIED':
+    case 'VALID':
+      return 1;
+    case 'REJECTED':
+      return 2;
+    case 'REVOKED':
+      return 3;
+    default:
+      return 0;
+  }
+}
+
+export function enumIndexToStatus(index: number): 'PENDING' | 'VERIFIED' | 'REJECTED' | 'REVOKED' {
+  switch (index) {
+    case 0:
+      return 'PENDING';
+    case 1:
+      return 'VERIFIED';
+    case 2:
+      return 'REJECTED';
+    case 3:
+      return 'REVOKED';
+    default:
+      return 'PENDING';
+  }
+}
+
+/**
  * Decodes bytes32 hex string to clean ASCII string
  */
 export function bytes32ToString(bytes32Hex: string): string {
@@ -190,3 +283,5 @@ export function bytes32ToString(bytes32Hex: string): string {
   }
   return str;
 }
+
+

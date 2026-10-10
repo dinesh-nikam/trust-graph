@@ -34,21 +34,16 @@ export const AppLayout: React.FC = () => {
       </div>
 
       {mode === 'DEMO' ? (
-        <div role="status" className="relative z-50 bg-amber-950 border-b border-amber-500 text-[11px] py-2 px-4 text-center text-amber-100 font-mono font-bold tracking-wide">
-          [DEMO MODE: LOCAL FIXTURES - NOT COMMITTED TO MONAD TESTNET]
+        <div role="status" className="relative z-50 bg-amber-950/90 border-b border-amber-500/50 backdrop-blur-md text-[11px] py-1.5 px-4 text-center text-amber-200 font-mono font-semibold tracking-wider flex items-center justify-center gap-2 shadow-[0_1px_12px_rgba(245,158,11,0.15)]">
+          <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" aria-hidden="true" />
+          <span>[DEMO MODE: LOCAL FIXTURES - NOT COMMITTED TO MONAD TESTNET]</span>
         </div>
       ) : (
-        <div className="relative z-50 border-b border-white/[0.06] bg-neutral-950/80 text-[11px] py-1.5 px-4 text-center text-neutral-400 font-mono truncate">
-          {REGISTRY_ADDRESS_CONFIGURED ? (
-            <>
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 mr-2 align-middle" aria-hidden="true" />
-              {`MONAD TESTNET CONFIGURED (Chain ID: ${MONAD_TESTNET_CHAIN_ID}) | REGISTRY: ${TRUST_GRAPH_REGISTRY_ADDRESS}`}
-            </>
-          ) : (
-            <span className="text-amber-300">
-              MONAD TESTNET REGISTRY ADDRESS IS NOT CONFIGURED. Registry reads and transactions are disabled.
-            </span>
-          )}
+        <div className="relative z-50 border-b border-white/[0.06] bg-neutral-950/80 backdrop-blur-md text-[11px] py-1.5 px-4 text-center text-neutral-400 font-mono truncate flex items-center justify-center gap-2">
+          <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
+          <span>
+            {`MONAD TESTNET (Chain ID: ${MONAD_TESTNET_CHAIN_ID}) · ATTESTATION REGISTRY: ${REGISTRY_ADDRESS_CONFIGURED ? TRUST_GRAPH_REGISTRY_ADDRESS : 'NOT CONFIGURED'} · WORK REGISTRY: ${PROOF_OF_WORK_REGISTRY_CONFIGURED ? PROOF_OF_WORK_REGISTRY_ADDRESS : 'NOT CONFIGURED'}`}
+          </span>
         </div>
       )}
 

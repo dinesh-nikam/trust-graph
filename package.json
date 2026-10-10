@@ -19,6 +19,7 @@
     "test": "hardhat test && node --experimental-strip-types test/trustGraph.test.ts",
     "test:e2e": "e2e run",
     "deploy": "node scripts/deploy.cjs",
+    "deploy:work": "node scripts/deploy.cjs work",
     "preview": "vite preview",
     "graphify": "python -m graphify extract . --code-only && python -m graphify cluster-only .",
     "graphify:update": "python -m graphify update .",

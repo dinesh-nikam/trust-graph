@@ -1,8 +1,16 @@
 import { createPublicClient, http, isAddress } from 'viem';
 import { Attestation, ClaimType, IssuerProfile, TrustProfile, ValidityStatus, WorkSubmission } from '../types';
-import { CONTRACT_CONFIG, DEMO_WALLETS, MONAD_TESTNET_CHAIN_ID, TRUST_GRAPH_REGISTRY_ADDRESS, REGISTRY_ADDRESS_CONFIGURED, monadTestnet } from '../lib/contract/config';
+import { 
+  CONTRACT_CONFIG, 
+  DEMO_WALLETS, 
+  MONAD_TESTNET_CHAIN_ID, 
+  TRUST_GRAPH_REGISTRY_ADDRESS, 
+  REGISTRY_ADDRESS_CONFIGURED, 
+  monadTestnet 
+} from '../lib/contract/config';
 import { bytes32ToString, computeSha256 } from '../utils/formatters';
 import { MOCK_ATTESTATIONS, MOCK_ISSUERS, getProfileForAddress } from '../data/mockData';
+
 
 const STORAGE_KEY = 'trustgraph_attestations_v2';
 const STORAGE_ISSUERS_KEY = 'trustgraph_issuers_v2';
@@ -83,14 +91,9 @@ class TrustGraphService {
       if (storedMode === 'LIVE' || storedMode === 'DEMO') {
         this.isLiveMode = storedMode === 'LIVE';
       } else if (envMode) {
-        this.isLiveMode = envMode.toLowerCase() === 'live';
+        this.isLiveMode = envMode.toLowerCase() !== 'demo';
       } else {
-        this.isLiveMode = REGISTRY_ADDRESS_CONFIGURED;
-      }
-
-      // If live mode is selected but no registry address is configured at all, fallback to DEMO
-      if (this.isLiveMode && !REGISTRY_ADDRESS_CONFIGURED) {
-        this.isLiveMode = false;
+        this.isLiveMode = true;
       }
 
       const storedAttestations = localStorage.getItem(STORAGE_KEY);
@@ -108,7 +111,7 @@ class TrustGraphService {
         this.submissions = JSON.parse(storedSubmissions);
       }
     } catch {
-      this.isLiveMode = false;
+      this.isLiveMode = import.meta.env.VITE_APP_MODE?.toLowerCase() !== 'demo';
     }
   }
 
@@ -138,18 +141,28 @@ class TrustGraphService {
    */
   public async hasContractBytecode(): Promise<boolean> {
     if (!REGISTRY_ADDRESS_CONFIGURED) return false;
-    try {
-      const chainId = await publicClient.getChainId();
-      if (chainId !== MONAD_TESTNET_CHAIN_ID) return false;
-      const bytecode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
-      return Boolean(bytecode && bytecode !== '0x');
-    } catch {
-      return false;
+    const chainId = await publicClient.getChainId();
+    if (chainId !== MONAD_TESTNET_CHAIN_ID) return false;
+    const bytecode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
+    return Boolean(bytecode && bytecode !== '0x');
+  }
+
+  private async assertRegistryAvailable(): Promise<void> {
+    if (!REGISTRY_ADDRESS_CONFIGURED) {
+      throw new Error('Registry address is not configured. Live registry reads are unavailable.');
+    }
+    const chainId = await publicClient.getChainId();
+    if (chainId !== MONAD_TESTNET_CHAIN_ID) {
+      throw new Error(`Registry RPC returned chain ID ${chainId}; expected Monad Testnet (${MONAD_TESTNET_CHAIN_ID}).`);
+    }
+    const bytecode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
+    if (!bytecode || bytecode === '0x') {
+      throw new Error('No registry contract is deployed at the configured Monad Testnet address.');
     }
   }
 
   public async getRegistryOwner(): Promise<`0x${string}`> {
-    if (!(await this.hasContractBytecode())) throw new Error('No registry contract is deployed at the configured Monad Testnet address.');
+    await this.assertRegistryAvailable();
     return publicClient.readContract({ ...CONTRACT_CONFIG, functionName: 'owner' });
   }
 
@@ -157,8 +170,7 @@ class TrustGraphService {
     if (!/^\d+$/.test(id) || BigInt(id) < 1n) return null;
     const numericId = BigInt(id);
 
-    const isDeployed = await this.hasContractBytecode();
-    if (!isDeployed) throw new Error('No registry contract is deployed at the configured Monad Testnet address.');
+    await this.assertRegistryAvailable();
 
       const statusCode = await publicClient.readContract({
         ...CONTRACT_CONFIG,
@@ -206,15 +218,136 @@ class TrustGraphService {
       };
   }
 
+  private async readOnChainAttestationsBatch(ids: bigint[]): Promise<Attestation[]> {
+    if (ids.length === 0) return [];
+    await this.assertRegistryAvailable();
+
+    try {
+      // 1. Fetch all attestation structs in batch chunks of 50
+      const CHUNK_SIZE = 50;
+      const chunks: bigint[][] = [];
+      for (let i = 0; i < ids.length; i += CHUNK_SIZE) {
+        chunks.push(ids.slice(i, i + CHUNK_SIZE));
+      }
+
+      const rawAttestationBatches = await Promise.all(
+        chunks.map((chunk) =>
+          publicClient.readContract({
+            ...CONTRACT_CONFIG,
+            functionName: 'getAttestations',
+            args: [chunk],
+          })
+        )
+      );
+
+      const allRecords = rawAttestationBatches.flat();
+      const validRecords = allRecords.filter((r) => r.issuedAt !== 0n);
+      if (validRecords.length === 0) return [];
+
+      // 2. Multicall validity status for all valid records in 1 round trip
+      const validityResults = await publicClient.multicall({
+        contracts: validRecords.map((r) => ({
+          ...CONTRACT_CONFIG,
+          functionName: 'getValidityStatus',
+          args: [r.id],
+        })),
+        allowFailure: true,
+      });
+
+      // 3. Multicall unique issuer authorizations in 1 round trip
+      const uniqueIssuers = [...new Set(validRecords.map((r) => r.issuer.toLowerCase()))];
+      const issuerResults = await publicClient.multicall({
+        contracts: uniqueIssuers.map((issuer) => ({
+          ...CONTRACT_CONFIG,
+          functionName: 'isIssuer',
+          args: [issuer as `0x${string}`],
+        })),
+        allowFailure: true,
+      });
+
+      const issuerAuthMap = new Map<string, boolean>();
+      uniqueIssuers.forEach((issuer, index) => {
+        const res = issuerResults[index];
+        issuerAuthMap.set(issuer, res?.status === 'success' ? Boolean(res.result) : false);
+      });
+
+      // 4. Assemble Attestation objects
+      return validRecords.map((record, index) => {
+        const valRes = validityResults[index];
+        const statusCode = valRes?.status === 'success' ? Number(valRes.result) : 0;
+        const validity = validityByCode[statusCode] ?? 'UNKNOWN';
+        const issuerAuthorized = issuerAuthMap.get(record.issuer.toLowerCase()) ?? false;
+        const expiry = Number(record.expiry);
+        const claimType = decodeClaimType(record.claimType);
+        const reason = record.revocationReason || undefined;
+
+        return {
+          id: record.id.toString(),
+          issuer: record.issuer,
+          issuerName: record.issuer,
+          issuerRole: 'Registry issuer',
+          issuerAuthorized,
+          subject: record.subject,
+          claimType,
+          claimTitle: claimType,
+          claimDescription: 'The contract does not store a claim title or description.',
+          evidenceHash: record.evidenceHash,
+          evidenceUrl: record.evidenceUri,
+          issuedAt: Number(record.issuedAt),
+          expiry,
+          revoked: record.revoked,
+          revocationReason: reason,
+          validity,
+          validityExplanation: validityExplanation(validity, expiry, reason),
+          isLiveOnChain: true,
+        };
+      });
+    } catch (batchErr) {
+      // Graceful fallback to individual reads if contract version lacks batch methods
+      console.warn('Batch attestations read fallback to individual reads:', batchErr);
+      const records = await Promise.all(ids.map((id) => this.readOnChainAttestation(id.toString())));
+      return records.filter((r): r is Attestation => r !== null);
+    }
+  }
+
   public async getAttestationById(id: string): Promise<Attestation | null> {
     if (this.isLiveMode) {
-      const isDeployed = await this.hasContractBytecode();
-      if (isDeployed) {
-        return this.readOnChainAttestation(id);
+      // This registry uses sequential uint256 IDs, not bytes32 work IDs.
+      if (id.startsWith('0x') && id.length === 66) return null;
+      return this.readOnChainAttestation(id);
+    }
+
+    // Demo records and submissions are available only in explicit DEMO mode.
+    if (id.startsWith('0x') && id.length === 66) {
+      const subMatch = this.submissions.find((s) => s.id.toLowerCase() === id.toLowerCase());
+      if (subMatch) {
+        return {
+          id: subMatch.id,
+          issuer: DEMO_WALLETS.REVIEWER.address,
+          issuerName: 'Authorized Verifier',
+          issuerRole: 'Reviewer',
+          issuerAuthorized: true,
+          subject: subMatch.worker,
+          claimType: subMatch.claimType,
+          claimTitle: subMatch.title,
+          claimDescription: subMatch.description,
+          evidenceHash: subMatch.evidenceHash,
+          evidenceUrl: subMatch.evidenceUrl,
+          evidenceManifest: subMatch.evidenceManifest,
+          issuedAt: subMatch.submittedAt,
+          expiry: 0,
+          revoked: subMatch.status === 'REJECTED',
+          revocationReason: subMatch.rejectionReason,
+          validity: subMatch.status === 'APPROVED' ? 'VALID' : subMatch.status === 'REJECTED' ? 'REVOKED' : 'PENDING',
+          validityExplanation:
+            subMatch.status === 'APPROVED'
+              ? 'Work approved by verifier.'
+              : subMatch.status === 'REJECTED'
+              ? `Rejected: ${subMatch.rejectionReason}`
+              : 'Pending reviewer verification.',
+          isLiveOnChain: false,
+        };
       }
-      const demoMatch = this.demoAttestations.find((a) => a.id.toLowerCase() === id.toLowerCase());
-      if (demoMatch) return this.evaluateValidity(demoMatch);
-      return null;
     }
 
     // Demo records are available only when DEMO mode is explicitly selected.
@@ -226,13 +359,10 @@ class TrustGraphService {
 
   public async getAllAttestations(): Promise<Attestation[]> {
     if (this.isLiveMode) {
-      const isDeployed = await this.hasContractBytecode();
-      if (isDeployed) {
-        const ids = await publicClient.readContract({ ...CONTRACT_CONFIG, functionName: 'getAllAttestationIds' });
-        const records = await Promise.all(ids.map((id) => this.readOnChainAttestation(id.toString())));
-        return records.filter((record): record is Attestation => record !== null).sort((a, b) => b.issuedAt - a.issuedAt);
-      }
-      return [...this.demoAttestations];
+      await this.assertRegistryAvailable();
+      const ids = await publicClient.readContract({ ...CONTRACT_CONFIG, functionName: 'getAllAttestationIds' });
+      const records = await this.readOnChainAttestationsBatch(ids as bigint[]);
+      return records.sort((a, b) => b.issuedAt - a.issuedAt);
     }
     return [...this.demoAttestations];
   }
@@ -242,35 +372,45 @@ class TrustGraphService {
 
     if (this.isLiveMode) {
       if (!isAddress(subject)) throw new Error('Enter a valid EVM wallet address.');
-      const isDeployed = await this.hasContractBytecode();
-      if (!isDeployed) {
-        return getProfileForAddress(rawAddress);
-      }
+      await this.assertRegistryAvailable();
       const ids = await publicClient.readContract({
         ...CONTRACT_CONFIG,
         functionName: 'getAttestationsBySubject',
         args: [subject],
       });
-      const records = await Promise.all(ids.map((id) => this.readOnChainAttestation(id.toString())));
-      const attestations = records.filter((record): record is Attestation => record !== null)
+      const attestations = (await this.readOnChainAttestationsBatch(ids as bigint[]))
         .sort((a, b) => b.issuedAt - a.issuedAt);
       const byClaimType = Object.fromEntries(claimTypes.map((type) => [
         type,
         attestations.filter((attestation) => attestation.claimType === type).length,
       ])) as Record<ClaimType, number>;
       const uniqueIssuers = [...new Set(attestations.map((attestation) => attestation.issuer))];
-      const trustedIssuers = await Promise.all(uniqueIssuers.map(async (issuer): Promise<IssuerProfile> => ({
-        address: issuer,
-        name: issuer,
-        organization: 'Unspecified on-chain',
-        role: 'Registry issuer',
-        isAuthorized: await this.isIssuerAuthorized(issuer),
-        attestationsIssuedCount: attestations.filter((attestation) => attestation.issuer === issuer).length,
-      })));
+
+      // Multicall issuer authorizations in 1 batch
+      const authResults = await publicClient.multicall({
+        contracts: uniqueIssuers.map((issuer) => ({
+          ...CONTRACT_CONFIG,
+          functionName: 'isIssuer',
+          args: [issuer],
+        })),
+        allowFailure: true,
+      });
+
+      const trustedIssuers: IssuerProfile[] = uniqueIssuers.map((issuer, idx) => {
+        const isAuth = authResults[idx]?.status === 'success' ? Boolean(authResults[idx].result) : false;
+        return {
+          address: issuer,
+          name: issuer,
+          organization: 'Unspecified on-chain',
+          role: 'Registry issuer',
+          isAuthorized: isAuth,
+          attestationsIssuedCount: attestations.filter((attestation) => attestation.issuer === issuer).length,
+        };
+      });
 
       return {
         address: subject,
-        alias: subject.toLowerCase() === DEMO_WALLETS.DEVELOPER.address.toLowerCase() ? 'Sarah (Demo Builder)' : undefined,
+        alias: undefined,
         firstSeenAt: attestations.length ? Math.min(...attestations.map((attestation) => attestation.issuedAt)) : undefined,
         stats: {
           totalAttestations: attestations.length,
@@ -292,8 +432,8 @@ class TrustGraphService {
   public async isIssuerAuthorized(address: `0x${string}` | string): Promise<boolean> {
     if (this.isLiveMode) {
       if (!isAddress(address)) throw new Error('Enter a valid issuer address.');
-      if (!(await this.hasContractBytecode())) throw new Error('No registry contract is deployed at the configured Monad Testnet address.');
-      return publicClient.readContract({ ...CONTRACT_CONFIG, functionName: 'isIssuer', args: [address] });
+      await this.assertRegistryAvailable();
+      return publicClient.readContract({ ...CONTRACT_CONFIG, functionName: 'isIssuer', args: [address as `0x${string}`] });
     }
     const addr = address.toLowerCase();
     if (addr === DEMO_WALLETS.ORGANIZER.address.toLowerCase()) return true;
@@ -305,14 +445,26 @@ class TrustGraphService {
     if (this.isLiveMode) {
       const attestations = await this.getAllAttestations();
       const addresses = [...new Set(attestations.map((attestation) => attestation.issuer))];
-      return Promise.all(addresses.map(async (address) => ({
-        address,
-        name: address,
-        organization: 'Unspecified on-chain',
-        role: 'Registry issuer',
-        isAuthorized: await this.isIssuerAuthorized(address),
-        attestationsIssuedCount: attestations.filter((attestation) => attestation.issuer === address).length,
-      })));
+      const authResults = await publicClient.multicall({
+        contracts: addresses.map((addr) => ({
+          ...CONTRACT_CONFIG,
+          functionName: 'isIssuer',
+          args: [addr],
+        })),
+        allowFailure: true,
+      });
+
+      return addresses.map((address, index) => {
+        const isAuth = authResults[index]?.status === 'success' ? Boolean(authResults[index].result) : false;
+        return {
+          address,
+          name: address,
+          organization: 'Unspecified on-chain',
+          role: 'Registry issuer',
+          isAuthorized: isAuth,
+          attestationsIssuedCount: attestations.filter((attestation) => attestation.issuer === address).length,
+        };
+      });
     }
     return [...this.demoIssuers];
   }

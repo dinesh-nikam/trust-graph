@@ -46,6 +46,7 @@ contract ProofOfWorkRegistry {
         uint256 createdAt;
         uint256 verifiedAt;
         Status status;
+        string statusReason;     // Reason for rejection or revocation
     }
 
     // --- State Variables ---
@@ -175,7 +176,8 @@ contract ProofOfWorkRegistry {
             verifier: address(0),
             createdAt: block.timestamp,
             verifiedAt: 0,
-            status: Status.PENDING
+            status: Status.PENDING,
+            statusReason: ""
         });
 
         allWorkIds.push(workId);
@@ -209,9 +211,12 @@ contract ProofOfWorkRegistry {
         Work storage record = works[workId];
         require(record.createdAt != 0, "Work item does not exist");
         require(record.status == Status.PENDING, "Can only reject PENDING work");
+        require(bytes(reason).length > 0, "Rejection reason cannot be empty");
 
         record.status = Status.REJECTED;
         record.verifier = msg.sender;
+        record.verifiedAt = block.timestamp;
+        record.statusReason = reason;
 
         emit WorkRejected(workId, msg.sender, reason, block.timestamp);
     }
@@ -225,9 +230,12 @@ contract ProofOfWorkRegistry {
         Work storage record = works[workId];
         require(record.createdAt != 0, "Work item does not exist");
         require(record.status == Status.VERIFIED, "Can only revoke VERIFIED work");
+        require(bytes(reason).length > 0, "Revocation reason cannot be empty");
 
         record.status = Status.REVOKED;
         record.verifier = msg.sender;
+        record.verifiedAt = block.timestamp;
+        record.statusReason = reason;
 
         emit WorkRevoked(workId, msg.sender, reason, block.timestamp);
     }
@@ -289,6 +297,79 @@ contract ProofOfWorkRegistry {
      */
     function getTotalWorkCount() external view returns (uint256) {
         return allWorkIds.length;
+    }
+
+    /**
+     * @notice Alias for getTotalWorkCount conforming to IProofOfWorkRegistry
+     */
+    function getWorkCount() external view returns (uint256) {
+        return allWorkIds.length;
+    }
+
+    /**
+     * @notice Batch retrieve work records for an array of work IDs.
+     * @dev Eliminates N JSON-RPC round-trips into a single query.
+     */
+    function getWorks(bytes32[] calldata ids) external view returns (Work[] memory items) {
+        items = new Work[](ids.length);
+        for (uint256 i = 0; i < ids.length; i++) {
+            items[i] = works[ids[i]];
+        }
+    }
+
+    /**
+     * @notice Paginated retrieval of registered work records.
+     * @param offset Starting index in allWorkIds array.
+     * @param limit Maximum number of records to return (capped at 100 to avoid gas exhaustion).
+     */
+    function getWorksPaginated(uint256 offset, uint256 limit) external view returns (
+        Work[] memory items,
+        uint256 total
+    ) {
+        total = allWorkIds.length;
+        if (offset >= total || limit == 0) {
+            return (new Work[](0), total);
+        }
+
+        uint256 count = limit;
+        if (offset + count > total) {
+            count = total - offset;
+        }
+        if (count > 100) {
+            count = 100;
+        }
+
+        items = new Work[](count);
+        for (uint256 i = 0; i < count; i++) {
+            items[i] = works[allWorkIds[offset + i]];
+        }
+    }
+
+    /**
+     * @notice Paginated retrieval of works registered by a specific developer.
+     */
+    function getWorksByWorkerPaginated(address worker, uint256 offset, uint256 limit) external view returns (
+        Work[] memory items,
+        uint256 total
+    ) {
+        bytes32[] storage workerIds = workerWorkIds[worker];
+        total = workerIds.length;
+        if (offset >= total || limit == 0) {
+            return (new Work[](0), total);
+        }
+
+        uint256 count = limit;
+        if (offset + count > total) {
+            count = total - offset;
+        }
+        if (count > 100) {
+            count = 100;
+        }
+
+        items = new Work[](count);
+        for (uint256 i = 0; i < count; i++) {
+            items[i] = works[workerIds[offset + i]];
+        }
     }
 
     // --- Admin Functions ---
