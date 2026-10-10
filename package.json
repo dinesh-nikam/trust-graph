@@ -19,8 +19,8 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.1",
     "tailwind-merge": "^2.5.5",
-    "viem": "^2.21.57",
-    "wagmi": "^2.14.6"
+    "viem": "^2.57.4",
+    "wagmi": "^3.7.7"
   },
   "devDependencies": {
     "@e2e-dev/web": "^0.14.0",

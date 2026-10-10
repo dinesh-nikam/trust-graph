@@ -52,9 +52,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'VALID',
     validityExplanation:
       'Attestation is active. Reviewer is authorized on Monad testnet registry. Contract has no expiration and has not been revoked.',
-    transactionHash: '0x99a2245b90f42b8e3a23cb9e9432f8319a8d9a241e7f920f1883bc0d9841bbce',
-    blockNumber: 1429512,
-  },
+          },
 
   // 2. CHALLENGE_COMPLETED (VALID)
   {
@@ -79,9 +77,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'VALID',
     validityExplanation:
       'Attestation is active. Jury issuer holds valid registry authority. Evidence manifest benchmark passed.',
-    transactionHash: '0x77b19283fca820129bcfe345109bcf7823e49811234091a1829cbdf819283c74',
-    blockNumber: 1398410,
-  },
+          },
 
   // 3. CONTRIBUTION_VERIFIED (VALID)
   {
@@ -106,9 +102,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'VALID',
     validityExplanation:
       'Attestation is active. Issuer reviewed merged PR and tested reproducibility.',
-    transactionHash: '0x519a8491bbdf9012384a8bc894719283bcf819283a48194bcf90184bdf719482',
-    blockNumber: 1312094,
-  },
+          },
 
   // 4. REVOKED SAMPLE (Intentionally Revoked)
   {
@@ -136,9 +130,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'REVOKED',
     validityExplanation:
       'This attestation was explicitly revoked on-chain by the issuing reviewer. The historical record is preserved, but the claim no longer stands.',
-    transactionHash: '0x22f8194bcf90184bdf719482519a8491bbdf9012384a8bc894719283bcf81928',
-    blockNumber: 1289410,
-  },
+          },
 
   // 5. EXPIRED SAMPLE (Expired Attestation)
   {
@@ -163,9 +155,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'EXPIRED',
     validityExplanation:
       'This attestation was time-bounded and has passed its registered expiration timestamp.',
-    transactionHash: '0x11119283fca820129bcfe345109bcf7823e49811234091a1829cbdf819283c74',
-    blockNumber: 1109281,
-  },
+          },
 
   // 6. Alex / Developer 2 Sample
   {
@@ -190,9 +180,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'VALID',
     validityExplanation:
       'Verified contract deployment on Monad testnet with matching bytecode hash.',
-    transactionHash: '0x4486926019A8B74431eBDeF7c2718E340621B903112233445566778899aabbcc',
-    blockNumber: 1000100,
-  },
+          },
 ];
 
 export function getProfileForAddress(rawAddress: string): TrustProfile {

@@ -25,6 +25,7 @@ import {
   getValidityDetails 
 } from '../utils/formatters';
 import { DEMO_WALLETS, getExplorerAddressUrl, getExplorerTxUrl } from '../lib/contract/config';
+import { AttestationCard } from '../components/shared/AttestationCard';
 
 export const TrustProfilePage: React.FC = () => {
   const { address } = useParams<{ address: string }>();
@@ -331,111 +332,7 @@ export const TrustProfilePage: React.FC = () => {
       ) : (
         <div className="space-y-4">
           {filteredAttestations.map((att) => {
-            const claimType = getClaimTypeDetails(att.claimType);
-            const validity = getValidityDetails(att.validity);
-
-            return (
-              <div
-                key={att.id}
-                className={`p-6 rounded-xl bg-neutral-900/60 border transition-all ${
-                  att.validity === 'REVOKED'
-                    ? 'border-rose-900/40 bg-rose-950/10'
-                    : 'border-neutral-800 hover:border-neutral-700'
-                }`}
-              >
-                {/* Header row */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                  <div className="flex items-center gap-2.5">
-                    <span className={`text-[11px] font-mono px-2.5 py-0.5 rounded border ${claimType.tagBg}`}>
-                      {claimType.label}
-                    </span>
-                    <span className={`text-[11px] font-mono px-2.5 py-0.5 rounded border flex items-center gap-1 ${validity.badgeClass}`}>
-                      <span>{validity.symbol}</span>
-                      <span>{validity.label}</span>
-                    </span>
-                    <span className="text-neutral-500 font-mono text-xs">#{att.id}</span>
-                  </div>
-
-                  <div className="text-xs text-neutral-400 font-mono flex items-center gap-3">
-                    <span>Issued: {formatDate(att.issuedAt)}</span>
-                    {att.expiry > 0 && (
-                      <span className="text-neutral-500">Expires: {formatDate(att.expiry)}</span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Claim title and description */}
-                <h3 className="text-base font-semibold text-white mb-2 leading-snug">
-                  {att.claimTitle}
-                </h3>
-                <p className="text-xs text-neutral-400 leading-relaxed mb-4 max-w-4xl">
-                  {att.claimDescription}
-                </p>
-
-                {/* Revocation explanation if revoked */}
-                {att.revoked && (
-                  <div className="mb-4 p-3 rounded-lg bg-rose-950/30 border border-rose-800/50 text-xs text-rose-300">
-                    <strong className="font-semibold">Historical Revocation Note:</strong>{' '}
-                    {att.revocationReason || 'This proof was previously verified but is no longer valid.'}
-                  </div>
-                )}
-
-                {/* Metadata & inspection footer */}
-                <div className="pt-4 border-t border-neutral-800/80 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-mono text-neutral-400">
-                  {/* Evidence hash & link */}
-                  <div>
-                    <div className="text-neutral-500 text-[11px] mb-0.5">Evidence Manifest:</div>
-                    <div className="flex items-center gap-2">
-                      <a
-                        href={att.evidenceUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-emerald-400 hover:text-emerald-300 flex items-center gap-1 underline decoration-emerald-500/40"
-                      >
-                        <span>View Evidence</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                      <span className="text-neutral-500" title={att.evidenceHash}>
-                        ({shortenHash(att.evidenceHash, 4)})
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Reviewer / Issuer */}
-                  <div>
-                    <div className="text-neutral-500 text-[11px] mb-0.5">Verified By:</div>
-                    <div className="text-neutral-200">
-                      {att.issuerName || shortenAddress(att.issuer)}
-                    </div>
-                  </div>
-
-                  {/* Action Link to Full Inspection */}
-                  <div className="flex items-center justify-start md:justify-end gap-3 pt-2 md:pt-0">
-                    {att.transactionHash && (
-                      <a
-                        href={getExplorerTxUrl(att.transactionHash)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:text-white text-neutral-400 flex items-center gap-1 text-[11px]"
-                        title="View transaction on Monad Explorer"
-                      >
-                        <span>Tx</span>
-                        <ExternalLink className="h-3 w-3" />
-                      </a>
-                    )}
-
-                    <Link
-                      to={`/verify/${att.id}`}
-                      className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-white font-medium text-xs flex items-center gap-1.5 transition-colors"
-                    >
-                      <span>Audit Proof</span>
-                      <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </div>
-                </div>
-
-              </div>
-            );
+            return <AttestationCard key={att.id} attestation={att} />;
           })}
         </div>
       )}

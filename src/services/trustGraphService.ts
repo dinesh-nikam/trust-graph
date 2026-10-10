@@ -202,8 +202,8 @@ class TrustGraphService {
       validityExplanation: isAuth
         ? 'Attestation recorded with verified evidence hash.'
         : 'Warning: Issuer is not yet recognized in authorized registry.',
-      transactionHash: input.txHash || (input.isLiveOnChain ? undefined : (`0x${Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('')}` as `0x${string}`)),
-      blockNumber: input.blockNumber || 1450000,
+      transactionHash: input.txHash,
+      blockNumber: input.blockNumber,
       isLiveOnChain: input.isLiveOnChain ?? false,
     };
 

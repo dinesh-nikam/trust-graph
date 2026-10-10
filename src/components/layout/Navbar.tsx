@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAccount, useConnect, useDisconnect, useSwitchChain } from 'wagmi';
+import { useAccount, useSwitchChain, useConnect, useDisconnect } from 'wagmi';
 import { 
   GitGraph, 
   Search, 
@@ -25,9 +25,9 @@ export const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { address, isConnected, chainId } = useAccount();
-  const { connect, connectors, isPending: isConnecting } = useConnect();
-  const { disconnect } = useDisconnect();
   const { switchChain, isPending: isSwitching } = useSwitchChain();
+  const { connect, connectors } = useConnect();
+  const { disconnect } = useDisconnect();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isWalletMenuOpen, setIsWalletMenuOpen] = useState(false);
@@ -362,17 +362,11 @@ export const Navbar: React.FC = () => {
                 </div>
               ) : (
                 <button
-                  onClick={() => {
-                    const connector = connectors[0];
-                    if (connector) {
-                      connect({ connector });
-                    }
-                  }}
-                  disabled={isConnecting}
-                  className="flex items-center gap-2 px-3.5 py-1.5 bg-neutral-100 hover:bg-white text-neutral-950 font-medium text-xs rounded-md transition-all shadow-sm active:scale-95 disabled:opacity-50"
+                  onClick={() => connect({ connector: connectors[0] })}
+                  className="flex items-center gap-2 px-3.5 py-1.5 bg-neutral-100 hover:bg-white text-neutral-950 font-medium text-xs rounded-md transition-all shadow-sm active:scale-95"
                 >
                   <Wallet className="h-3.5 w-3.5" />
-                  <span>{isConnecting ? 'Connecting...' : 'Connect Wallet'}</span>
+                  <span>Connect Wallet</span>
                 </button>
               )}
             </div>

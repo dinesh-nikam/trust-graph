@@ -19,6 +19,8 @@ import {
   Calendar
 } from 'lucide-react';
 import { useAttestation, useRevokeAttestation, useIssuerStatus } from '../hooks/useTrustGraph';
+import { ValidityBadge } from '../components/shared/ValidityBadge';
+import { EvidenceHashWidget } from '../components/shared/EvidenceHashWidget';
 import { 
   shortenAddress, 
   shortenHash, 
@@ -155,10 +157,7 @@ export const VerificationDetailPage: React.FC = () => {
             <span className={`text-xs font-mono px-3 py-1 rounded-md border ${claimType.tagBg}`}>
               {claimType.label}
             </span>
-            <span className={`text-xs font-mono px-3 py-1 rounded-md border flex items-center gap-1.5 ${validity.badgeClass}`}>
-              <span>{validity.symbol}</span>
-              <span>{validity.label}</span>
-            </span>
+            <ValidityBadge status={attestation.validity} />
           </div>
 
           <div className="flex items-center gap-3 text-xs font-mono text-neutral-400">
@@ -278,19 +277,7 @@ export const VerificationDetailPage: React.FC = () => {
               </div>
             )}
 
-            <div>
-              <div className="text-neutral-500 font-mono text-[11px] mb-1">On-Chain SHA-256 Digest:</div>
-              <div className="flex items-center justify-between p-2.5 rounded-lg bg-neutral-950 border border-neutral-800 font-mono text-xs text-neutral-200">
-                <span className="break-all text-emerald-400/90">{attestation.evidenceHash}</span>
-                <button
-                  onClick={() => copyToClipboard(attestation.evidenceHash)}
-                  className="ml-2 p-1 text-neutral-400 hover:text-white shrink-0"
-                  title="Copy Hash"
-                >
-                  {copiedHash ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
-                </button>
-              </div>
-            </div>
+            <EvidenceHashWidget hash={attestation.evidenceHash} status={attestation.validity} />
           </div>
 
           {/* Interactive Client-Side Cryptographic Verifier Widget */}
