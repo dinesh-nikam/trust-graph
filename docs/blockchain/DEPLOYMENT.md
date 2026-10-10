@@ -1,8 +1,18 @@
 # Deployment Guide — TrustGraphRegistry
 
-> **Current status: NOT DEPLOYED.**
-> No TrustGraphRegistry has ever been broadcast to Monad testnet from this repository.
-> Deployment requires an **explicit human authorization checkpoint** — the deploy
+> **Current status: DEPLOYED.**
+> TrustGraphRegistry is live on Monad testnet.
+>
+> | Field | Value |
+> | --- | --- |
+> | Contract address | `0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E` |
+> | Deployer | `0x132187B44d6dB6913BD2FB2C664A8c94C63485ac` |
+> | Transaction hash | `0xe99b2b0ae819c650820b698c06f09eebc50dc5e362afcd3a33624f28ec4485ff` |
+> | Block number | `69802176` |
+> | Deployed at | `2026-10-10T10:32:19.497Z` |
+> | Explorer | `https://testnet.monadvision.com/address/0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E` |
+>
+> For any future redeployment, the same authorization checkpoint applies: the deploy
 > script is never run automatically, and no agent or CI job is permitted to
 > broadcast without an explicit, per-deployment go-ahead from the repository owner.
 
@@ -198,16 +208,14 @@ Per this repository's deployment policy:
 > **Stop before broadcasting a testnet deployment until explicit authorization
 > is obtained.**
 
-Concretely:
+The initial deployment was completed on 2026-10-10 after explicit authorization.
+For any future redeployment:
 
 - The deploy command is run **by a human**, on demand, only after the change
   set that produced the bytecode has been reviewed.
 - Any assistant/agent session must ask for and receive an explicit
   authorization for that specific broadcast before running the deploy
   command. "The task prompt was provided" is **not** authorization.
-- If authorization is declined or pending, the repository stays in
-  **NOT DEPLOYED** state and all integration docs keep pointing at the
-  not-yet-valid address in the handoff doc.
 
 After an authorized deployment succeeds:
 
