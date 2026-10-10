@@ -7,9 +7,16 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types test/trustGraph.test.ts",
+    "compile": "npx hardhat compile",
+    "test:contract": "npx hardhat test",
+    "test:unit": "node --experimental-strip-types test/trustGraph.test.ts",
+    "test": "npm run test:contract && npm run test:unit",
     "test:e2e": "e2e run",
-    "preview": "vite preview"
+    "deploy": "node scripts/deploy.cjs",
+    "preview": "vite preview",
+    "graphify": "python -m graphify extract . --code-only && python -m graphify cluster-only .",
+    "graphify:update": "python -m graphify update .",
+    "graphify:query": "python -m graphify query"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.8",
@@ -24,13 +31,16 @@
   },
   "devDependencies": {
     "@e2e-dev/web": "^0.14.0",
+    "@nomicfoundation/hardhat-toolbox": "^7.0.0",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "e2e": "^0.19.0",
+    "hardhat": "^3.19.0",
     "postcss": "^8.4.49",
+    "solc": "^0.8.28",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2",
     "vite": "^6.0.3"

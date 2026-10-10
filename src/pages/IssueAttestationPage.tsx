@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAccount, useSwitchChain } from 'wagmi';
 import { 
   PlusCircle, 
@@ -17,17 +17,19 @@ import {
 import { useIssueAttestation, useIssuerStatus } from '../hooks/useTrustGraph';
 import { ClaimType } from '../types';
 import { computeSha256, shortenAddress } from '../utils/formatters';
-import { DEMO_WALLETS, MONAD_TESTNET_CHAIN_ID, getExplorerTxUrl } from '../lib/contract/config';
+import { MONAD_TESTNET_CHAIN_ID, getExplorerTxUrl } from '../lib/contract/config';
+import { trustGraphService } from '../services/trustGraphService';
 
 export const IssueAttestationPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { address, isConnected, chainId } = useAccount();
   const { switchChain } = useSwitchChain();
-  const { isAuthorized, isLoading: isCheckingAuth } = useIssuerStatus(address);
+  const { isAuthorized, isLoading: isCheckingAuth, error: issuerCheckError } = useIssuerStatus(address);
   const { issue, txStep, errorMessage, txHash, createdAttestation, reset } = useIssueAttestation();
 
   // Form states
-  const [subject, setSubject] = useState<string>(DEMO_WALLETS.DEVELOPER.address);
+  const [subject, setSubject] = useState('');
   const [claimType, setClaimType] = useState<ClaimType>('CONTRACT_DEPLOYED');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -36,28 +38,31 @@ export const IssueAttestationPage: React.FC = () => {
   const [evidenceHash, setEvidenceHash] = useState<`0x${string}` | ''>('');
   const [isComputingHash, setIsComputingHash] = useState(false);
   const [expiryOption, setExpiryOption] = useState<'perpetual' | '1year' | '30days'>('perpetual');
-  const [isLiveTx, setIsLiveTx] = useState(false);
 
-  // Pre-fill demo templates based on claim type
-  const loadDemoTemplate = (type: ClaimType) => {
-    setClaimType(type);
-    if (type === 'CONTRACT_DEPLOYED') {
-      setTitle('Monad High-Throughput AMM Liquidity Router');
-      setDescription('Verified deployment of parallelized swap router with zero storage conflict test benchmarks.');
-      setEvidenceUrl('https://testnet.monadexplorer.com/address/0x4386926019A8B74431eBDeF7c2718E340621B903');
-      setManifestText('Contract: 0x4386926019A8B74431eBDeF7c2718E340621B903\nChain: Monad Testnet (10143)\nBytecode verified against git commit: 8f421ca');
-    } else if (type === 'CHALLENGE_COMPLETED') {
-      setTitle('Monad Madness DeFi Benchmark: 10k TPS Finalist');
-      setDescription('Reviewed technical benchmark submission reproducing 10,000 TPS under async execution simulator.');
-      setEvidenceUrl('https://devpost.com/software/monad-parallel-amm');
-      setManifestText('Challenge: Monad Madness DeFi Benchmark\nJury Score: 98/100\nExecution reproducibility confirmed.');
-    } else {
-      setTitle('Core revm Async Storage Pre-warm Patch');
-      setDescription('Upstream pull request optimizing disk I/O cold storage reads by 32% under load.');
-      setEvidenceUrl('https://github.com/monad-developers/node/pull/482');
-      setManifestText('Repo: https://github.com/monad-developers/node/pull/482\nCommit: a812f04e1984\nMerged by core maintainer.');
+  // Pre-fill from query params if coming from Developer Submissions queue
+  useEffect(() => {
+    const sSubject = searchParams.get('subject');
+    const sType = searchParams.get('type') as ClaimType | null;
+    const sTitle = searchParams.get('title');
+    const sDesc = searchParams.get('description');
+    const sUrl = searchParams.get('url');
+    const sManifest = searchParams.get('manifest');
+
+    if (sSubject) setSubject(sSubject);
+    if (sType) setClaimType(sType);
+    if (sTitle) setTitle(sTitle);
+    if (sDesc) setDescription(sDesc);
+    if (sUrl) setEvidenceUrl(sUrl);
+    if (sManifest) setManifestText(sManifest);
+  }, [searchParams]);
+
+  // If a submissionId was provided and issuance succeeds, mark submission as approved
+  const submissionId = searchParams.get('submissionId');
+  useEffect(() => {
+    if (txStep === 'confirmed' && createdAttestation && submissionId) {
+      trustGraphService.approveSubmission(submissionId, createdAttestation.id);
     }
-  };
+  }, [txStep, createdAttestation, submissionId]);
 
   // Compute SHA-256 hash whenever manifest or URL changes
   useEffect(() => {
@@ -109,7 +114,6 @@ export const IssueAttestationPage: React.FC = () => {
       evidenceHash: finalHash,
       evidenceManifest: manifestText.trim() || evidenceUrl.trim(),
       expiry: expirySec,
-      isLiveOnChain: isLiveTx && isConnected,
     });
   };
 
@@ -134,7 +138,7 @@ export const IssueAttestationPage: React.FC = () => {
       </div>
 
       {/* Reviewer Standing Warning / Status */}
-      <div className="mb-8 p-4 rounded-xl bg-neutral-900/60 border border-neutral-800 text-xs">
+      <div className="mb-8 p-4 rounded-2xl backdrop-blur-md bg-neutral-900/60 border border-neutral-800 text-xs">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-2.5">
             <Info className="h-4 w-4 text-neutral-400 shrink-0 mt-0.5" />
@@ -145,38 +149,31 @@ export const IssueAttestationPage: React.FC = () => {
                     Connected as: <strong className="font-mono text-white">{shortenAddress(address)}</strong>
                   </span>
                 ) : (
-                  <span>Wallet Not Connected (Operating in Demo Reviewer Sandbox)</span>
+                  <span>Connect an issuer wallet to issue an attestation.</span>
                 )}
               </div>
               <div className="text-neutral-400 text-[11px] leading-relaxed">
                 {isConnected ? (
-                  isAuthorized ? (
+                  issuerCheckError ? (
+                    <span className="text-rose-300">Registry authorization could not be read. Check the RPC and configured contract address.</span>
+                  ) : isAuthorized ? (
                     <span className="text-emerald-400">
                       ✓ Recognized as an Authorized Issuer in the TrustGraph registry.
                     </span>
                   ) : (
                     <span className="text-amber-400">
-                      Notice: This wallet is not registered as an authorized issuer on the live contract. You can test in Demo Sandbox mode, or ask the organizer to call <code>approveIssuer</code>.
+                      This wallet is not an authorized issuer in the registry. Ask the registry owner to call <code>approveIssuer</code>.
                     </span>
                   )
                 ) : (
                   <span>
-                    You can fill this form to test issuance in sandbox mode, or connect an authorized Monad testnet wallet.
+                    Issuance requires an authorized wallet on Monad Testnet.
                   </span>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="shrink-0 flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => loadDemoTemplate('CONTRACT_DEPLOYED')}
-              className="px-2.5 py-1 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-mono text-[11px] transition-colors"
-            >
-              Load Demo Data
-            </button>
-          </div>
         </div>
       </div>
 
@@ -190,13 +187,18 @@ export const IssueAttestationPage: React.FC = () => {
                 Attestation Successfully Recorded!
               </h3>
               <p className="text-xs text-neutral-300 leading-relaxed mb-4">
-                Attestation #{createdAttestation.id} has been anchored. The public proof is inspectable immediately.
+                Attestation #{createdAttestation.id} was confirmed on Monad Testnet.
               </p>
 
               <div className="flex flex-wrap items-center gap-3">
+                {txHash && (
+                  <a href={getExplorerTxUrl(txHash)} target="_blank" rel="noreferrer" className="text-xs text-emerald-300 hover:underline inline-flex items-center gap-1">
+                    View confirmed transaction <ExternalLink className="h-3 w-3" />
+                  </a>
+                )}
                 <Link
                   to={`/verify/${createdAttestation.id}`}
-                  className="px-4 py-2 bg-emerald-400 hover:bg-emerald-300 text-neutral-950 font-semibold text-xs rounded-lg transition-colors flex items-center gap-1.5"
+                  className="btn-primary px-4 py-2 text-xs"
                 >
                   <span>Inspect On-Chain Proof</span>
                   <ArrowRight className="h-3.5 w-3.5" />
@@ -235,7 +237,7 @@ export const IssueAttestationPage: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* Recipient / Subject */}
-        <div className="p-5 rounded-xl bg-neutral-900/50 border border-neutral-800 space-y-4">
+        <div className="p-5 rounded-2xl backdrop-blur-md bg-neutral-900/50 border border-neutral-800 space-y-4">
           <div className="text-xs font-mono uppercase tracking-wider text-neutral-400">
             01. Subject Wallet
           </div>
@@ -254,13 +256,6 @@ export const IssueAttestationPage: React.FC = () => {
             />
             <div className="flex items-center gap-2 mt-2">
               <span className="text-[11px] text-neutral-500">Quick Fill:</span>
-              <button
-                type="button"
-                onClick={() => setSubject(DEMO_WALLETS.DEVELOPER.address)}
-                className="text-[11px] text-emerald-400 hover:underline font-mono"
-              >
-                Developer Sarah (0x3a48...)
-              </button>
               {address && (
                 <button
                   type="button"
@@ -275,7 +270,7 @@ export const IssueAttestationPage: React.FC = () => {
         </div>
 
         {/* Claim Type & Details */}
-        <div className="p-5 rounded-xl bg-neutral-900/50 border border-neutral-800 space-y-4">
+        <div className="p-5 rounded-2xl backdrop-blur-md bg-neutral-900/50 border border-neutral-800 space-y-4">
           <div className="text-xs font-mono uppercase tracking-wider text-neutral-400">
             02. Claim Type & Description
           </div>
@@ -337,7 +332,7 @@ export const IssueAttestationPage: React.FC = () => {
         </div>
 
         {/* Evidence Manifest & Hashing */}
-        <div className="p-5 rounded-xl bg-neutral-900/50 border border-neutral-800 space-y-4">
+        <div className="p-5 rounded-2xl backdrop-blur-md bg-neutral-900/50 border border-neutral-800 space-y-4">
           <div className="text-xs font-mono uppercase tracking-wider text-neutral-400">
             03. Evidence Manifest & Cryptographic Hash
           </div>
@@ -358,7 +353,7 @@ export const IssueAttestationPage: React.FC = () => {
 
           <div>
             <label className="block text-xs font-medium text-neutral-300 mb-1.5">
-              Canonical Evidence Manifest
+              Evidence Manifest
             </label>
             <textarea
               rows={3}
@@ -367,6 +362,9 @@ export const IssueAttestationPage: React.FC = () => {
               placeholder="Specific commit, transaction hash, contract address, or test run..."
               className="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-xs text-neutral-200 font-mono focus:border-neutral-600 focus:outline-none"
             />
+            <p className="mt-2 text-[11px] text-amber-300">
+              The contract stores the evidence URL and hash, not the manifest text, title, or description. Publish the exact manifest at the evidence URL so auditors can retrieve and hash the same trimmed text.
+            </p>
           </div>
 
           {/* Computed SHA-256 Anchor */}
@@ -374,7 +372,7 @@ export const IssueAttestationPage: React.FC = () => {
             <div className="flex items-center justify-between text-[11px] text-neutral-400 mb-1 font-mono">
               <span className="flex items-center gap-1.5">
                 <FileCheck className="h-3.5 w-3.5 text-emerald-400" />
-                <span>Deterministic SHA-256 Hash (Stored On-Chain):</span>
+                <span>SHA-256 of trimmed manifest text (URL if blank):</span>
               </span>
               {isComputingHash && <span className="text-emerald-400">Calculating...</span>}
             </div>
@@ -385,7 +383,7 @@ export const IssueAttestationPage: React.FC = () => {
         </div>
 
         {/* Validity Duration / Expiry */}
-        <div className="p-5 rounded-xl bg-neutral-900/50 border border-neutral-800 space-y-3">
+        <div className="p-5 rounded-2xl backdrop-blur-md bg-neutral-900/50 border border-neutral-800 space-y-3">
           <div className="text-xs font-mono uppercase tracking-wider text-neutral-400">
             04. Validity Duration
           </div>
@@ -399,7 +397,7 @@ export const IssueAttestationPage: React.FC = () => {
               <button
                 key={opt.id}
                 type="button"
-                onClick={() => setExpiryOption(opt.id as any)}
+                onClick={() => setExpiryOption(opt.id as 'perpetual' | '1year' | '30days')}
                 className={`p-3 rounded-lg border text-left transition-all ${
                   expiryOption === opt.id
                     ? 'bg-neutral-800/90 border-emerald-500/60 text-white'
@@ -414,7 +412,7 @@ export const IssueAttestationPage: React.FC = () => {
         </div>
 
         {/* Pre-Submission Inspector: What will be recorded */}
-        <div className="p-5 rounded-xl bg-neutral-900/80 border border-neutral-800 space-y-3">
+        <div className="p-5 rounded-2xl backdrop-blur-md bg-neutral-900/80 border border-neutral-800 space-y-3">
           <div className="text-xs font-mono uppercase tracking-wider text-neutral-300 flex items-center gap-2">
             <Lock className="h-3.5 w-3.5 text-emerald-400" />
             <span>Pre-Submission Ledger Preview</span>
@@ -446,24 +444,15 @@ export const IssueAttestationPage: React.FC = () => {
 
         {/* Submission Action */}
         <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
-            {isConnected && (
-              <label className="flex items-center gap-2 cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={isLiveTx}
-                  onChange={(e) => setIsLiveTx(e.target.checked)}
-                  className="rounded border-neutral-700 bg-neutral-900 text-emerald-500"
-                />
-                <span>Execute real Monad testnet transaction</span>
-              </label>
-            )}
+          <div className="text-xs font-mono text-neutral-400">
+            Every submission requires a real Monad Testnet transaction.
+            {isWrongNetwork && <span className="block text-amber-300">Switch to Monad Testnet before submitting.</span>}
           </div>
 
           <button
             type="submit"
-            disabled={txStep === 'preparing' || txStep === 'waiting-wallet' || txStep === 'submitted'}
-            className="w-full sm:w-auto px-6 py-3 bg-neutral-100 hover:bg-white text-neutral-950 font-semibold text-xs sm:text-sm rounded-lg transition-all shadow-sm active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+            disabled={!isConnected || !isAuthorized || isCheckingAuth || isWrongNetwork || isComputingHash || txStep === 'preparing' || txStep === 'waiting-wallet' || txStep === 'submitted' || txStep === 'confirming'}
+            className="btn-primary w-full sm:w-auto px-6 py-3 text-xs sm:text-sm"
           >
             {txStep === 'waiting-wallet' && (
               <>
@@ -477,6 +466,7 @@ export const IssueAttestationPage: React.FC = () => {
                 <span>Anchoring on Monad...</span>
               </>
             )}
+            {txStep === 'confirming' && <><RefreshCw className="h-4 w-4 animate-spin" /><span>Waiting for Monad confirmation...</span></>}
             {(txStep === 'idle' || txStep === 'confirmed' || txStep === 'error') && (
               <>
                 <PlusCircle className="h-4 w-4" />

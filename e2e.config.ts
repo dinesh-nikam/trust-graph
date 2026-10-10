@@ -9,8 +9,8 @@ export default {
       app: {
         url: 'http://127.0.0.1:5173',
         command: {
-          executable: process.platform === 'win32' ? 'npm.cmd' : 'npm',
-          args: ['run', 'dev'],
+          executable: process.platform === 'win32' ? 'cmd.exe' : 'npm',
+          args: process.platform === 'win32' ? ['/c', 'npm', 'run', 'dev'] : ['run', 'dev'],
           log: '.e2e/logs/app.log',
           reuseExisting: true,
         },

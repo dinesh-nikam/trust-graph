@@ -152,7 +152,7 @@ export const TrustGraphRegistryABI = [
       { name: 'id', type: 'uint256', indexed: true },
       { name: 'issuer', type: 'address', indexed: true },
       { name: 'subject', type: 'address', indexed: true },
-      { name: 'claimType', type: 'bytes32', indexed: true },
+      { name: 'claimType', type: 'bytes32', indexed: false },
       { name: 'evidenceHash', type: 'bytes32', indexed: false },
       { name: 'expiry', type: 'uint256', indexed: false },
     ],

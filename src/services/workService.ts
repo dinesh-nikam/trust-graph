@@ -1,5 +1,5 @@
 import { trustGraphService } from './trustGraphService';
-import { WorkRecord, DeveloperPassport, WorkType, VerifierProfile } from '../types';
+import { WorkRecord, DeveloperPassport, VerifierProfile } from '../types';
 
 export class WorkService {
   public async getAllWorks(): Promise<WorkRecord[]> {
@@ -14,31 +14,20 @@ export class WorkService {
     return trustGraphService.getProfile(address);
   }
 
-  public async registerWork(input: any): Promise<WorkRecord> {
-    return trustGraphService.issueAttestation({
-      subject: input.worker,
-      claimType: input.workType,
-      claimTitle: input.title,
-      claimDescription: input.description,
-      evidenceUrl: input.evidenceUrl,
-      evidenceHash: input.evidenceHash,
-      expiry: 0,
-      issuer: input.worker,
-    });
+  public async registerWork(_input: unknown): Promise<WorkRecord> {
+    throw new Error('Work registration is not supported by the deployed TrustGraphRegistry interface.');
   }
 
-  public async verifyWork(workId: string, verifierAddress: string): Promise<WorkRecord> {
-    const item = await trustGraphService.getAttestationById(workId);
-    if (!item) throw new Error('Work not found');
-    return item;
+  public async verifyWork(_workId: string, _verifierAddress: string): Promise<WorkRecord> {
+    throw new Error('The deployed registry does not implement a separate verification transition.');
   }
 
-  public async rejectWork(workId: string, reason: string): Promise<WorkRecord> {
-    return trustGraphService.revokeAttestation(workId, reason, '');
+  public async rejectWork(_workId: string, _reason: string): Promise<WorkRecord> {
+    throw new Error('The deployed registry does not implement rejection.');
   }
 
-  public async revokeWork(workId: string, reason: string): Promise<WorkRecord> {
-    return trustGraphService.revokeAttestation(workId, reason, '');
+  public async revokeWork(_workId: string, _reason: string): Promise<WorkRecord> {
+    throw new Error('Revocation must use the wallet transaction hook and a confirmed Monad receipt.');
   }
 
   public async getVerifiers(): Promise<VerifierProfile[]> {

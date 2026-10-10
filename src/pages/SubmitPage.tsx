@@ -1,1 +1,1 @@
-export { IssueAttestationPage as SubmitPage, IssueAttestationPage as default } from './IssueAttestationPage';
+export { SubmitWorkPage as SubmitPage, SubmitWorkPage as default } from './SubmitWorkPage';

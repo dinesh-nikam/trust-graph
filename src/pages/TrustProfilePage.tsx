@@ -24,11 +24,11 @@ import {
   getClaimTypeDetails, 
   getValidityDetails 
 } from '../utils/formatters';
-import { DEMO_WALLETS, getExplorerAddressUrl, getExplorerTxUrl } from '../lib/contract/config';
+import { getExplorerAddressUrl, getExplorerTxUrl } from '../lib/contract/config';
 
 export const TrustProfilePage: React.FC = () => {
   const { address } = useParams<{ address: string }>();
-  const activeAddress = address || DEMO_WALLETS.DEVELOPER.address;
+  const activeAddress = address || '';
   const { profile, isLoading, error } = useTrustProfile(activeAddress);
 
   const [claimFilter, setClaimFilter] = useState<'ALL' | ClaimType>('ALL');
@@ -63,17 +63,11 @@ export const TrustProfilePage: React.FC = () => {
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <div className="p-8 rounded-xl bg-neutral-900 border border-neutral-800">
           <AlertCircle className="h-8 w-8 text-neutral-500 mx-auto mb-3" />
-          <h2 className="text-lg font-semibold text-white mb-2">Profile Not Found</h2>
+          <h2 className="text-lg font-semibold text-white mb-2">{error ? 'Registry Read Failed' : 'Profile Not Found'}</h2>
           <p className="text-neutral-400 text-sm mb-6">
-            No registered attestations found for address {activeAddress}.
+            {error instanceof Error ? error.message : `No registered attestations found for address ${activeAddress}.`}
           </p>
           <div className="flex justify-center gap-4">
-            <Link
-              to={`/profile/${DEMO_WALLETS.DEVELOPER.address}`}
-              className="px-4 py-2 bg-white text-neutral-950 font-medium text-xs rounded-lg hover:bg-neutral-200 transition-colors"
-            >
-              Inspect Sarah&apos;s Demo Profile
-            </Link>
             <Link
               to="/issue"
               className="px-4 py-2 bg-neutral-800 text-white font-medium text-xs rounded-lg hover:bg-neutral-700 transition-colors"
@@ -136,7 +130,7 @@ export const TrustProfilePage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
         
         {/* Identity Card */}
-        <div className="lg:col-span-2 p-6 rounded-xl bg-neutral-900/60 border border-neutral-800">
+        <div className="lg:col-span-2 p-6 rounded-2xl backdrop-blur-md bg-neutral-900/60 border border-neutral-800">
           <div className="flex items-start justify-between gap-4 mb-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -179,7 +173,7 @@ export const TrustProfilePage: React.FC = () => {
         </div>
 
         {/* Verification Summary (No arbitrary scores!) */}
-        <div className="p-6 rounded-xl bg-neutral-900/60 border border-neutral-800 flex flex-col justify-between">
+        <div className="p-6 rounded-2xl backdrop-blur-md bg-neutral-900/60 border border-neutral-800 flex flex-col justify-between">
           <div>
             <div className="text-xs font-mono uppercase tracking-wider text-neutral-400 mb-3">
               On-Chain Status Breakdown
@@ -213,7 +207,7 @@ export const TrustProfilePage: React.FC = () => {
       </div>
 
       {/* Trusted Issuers Section */}
-      <div className="mb-10 p-5 rounded-xl bg-neutral-900/40 border border-neutral-800">
+      <div className="mb-10 p-5 rounded-2xl backdrop-blur-md bg-neutral-900/40 border border-neutral-800">
         <div className="flex items-center justify-between mb-3">
           <div className="text-xs font-mono uppercase tracking-wider text-neutral-400 flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-emerald-400" />
@@ -316,7 +310,7 @@ export const TrustProfilePage: React.FC = () => {
 
       {/* Attestations Grid / List */}
       {filteredAttestations.length === 0 ? (
-        <div className="p-12 text-center rounded-xl bg-neutral-900/40 border border-neutral-800">
+        <div className="p-12 text-center rounded-2xl backdrop-blur-md bg-neutral-900/40 border border-neutral-800">
           <p className="text-neutral-400 text-sm mb-2">No attestations match the selected filter.</p>
           <button
             onClick={() => {
@@ -337,7 +331,7 @@ export const TrustProfilePage: React.FC = () => {
             return (
               <div
                 key={att.id}
-                className={`p-6 rounded-xl bg-neutral-900/60 border transition-all ${
+                className={`p-6 rounded-2xl backdrop-blur-md bg-neutral-900/60 border transition-all ${
                   att.validity === 'REVOKED'
                     ? 'border-rose-900/40 bg-rose-950/10'
                     : 'border-neutral-800 hover:border-neutral-700'

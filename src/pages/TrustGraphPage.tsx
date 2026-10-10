@@ -25,19 +25,19 @@ import {
   getClaimTypeDetails, 
   getValidityDetails 
 } from '../utils/formatters';
-import { DEMO_WALLETS, getExplorerAddressUrl, getExplorerTxUrl } from '../lib/contract/config';
+import { getExplorerAddressUrl, getExplorerTxUrl } from '../lib/contract/config';
 
 interface SelectedNode {
   type: 'SUBJECT' | 'CLAIM' | 'ISSUER' | 'EVIDENCE';
   title: string;
   subtitle?: string;
-  data: any;
+  data: unknown;
   attestation?: Attestation;
 }
 
 export const TrustGraphPage: React.FC = () => {
   const { address } = useParams<{ address: string }>();
-  const activeAddress = address || DEMO_WALLETS.DEVELOPER.address;
+  const activeAddress = address || '';
   const { profile, isLoading, error } = useTrustProfile(activeAddress);
 
   const [selectedNode, setSelectedNode] = useState<SelectedNode | null>(null);
@@ -76,18 +76,12 @@ export const TrustGraphPage: React.FC = () => {
   if (error || !profile) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
-        <div className="p-8 rounded-xl bg-neutral-900 border border-neutral-800">
+        <div className="p-8 rounded-2xl backdrop-blur-md bg-neutral-900 border border-neutral-800">
           <AlertCircle className="h-8 w-8 text-neutral-500 mx-auto mb-3" />
-          <h2 className="text-lg font-semibold text-white mb-2">No Graph Data</h2>
+          <h2 className="text-lg font-semibold text-white mb-2">{error ? 'Registry Read Failed' : 'No Graph Data'}</h2>
           <p className="text-neutral-400 text-sm mb-6">
-            No attestations found to construct graph for {activeAddress}.
+            {error instanceof Error ? error.message : `No attestations found to construct graph for ${activeAddress}.`}
           </p>
-          <Link
-            to={`/graph/${DEMO_WALLETS.DEVELOPER.address}`}
-            className="px-4 py-2 bg-white text-neutral-950 font-medium text-xs rounded-lg hover:bg-neutral-200"
-          >
-            Load Sarah&apos;s Trust Graph
-          </Link>
         </div>
       </div>
     );
@@ -177,7 +171,7 @@ export const TrustGraphPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Interactive Graph Canvas / Tree View */}
-        <div className="lg:col-span-2 rounded-xl bg-neutral-950 border border-neutral-800 p-6 overflow-x-auto min-h-[560px] flex flex-col justify-between relative shadow-inner">
+        <div className="lg:col-span-2 rounded-2xl backdrop-blur-md bg-neutral-950 border border-neutral-800 p-6 overflow-x-auto min-h-[560px] flex flex-col justify-between relative shadow-inner">
           <div
             className="transition-transform duration-200 origin-top-left"
             style={{ transform: `scale(${zoomLevel})` }}
@@ -338,7 +332,7 @@ export const TrustGraphPage: React.FC = () => {
         </div>
 
         {/* Node Detail & Verification Inspector Panel */}
-        <div className="rounded-xl bg-neutral-900/60 border border-neutral-800 p-6 flex flex-col justify-between">
+        <div className="rounded-2xl backdrop-blur-md bg-neutral-900/60 border border-neutral-800 p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between gap-2 mb-4 pb-3 border-b border-neutral-800">
               <div className="text-xs font-mono uppercase tracking-wider text-neutral-400 flex items-center gap-2">
@@ -443,7 +437,7 @@ export const TrustGraphPage: React.FC = () => {
             <div className="pt-6 border-t border-neutral-800 mt-6">
               <Link
                 to={`/verify/${selectedNode.attestation.id}`}
-                className="w-full py-2.5 px-4 bg-neutral-100 hover:bg-white text-neutral-950 font-semibold text-xs rounded-lg flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                className="btn-primary w-full py-2.5 px-4 text-xs"
               >
                 <span>Full Independent Audit Page</span>
                 <ArrowRight className="h-3.5 w-3.5" />

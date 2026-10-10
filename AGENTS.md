@@ -614,3 +614,64 @@ When you evaluate the state of your work, subject it to these six foundational l
 
 > **Build less. Verify more.**  
 > The measure of success is not how many features are in the repository, but whether the single claim made by the passport is **undeniable, immutable, and cryptographically proven**.
+
+## graphify
+
+This project has an active codebase knowledge graph generated and managed by **Graphify** ([Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify)).
+The generated artifacts live at `graphify-out/` and provide structured context, community clusters, call graphs, and god-node detection across contracts, frontend components, and tests.
+
+When the user types `/graphify`, use the installed graphify skill (`.agents/skills/graphify/SKILL.md`) or CLI instructions before doing anything else.
+
+### Graphify Artifacts
+```text
+graphify-out/
+├── graph.html       Interactive visual knowledge graph (open in browser)
+├── GRAPH_REPORT.md  Plain-language architectural report (god nodes, community hubs)
+├── graph.json       Persistent machine-readable graph for fast queries
+└── cache/           SHA-256 AST extraction cache
+```
+
+### How to Run Graphify
+Graphify is installed via Python (`pip install "graphifyy[solidity]"`) and can be executed either via `npm` scripts or direct Python CLI:
+
+1. **Full Extraction & Report Generation**:
+   ```powershell
+   npm run graphify
+   # Or directly:
+   python -m graphify extract . --code-only
+   python -m graphify cluster-only .
+   ```
+
+2. **Incremental Update (After modifying code)**:
+   ```powershell
+   npm run graphify:update
+   # Or directly:
+   python -m graphify update .
+   ```
+
+3. **Query the Knowledge Graph**:
+   ```powershell
+   npm run graphify:query -- "<question or symbol>"
+   # Or directly:
+   python -m graphify query "<question>"
+   ```
+
+4. **Shortest Path Between Concepts / Modules**:
+   ```powershell
+   python -m graphify path "ProofOfWorkRegistry" "useTrustGraph"
+   ```
+
+5. **Deep Node / Concept Explanation**:
+   ```powershell
+   python -m graphify explain "registerWork"
+   ```
+
+6. **View Interactive Graph**:
+   - Open `graphify-out/graph.html` directly in your web browser.
+
+### Agent Operational Rules
+- **Graph-First Navigation**: For architectural and codebase relationship queries, when `graphify-out/graph.json` exists, run `graphify query "<question>"` or `npm run graphify:query -- "<question>"` first before conducting brute-force string greps.
+- **Path & Flow Queries**: Use `graphify path "<A>" "<B>"` to trace call chains and dependency flows between smart contracts and frontend hooks/services.
+- **Cache & Dirty Files**: Uncommitted changes in `graphify-out/` are expected after incremental updates; dirty graph files must not prevent agents from continuing work.
+- **Post-Mutation Synchronization**: After modifying source code in contracts, hooks, or components, execute `npm run graphify:update` (AST-only, deterministic, zero LLM token consumption) to keep the repository graph in sync.
+

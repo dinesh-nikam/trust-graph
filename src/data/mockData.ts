@@ -237,6 +237,7 @@ export function getProfileForAddress(rawAddress: string): TrustProfile {
       revokedAttestations: revokedCount,
       expiredAttestations: expiredCount,
       invalidIssuerAttestations: invalidIssuerCount,
+      evidenceMismatchAttestations: 0,
       byClaimType,
     },
     attestations,

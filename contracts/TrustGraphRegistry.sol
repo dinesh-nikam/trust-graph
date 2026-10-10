@@ -67,7 +67,7 @@ contract TrustGraphRegistry {
         uint256 indexed id,
         address indexed issuer,
         address indexed subject,
-        bytes32 indexed claimType,
+        bytes32 claimType,
         bytes32 evidenceHash,
         uint256 expiry
     );
@@ -201,6 +201,7 @@ contract TrustGraphRegistry {
         Attestation storage att = attestations[id];
         require(att.issuedAt != 0, "Attestation does not exist");
         require(!att.revoked, "Attestation is already revoked");
+        require(bytes(reason).length > 0, "Revocation reason cannot be empty");
         require(
             msg.sender == att.issuer || msg.sender == owner,
             "Only the issuing reviewer or registry owner can revoke"

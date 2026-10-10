@@ -1,39 +1,65 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 import { 
   UserCheck, 
   CheckCircle2, 
-  Ban, 
-  ExternalLink, 
-  Clock, 
-  Check,
-  ShieldCheck,
-  ArrowRight
+  ArrowRight,
+  Clock,
+  ExternalLink,
+  ShieldAlert,
+  AlertTriangle,
+  FileCheck,
+  X,
+  XCircle
 } from 'lucide-react';
-import { useTrustProfile, useRevokeAttestation } from '../hooks/useTrustGraph';
+import { useAllAttestations, useRegistryOwner, useRevokeAttestation } from '../hooks/useTrustGraph';
 import { 
   shortenAddress, 
-  shortenHash, 
   formatDate, 
+  formatDateTime,
   getClaimTypeDetails, 
   getValidityDetails 
 } from '../utils/formatters';
-import { Attestation } from '../types';
-import { DEMO_WALLETS, getExplorerTxUrl } from '../lib/contract/config';
+import { Attestation, WorkSubmission } from '../types';
+import { trustGraphService } from '../services/trustGraphService';
 
 export const VerifyPage: React.FC = () => {
-  const { profile, isLoading, refetch } = useTrustProfile(DEMO_WALLETS.DEVELOPER.address);
+  const navigate = useNavigate();
+  const { data: attestations = [], isLoading, error, refetch } = useAllAttestations();
+  const { address } = useAccount();
+  const { owner } = useRegistryOwner();
   const { revoke } = useRevokeAttestation();
 
-  const [activeTab, setActiveTab] = useState<'ALL' | 'VALID' | 'REVOKED'>('ALL');
+  const [activeTab, setActiveTab] = useState<'SUBMISSIONS' | 'ALL' | 'VALID' | 'REVOKED'>('SUBMISSIONS');
+  
+  // Attestation Revocation State
   const [selectedAttestation, setSelectedAttestation] = useState<Attestation | null>(null);
   const [revokeReason, setRevokeReason] = useState('');
   const [isRevokeModalOpen, setIsRevokeModalOpen] = useState(false);
+  const [revokeError, setRevokeError] = useState<string | null>(null);
+  const [isRevoking, setIsRevoking] = useState(false);
+
+  // Submissions State
+  const [submissions, setSubmissions] = useState<WorkSubmission[]>(() => trustGraphService.getSubmissions());
+  const [selectedSubmissionToReject, setSelectedSubmissionToReject] = useState<WorkSubmission | null>(null);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectError, setRejectError] = useState<string | null>(null);
+
+  // Global UI Notification
   const [notification, setNotification] = useState<string | null>(null);
 
-  const attestations = profile?.attestations || [];
+  useEffect(() => {
+    const handleStorageUpdate = () => {
+      setSubmissions(trustGraphService.getSubmissions());
+    };
+    window.addEventListener('storage', handleStorageUpdate);
+    return () => window.removeEventListener('storage', handleStorageUpdate);
+  }, []);
 
-  const displayed = attestations.filter((a) => {
+  const pendingSubmissionsCount = submissions.filter((s) => s.status === 'PENDING').length;
+
+  const displayedAttestations = attestations.filter((a) => {
     if (activeTab === 'VALID') return a.validity === 'VALID';
     if (activeTab === 'REVOKED') return a.validity === 'REVOKED';
     return true;
@@ -43,6 +69,8 @@ export const VerifyPage: React.FC = () => {
     e.preventDefault();
     if (!selectedAttestation || !revokeReason.trim()) return;
 
+    setIsRevoking(true);
+    setRevokeError(null);
     try {
       await revoke(selectedAttestation.id, revokeReason.trim());
       setNotification(`Attestation #${selectedAttestation.id} marked REVOKED.`);
@@ -50,8 +78,26 @@ export const VerifyPage: React.FC = () => {
       setSelectedAttestation(null);
       setRevokeReason('');
       refetch();
-    } catch (err: any) {
-      alert(`Error revoking: ${err?.message || 'Error'}`);
+    } catch (err: unknown) {
+      setRevokeError(err instanceof Error ? err.message : 'Unknown revocation error.');
+    } finally {
+      setIsRevoking(false);
+    }
+  };
+
+  const handleRejectSubmissionSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedSubmissionToReject || !rejectReason.trim()) return;
+
+    setRejectError(null);
+    try {
+      await trustGraphService.rejectSubmission(selectedSubmissionToReject.id, rejectReason.trim());
+      setNotification(`Submission "${selectedSubmissionToReject.title}" rejected.`);
+      setSelectedSubmissionToReject(null);
+      setRejectReason('');
+      setSubmissions(trustGraphService.getSubmissions());
+    } catch (err: unknown) {
+      setRejectError(err instanceof Error ? err.message : 'Failed to reject submission.');
     }
   };
 
@@ -63,39 +109,64 @@ export const VerifyPage: React.FC = () => {
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-neutral-900 border border-neutral-800 text-xs font-mono text-neutral-400 mb-3">
             <UserCheck className="h-3.5 w-3.5 text-neutral-300" />
-            <span>Authorized Attestation Portal</span>
+            <span>Authorized Attestation & Triage Portal</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            Reviewer Attestation Management
+            Reviewer Verification Management
           </h1>
           <p className="text-xs sm:text-sm text-neutral-400 mt-2">
-            Inspect evidence manifests, verify standing, and manage attestations on Monad testnet.
+            Triage submitted developer claims, inspect evidence manifests, and anchor on-chain proofs on Monad.
           </p>
         </div>
 
-        <Link
-          to="/issue"
-          className="px-4 py-2 bg-neutral-100 hover:bg-white text-neutral-950 font-semibold text-xs rounded-lg transition-colors flex items-center gap-2 shrink-0 self-start sm:self-auto"
-        >
-          <span>+ Issue New Attestation</span>
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            to="/submit"
+            className="px-3.5 py-2 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 font-medium text-xs rounded-lg transition-colors flex items-center gap-2 shrink-0"
+          >
+            <FileCheck className="h-3.5 w-3.5" />
+            <span>Submit Work</span>
+          </Link>
+          <Link
+            to="/issue"
+            className="px-4 py-2 bg-neutral-100 hover:bg-white text-neutral-950 font-semibold text-xs rounded-lg transition-colors flex items-center gap-2 shrink-0"
+          >
+            <span>+ Direct Issuance</span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
       </div>
 
       {notification && (
-        <div className="mb-6 p-4 rounded-xl bg-emerald-950/40 border border-emerald-800 text-xs text-emerald-300 flex items-center justify-between">
+        <div role="status" className="mb-6 p-4 rounded-xl bg-emerald-950/40 border border-emerald-800 text-xs text-emerald-300 flex items-center justify-between animate-fade-in">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="h-4 w-4" />
             <span>{notification}</span>
           </div>
-          <button onClick={() => setNotification(null)} className="text-emerald-400 hover:text-white">
-            ✕
+          <button onClick={() => setNotification(null)} className="text-emerald-400 hover:text-white" aria-label="Close notification">
+            <X className="h-4 w-4" />
           </button>
         </div>
       )}
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-neutral-800 pb-3 mb-6">
+      <div className="flex items-center gap-2 border-b border-neutral-800 pb-3 mb-6 overflow-x-auto">
+        <button
+          onClick={() => setActiveTab('SUBMISSIONS')}
+          className={`px-3 py-1.5 rounded text-xs font-mono transition-colors flex items-center gap-2 ${
+            activeTab === 'SUBMISSIONS'
+              ? 'bg-neutral-800 text-white font-medium'
+              : 'text-neutral-400 hover:text-white'
+          }`}
+        >
+          <span>DEVELOPER SUBMISSIONS</span>
+          {pendingSubmissionsCount > 0 && (
+            <span className="px-1.5 py-0.2 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] rounded-full">
+              {pendingSubmissionsCount}
+            </span>
+          )}
+        </button>
+
         {(['ALL', 'VALID', 'REVOKED'] as const).map((tab) => (
           <button
             key={tab}
@@ -106,73 +177,216 @@ export const VerifyPage: React.FC = () => {
                 : 'text-neutral-400 hover:text-white'
             }`}
           >
-            {tab}
+            {tab === 'ALL' ? 'ALL ON-CHAIN ATTESTATIONS' : tab}
           </button>
         ))}
       </div>
 
-      {/* Attestations Table / Grid */}
-      <div className="space-y-4">
-        {displayed.map((att) => {
-          const claimType = getClaimTypeDetails(att.claimType);
-          const validity = getValidityDetails(att.validity);
-
-          return (
-            <div
-              key={att.id}
-              className="p-5 rounded-xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-            >
-              <div className="space-y-1.5 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${claimType.tagBg}`}>
-                    {claimType.label}
-                  </span>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${validity.badgeClass}`}>
-                    {validity.label}
-                  </span>
-                  <span className="text-neutral-500 font-mono text-xs">#{att.id}</span>
-                </div>
-
-                <h3 className="text-sm font-semibold text-white">{att.claimTitle}</h3>
-                <div className="text-xs text-neutral-400 font-mono flex items-center gap-4">
-                  <span>Subject: {shortenAddress(att.subject)}</span>
-                  <span>Issued: {formatDate(att.issuedAt)}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 shrink-0">
-                <Link
-                  to={`/verify/${att.id}`}
-                  className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-xs font-mono text-white transition-colors"
-                >
-                  Audit Details
-                </Link>
-
-                {!att.revoked && (
-                  <button
-                    onClick={() => {
-                      setSelectedAttestation(att);
-                      setIsRevokeModalOpen(true);
-                    }}
-                    className="px-3 py-1.5 rounded bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800 text-xs font-mono transition-colors"
-                  >
-                    Revoke
-                  </button>
-                )}
-              </div>
+      {/* SUBMISSIONS TAB CONTENT */}
+      {activeTab === 'SUBMISSIONS' && (
+        <div className="space-y-4">
+          {submissions.length === 0 ? (
+            <div className="p-8 rounded-xl bg-neutral-900/40 border border-neutral-800 text-center text-xs text-neutral-400">
+              No developer work submissions found. Developers can submit work at{' '}
+              <Link to="/submit" className="text-emerald-400 hover:underline">/submit</Link>.
             </div>
-          );
-        })}
-      </div>
+          ) : (
+            submissions.map((sub) => {
+              const claimType = getClaimTypeDetails(sub.claimType);
+              const isPending = sub.status === 'PENDING';
+              const isApproved = sub.status === 'APPROVED';
+              const isRejected = sub.status === 'REJECTED';
+
+              return (
+                <div
+                  key={sub.id}
+                  className="p-5 rounded-xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4"
+                >
+                  <div className="space-y-2 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${claimType.tagBg}`}>
+                        {claimType.label}
+                      </span>
+                      <span
+                        className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
+                          isPending
+                            ? 'bg-amber-950/60 text-amber-300 border-amber-800'
+                            : isApproved
+                            ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800'
+                            : 'bg-rose-950/60 text-rose-300 border-rose-800'
+                        }`}
+                      >
+                        {sub.status}
+                      </span>
+                      <span className="text-neutral-500 font-mono text-xs">ID: {sub.id}</span>
+                    </div>
+
+                    <h3 className="text-sm font-semibold text-white">{sub.title}</h3>
+                    <p className="text-xs text-neutral-300 leading-relaxed max-w-3xl">
+                      {sub.description}
+                    </p>
+
+                    <div className="text-xs text-neutral-400 font-mono flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
+                      <span>Developer: <Link to={`/profile/${sub.worker}`} className="text-neutral-300 hover:underline">{shortenAddress(sub.worker)}</Link></span>
+                      <span>Submitted: {formatDateTime(sub.submittedAt)}</span>
+                      {sub.evidenceUrl && (
+                        <a
+                          href={sub.evidenceUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-neutral-300 hover:text-white inline-flex items-center gap-1 underline"
+                        >
+                          <span>Evidence URL</span>
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+                    </div>
+
+                    <div className="text-[11px] font-mono text-neutral-500 bg-neutral-950/80 p-2 rounded border border-neutral-800/80 break-all">
+                      SHA-256: <span className="text-neutral-300">{sub.evidenceHash}</span>
+                    </div>
+
+                    {isRejected && sub.rejectionReason && (
+                      <div className="text-xs text-rose-300 bg-rose-950/40 p-2.5 rounded border border-rose-900/60">
+                        <strong>Rejection Reason:</strong> {sub.rejectionReason}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex sm:flex-col items-center sm:items-end gap-2 shrink-0 pt-2 sm:pt-0">
+                    {isPending && (
+                      <>
+                        <button
+                          onClick={() => {
+                            const query = new URLSearchParams({
+                              subject: sub.worker,
+                              type: sub.claimType,
+                              title: sub.title,
+                              description: sub.description,
+                              url: sub.evidenceUrl,
+                              manifest: sub.evidenceManifest,
+                              submissionId: sub.id,
+                            }).toString();
+                            navigate(`/issue?${query}`);
+                          }}
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
+                        >
+                          <span>Review & Issue</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            setSelectedSubmissionToReject(sub);
+                            setRejectReason('');
+                            setRejectError(null);
+                          }}
+                          className="px-3 py-1.5 bg-neutral-800 hover:bg-rose-950/60 hover:text-rose-300 hover:border-rose-800 border border-neutral-700 text-neutral-300 text-xs font-mono rounded-lg transition-colors"
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+
+                    {isApproved && sub.attestationId && (
+                      <Link
+                        to={`/verify/${sub.attestationId}`}
+                        className="px-3.5 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-mono rounded-lg transition-colors flex items-center gap-1.5"
+                      >
+                        <span>Audit Proof #{sub.attestationId}</span>
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      )}
+
+      {/* ON-CHAIN ATTESTATIONS TAB CONTENT */}
+      {activeTab !== 'SUBMISSIONS' && (
+        <div className="space-y-4">
+          {isLoading && <p className="text-sm text-neutral-400 mb-6">Loading attestation records from Monad Testnet...</p>}
+          {error && (
+            <div role="alert" className="text-sm text-rose-300 mb-6 p-4 rounded-xl bg-rose-950/40 border border-rose-800">
+              Registry read failed: {error instanceof Error ? error.message : 'Unknown RPC error.'}{' '}
+              <button onClick={() => refetch()} className="underline ml-2 font-medium">Retry</button>
+            </div>
+          )}
+          {!isLoading && !error && displayedAttestations.length === 0 && (
+            <p className="text-sm text-neutral-400 mb-6">No attestations match this filter.</p>
+          )}
+
+          {displayedAttestations.map((att) => {
+            const claimType = getClaimTypeDetails(att.claimType);
+            const validity = getValidityDetails(att.validity);
+
+            return (
+              <div
+                key={att.id}
+                className="p-5 rounded-xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              >
+                <div className="space-y-1.5 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${claimType.tagBg}`}>
+                      {claimType.label}
+                    </span>
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${validity.badgeClass}`}>
+                      {validity.label}
+                    </span>
+                    <span className="text-neutral-500 font-mono text-xs">#{att.id}</span>
+                  </div>
+
+                  <h3 className="text-sm font-semibold text-white">{att.claimTitle}</h3>
+                  <div className="text-xs text-neutral-400 font-mono flex items-center gap-4">
+                    <span>Subject: {shortenAddress(att.subject)}</span>
+                    <span>Issued: {formatDate(att.issuedAt)}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <Link
+                    to={`/verify/${att.id}`}
+                    className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-xs font-mono text-white transition-colors"
+                  >
+                    Audit Details
+                  </Link>
+
+                  {!att.revoked && address && (address.toLowerCase() === att.issuer.toLowerCase() || address.toLowerCase() === owner?.toLowerCase()) && (
+                    <button
+                      onClick={() => {
+                        setSelectedAttestation(att);
+                        setIsRevokeModalOpen(true);
+                        setRevokeError(null);
+                      }}
+                      className="px-3 py-1.5 rounded bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800 text-xs font-mono transition-colors"
+                    >
+                      Revoke
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Revocation Modal */}
       {isRevokeModalOpen && selectedAttestation && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-neutral-900 border border-neutral-800 rounded-xl max-w-md w-full p-6">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-xl max-w-md w-full p-6 animate-scale-in">
             <h3 className="text-base font-bold text-white mb-2">Revoke Attestation #{selectedAttestation.id}</h3>
             <p className="text-xs text-neutral-400 mb-4 leading-relaxed">
               Revocation is recorded on Monad. The historical record will be preserved with status <code>REVOKED</code>.
             </p>
+
+            {revokeError && (
+              <div role="alert" className="mb-4 p-3 rounded-lg bg-rose-950/60 border border-rose-800 text-xs text-rose-300">
+                {revokeError}
+              </div>
+            )}
 
             <form onSubmit={handleRevokeSubmit} className="space-y-4">
               <div>
@@ -192,6 +406,7 @@ export const VerifyPage: React.FC = () => {
               <div className="flex items-center justify-end gap-2 pt-2">
                 <button
                   type="button"
+                  disabled={isRevoking}
                   onClick={() => setIsRevokeModalOpen(false)}
                   className="px-3 py-2 text-xs text-neutral-400 hover:text-white"
                 >
@@ -199,9 +414,63 @@ export const VerifyPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs rounded-lg transition-colors"
+                  disabled={isRevoking || !revokeReason.trim()}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-semibold text-xs rounded-lg transition-colors flex items-center gap-1.5"
                 >
-                  Confirm Revocation
+                  {isRevoking ? 'Confirming...' : 'Confirm Revocation'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Reject Submission Modal */}
+      {selectedSubmissionToReject && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-xl max-w-md w-full p-6 animate-scale-in">
+            <h3 className="text-base font-bold text-white mb-2">
+              Reject Submission: {selectedSubmissionToReject.title}
+            </h3>
+            <p className="text-xs text-neutral-400 mb-4 leading-relaxed">
+              Record a rationale for declining this submission. The developer will see this status in their dashboard.
+            </p>
+
+            {rejectError && (
+              <div role="alert" className="mb-4 p-3 rounded-lg bg-rose-950/60 border border-rose-800 text-xs text-rose-300">
+                {rejectError}
+              </div>
+            )}
+
+            <form onSubmit={handleRejectSubmissionSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-neutral-300 mb-1">
+                  Rejection Rationale *
+                </label>
+                <textarea
+                  required
+                  rows={3}
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  placeholder="e.g. Contract bytecode not found at address; GitHub PR was not merged..."
+                  className="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-xs text-neutral-200 focus:outline-none focus:border-rose-600"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedSubmissionToReject(null)}
+                  className="px-3 py-2 text-xs text-neutral-400 hover:text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!rejectReason.trim()}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-semibold text-xs rounded-lg transition-colors"
+                >
+                  Reject Submission
                 </button>
               </div>
             </form>

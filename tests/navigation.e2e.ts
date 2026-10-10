@@ -9,6 +9,13 @@ describe('TrustGraph E2E Suite', () => {
     await expect(screen.getByPlaceholder('Search wallet (0x...) or Claim #1')).toBeVisible();
   });
 
+  test('developer submission page displays form controls and hashing guide', async ({ app, screen, browser }) => {
+    await app.open('/submit');
+    await expect(browser).toHaveURL('/submit');
+    await expect(screen.getByRole('heading', { level: 1 })).toHaveText('Submit Work for Verification');
+    await expect(screen.getByText('DEVELOPER EVIDENCE SUBMISSION PIPELINE')).toBeVisible();
+  });
+
   test('trust profile page displays developer identity and attestations', async ({ app, screen, browser }) => {
     const devAddress = '0x3a48Bf2c8d8E02d91B0c82Ae27909A4D517e92D1';
     await app.open(`/profile/${devAddress}`);
@@ -22,6 +29,13 @@ describe('TrustGraph E2E Suite', () => {
     await expect(browser).toHaveURL('/issue');
     await expect(screen.getByRole('heading', { level: 1 })).toHaveText('Issue Evidence-Backed Attestation');
     await expect(screen.getByText('AUTHORIZED ISSUER PORTAL')).toBeVisible();
+  });
+
+  test('verifier triage queue renders management portal and submissions tab', async ({ app, screen, browser }) => {
+    await app.open('/verify');
+    await expect(browser).toHaveURL('/verify');
+    await expect(screen.getByRole('heading', { level: 1 })).toHaveText('Reviewer Verification Management');
+    await expect(screen.getByText('DEVELOPER SUBMISSIONS')).toBeVisible();
   });
 
   test('verification detail page inspects attestation proof and cryptographic hash', async ({ app, screen, browser }) => {

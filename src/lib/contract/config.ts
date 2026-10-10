@@ -1,10 +1,18 @@
 import { monadTestnet, getExplorerTxUrl, getExplorerAddressUrl, MONAD_TESTNET_CHAIN_ID } from '../blockchain/chain';
 import { TrustGraphRegistryABI, ProofOfWorkRegistryABI } from './abi';
+import { getAddress, isAddress, zeroAddress } from 'viem';
 
-// Deployed contract address on Monad Testnet (can be overridden via environment)
-export const TRUST_GRAPH_REGISTRY_ADDRESS = ((import.meta.env.VITE_TRUST_GRAPH_REGISTRY_ADDRESS as string) ||
-  (import.meta.env.VITE_PROOF_OF_WORK_REGISTRY_ADDRESS as string) ||
-  '0x4386926019A8B74431eBDeF7c2718E340621B903') as `0x${string}`;
+const configuredRegistryAddress = import.meta.env.VITE_TRUST_GRAPH_REGISTRY_ADDRESS ||
+  import.meta.env.VITE_PROOF_OF_WORK_REGISTRY_ADDRESS;
+
+if (configuredRegistryAddress && !isAddress(configuredRegistryAddress)) {
+  throw new Error('VITE_TRUST_GRAPH_REGISTRY_ADDRESS must be a valid EVM address.');
+}
+
+export const TRUST_GRAPH_REGISTRY_ADDRESS = configuredRegistryAddress
+  ? getAddress(configuredRegistryAddress)
+  : zeroAddress;
+export const REGISTRY_ADDRESS_CONFIGURED = TRUST_GRAPH_REGISTRY_ADDRESS !== zeroAddress;
 
 // Backwards compatibility alias
 export const PROOF_OF_WORK_REGISTRY_ADDRESS = TRUST_GRAPH_REGISTRY_ADDRESS;

@@ -13,7 +13,31 @@ export type ClaimType =
   | 'CONTRIBUTION_VERIFIED';
 
 // Discrete validity states (never an arbitrary reputation score or simple boolean)
-export type ValidityStatus = 'VALID' | 'REVOKED' | 'EXPIRED' | 'INVALID_ISSUER';
+export type ValidityStatus =
+  | 'UNKNOWN'
+  | 'VALID'
+  | 'EXPIRED'
+  | 'REVOKED'
+  | 'INVALID_ISSUER'
+  | 'EVIDENCE_MISMATCH'
+  | 'NOT_FOUND'
+  | 'PENDING';
+
+// Developer work submission for verifier triage
+export interface WorkSubmission {
+  id: string;
+  worker: `0x${string}`;
+  claimType: ClaimType;
+  title: string;
+  description: string;
+  evidenceUrl: string;
+  evidenceManifest: string;
+  evidenceHash: `0x${string}`;
+  submittedAt: number;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  rejectionReason?: string;
+  attestationId?: string;
+}
 
 // Off-chain evidence representation with cryptographic anchor
 export interface Evidence {
@@ -62,6 +86,7 @@ export interface TrustProfileStats {
   revokedAttestations: number;
   expiredAttestations: number;
   invalidIssuerAttestations: number;
+  evidenceMismatchAttestations: number;
   byClaimType: Record<ClaimType, number>;
 }
 

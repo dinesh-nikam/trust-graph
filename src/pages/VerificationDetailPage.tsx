@@ -18,7 +18,7 @@ import {
   Share2,
   Calendar
 } from 'lucide-react';
-import { useAttestation, useRevokeAttestation, useIssuerStatus } from '../hooks/useTrustGraph';
+import { useAttestation, useRevokeAttestation, useRegistryOwner } from '../hooks/useTrustGraph';
 import { 
   shortenAddress, 
   shortenHash, 
@@ -33,7 +33,6 @@ import {
   getExplorerAddressUrl, 
   getExplorerTxUrl 
 } from '../lib/contract/config';
-import { trustGraphService } from '../services/trustGraphService';
 
 export const VerificationDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -41,6 +40,7 @@ export const VerificationDetailPage: React.FC = () => {
   const { attestation, isLoading, error, refetch } = useAttestation(activeId);
   const { address } = useAccount();
   const { revoke, txStep: revokeTxStep } = useRevokeAttestation();
+  const { owner } = useRegistryOwner();
 
   // Local verification test state
   const [testContent, setTestContent] = useState('');
@@ -54,6 +54,7 @@ export const VerificationDetailPage: React.FC = () => {
   const [isRevoking, setIsRevoking] = useState(false);
   const [revokeReason, setRevokeReason] = useState('');
   const [revokeSuccessMsg, setRevokeSuccessMsg] = useState<string | null>(null);
+  const [revokeErrorMsg, setRevokeErrorMsg] = useState<string | null>(null);
 
   const [copiedHash, setCopiedHash] = useState(false);
 
@@ -86,13 +87,14 @@ export const VerificationDetailPage: React.FC = () => {
     e.preventDefault();
     if (!revokeReason.trim() || !attestation) return;
 
+    setRevokeErrorMsg(null);
     try {
       await revoke(attestation.id, revokeReason.trim());
       setIsRevoking(false);
       setRevokeSuccessMsg('Attestation has been revoked on Monad. Historical record updated.');
       refetch();
-    } catch (err: any) {
-      alert(`Revocation failed: ${err?.message || 'Error'}`);
+    } catch (err: unknown) {
+      setRevokeErrorMsg(`Revocation failed: ${err instanceof Error ? err.message : 'Unknown error.'}`);
     }
   };
 
@@ -110,29 +112,27 @@ export const VerificationDetailPage: React.FC = () => {
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <div className="p-8 rounded-xl bg-neutral-900 border border-neutral-800">
           <AlertTriangle className="h-8 w-8 text-neutral-500 mx-auto mb-3" />
-          <h2 className="text-lg font-semibold text-white mb-2">Attestation Not Found</h2>
+          <h2 className="text-lg font-semibold text-white mb-2">{error ? 'Registry Read Failed' : 'Attestation Not Found'}</h2>
           <p className="text-neutral-400 text-sm mb-6">
-            No attestation found with ID #{activeId} on the registry.
+            {error instanceof Error ? error.message : `No attestation found with ID #${activeId} on the registry.`}
           </p>
-          <Link
-            to="/verify/1"
-            className="px-4 py-2 bg-neutral-100 text-neutral-950 font-medium text-xs rounded-lg hover:bg-white transition-colors"
-          >
-            Inspect Sample Attestation #1
-          </Link>
+          {error && <button onClick={() => refetch()} className="px-4 py-2 bg-neutral-800 text-white text-xs rounded-lg hover:bg-neutral-700">Retry registry read</button>}
         </div>
       </div>
     );
   }
 
   const claimType = getClaimTypeDetails(attestation.claimType);
-  const validity = getValidityDetails(attestation.validity);
+  const displayedStatus = hashResult?.tested && !hashResult.matches
+    ? 'EVIDENCE_MISMATCH'
+    : attestation.validity;
+  const validity = getValidityDetails(displayedStatus);
 
   const canRevoke =
     !attestation.revoked &&
     address &&
     (address.toLowerCase() === attestation.issuer.toLowerCase() ||
-      trustGraphService.isIssuerAuthorized(address));
+      address.toLowerCase() === owner?.toLowerCase());
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16">
@@ -149,7 +149,7 @@ export const VerificationDetailPage: React.FC = () => {
       </div>
 
       {/* Header Banner */}
-      <div className="p-6 rounded-xl bg-neutral-900/60 border border-neutral-800 mb-8">
+      <div className="p-6 rounded-2xl backdrop-blur-md bg-neutral-900/60 border border-neutral-800 mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
             <span className={`text-xs font-mono px-3 py-1 rounded-md border ${claimType.tagBg}`}>
@@ -209,7 +209,7 @@ export const VerificationDetailPage: React.FC = () => {
         </div>
 
         {/* 1 & 2: Issuer & Authorization Standing */}
-        <div className="p-5 rounded-xl bg-neutral-900/40 border border-neutral-800 space-y-4">
+        <div className="p-5 rounded-2xl backdrop-blur-md bg-neutral-900/40 border border-neutral-800 space-y-4">
           <div className="flex items-center justify-between">
             <div className="text-xs font-mono text-neutral-400">01 & 02. REVIEWING AUTHORITY</div>
             <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
@@ -252,7 +252,7 @@ export const VerificationDetailPage: React.FC = () => {
         </div>
 
         {/* 3 & 4: Evidence Manifest & Cryptographic Hash */}
-        <div className="p-5 rounded-xl bg-neutral-900/40 border border-neutral-800 space-y-4">
+        <div className="p-5 rounded-2xl backdrop-blur-md bg-neutral-900/40 border border-neutral-800 space-y-4">
           <div className="text-xs font-mono text-neutral-400">03 & 04. EVIDENCE & CRYPTOGRAPHIC ANCHOR</div>
 
           <div className="space-y-3 text-xs">
@@ -311,7 +311,10 @@ export const VerificationDetailPage: React.FC = () => {
             <textarea
               rows={3}
               value={testContent}
-              onChange={(e) => setTestContent(e.target.value)}
+              onChange={(e) => {
+                setTestContent(e.target.value);
+                setHashResult(null);
+              }}
               placeholder="Paste or modify evidence text to test if SHA-256 hash matches the blockchain anchor..."
               className="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-xs text-neutral-200 font-mono focus:border-neutral-600 focus:outline-none mb-2"
             />
@@ -348,7 +351,7 @@ export const VerificationDetailPage: React.FC = () => {
         </div>
 
         {/* 5, 6 & 7: Timestamps, Expiry, and Monad Transaction Record */}
-        <div className="p-5 rounded-xl bg-neutral-900/40 border border-neutral-800 space-y-4">
+        <div className="p-5 rounded-2xl backdrop-blur-md bg-neutral-900/40 border border-neutral-800 space-y-4">
           <div className="text-xs font-mono text-neutral-400">05, 06 & 07. LIFECYCLE & MONAD TRANSACTION</div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
@@ -383,7 +386,7 @@ export const VerificationDetailPage: React.FC = () => {
           <div className="pt-3 border-t border-neutral-800/80 text-xs font-mono space-y-2">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <span className="text-neutral-500">Monad Transaction Hash:</span>
-              {attestation.transactionHash ? (
+              {attestation.isLiveOnChain && attestation.transactionHash ? (
                 <a
                   href={getExplorerTxUrl(attestation.transactionHash)}
                   target="_blank"
@@ -394,7 +397,9 @@ export const VerificationDetailPage: React.FC = () => {
                   <ExternalLink className="h-3 w-3" />
                 </a>
               ) : (
-                <span className="text-neutral-500">Simulated in Local Sandbox Mode</span>
+                <span className="px-2 py-0.5 rounded bg-amber-950/60 border border-amber-800 text-amber-300 text-[11px] font-mono">
+                  [DEMO FIXTURE — NOT COMMITTED TO MONAD TESTNET]
+                </span>
               )}
             </div>
 
@@ -417,7 +422,7 @@ export const VerificationDetailPage: React.FC = () => {
 
       {/* Verifier Action: Revoke Attestation */}
       {canRevoke && (
-        <div className="p-6 rounded-xl bg-neutral-900/60 border border-neutral-800 mb-8">
+        <div className="p-6 rounded-2xl backdrop-blur-md bg-neutral-900/60 border border-neutral-800 mb-8">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="text-sm font-semibold text-white">Reviewer Management Action</h3>
@@ -427,7 +432,10 @@ export const VerificationDetailPage: React.FC = () => {
             </div>
             {!isRevoking && (
               <button
-                onClick={() => setIsRevoking(true)}
+                onClick={() => {
+                  setIsRevoking(true);
+                  setRevokeErrorMsg(null);
+                }}
                 className="px-3.5 py-1.5 rounded-lg bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800 text-xs font-mono transition-colors"
               >
                 Revoke Attestation
@@ -440,6 +448,13 @@ export const VerificationDetailPage: React.FC = () => {
               <div className="text-xs font-semibold text-rose-300">
                 Provide Human-Readable Revocation Rationale *
               </div>
+
+              {revokeErrorMsg && (
+                <div role="alert" className="p-3 rounded-lg bg-rose-950/80 border border-rose-800 text-xs text-rose-300">
+                  {revokeErrorMsg}
+                </div>
+              )}
+
               <textarea
                 required
                 rows={2}

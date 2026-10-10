@@ -31,6 +31,12 @@
       "skillPath": "skills/gas/SKILL.md",
       "computedHash": "d5e029b79efd4e4ea8e81fcbd1ba365302c4b8d9a8d728ac031da8909ab6882a"
     },
+    "graphify": {
+      "source": "Graphify-Labs/graphify",
+      "sourceType": "github",
+      "skillPath": "skills/graphify/SKILL.md",
+      "computedHash": "52a7e2167b50e1ff96ac85fbee26afcdf34676c4ebb6364cd7c7938347873bd0"
+    },
     "indexer": {
       "source": "therealharpaljadeja/monskills",
       "sourceType": "github",

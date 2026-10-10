@@ -111,6 +111,33 @@ export function getValidityDetails(status: ValidityStatus | WorkStatus | string)
         textClass: 'text-amber-400',
         explanation: 'Issuer authorization has been removed from the TrustGraph registry.',
       };
+    case 'EVIDENCE_MISMATCH':
+      return {
+        label: 'EVIDENCE MISMATCH',
+        symbol: '✕',
+        badgeClass: 'bg-red-500/10 text-red-400 border-red-500/30',
+        dotClass: 'bg-red-400',
+        textClass: 'text-red-400',
+        explanation: 'Calculated hash of presented evidence does NOT match the on-chain recorded hash.',
+      };
+    case 'NOT_FOUND':
+      return {
+        label: 'NOT FOUND',
+        symbol: '?',
+        badgeClass: 'bg-neutral-500/10 text-neutral-400 border-neutral-500/30',
+        dotClass: 'bg-neutral-500',
+        textClass: 'text-neutral-400',
+        explanation: 'Attestation does not exist on the TrustGraph registry.',
+      };
+    case 'UNKNOWN':
+      return {
+        label: 'UNKNOWN',
+        symbol: '?',
+        badgeClass: 'bg-neutral-500/10 text-neutral-400 border-neutral-500/30',
+        dotClass: 'bg-neutral-500',
+        textClass: 'text-neutral-400',
+        explanation: 'Validity state cannot be determined or verified.',
+      };
     case 'PENDING':
     default:
       return {
