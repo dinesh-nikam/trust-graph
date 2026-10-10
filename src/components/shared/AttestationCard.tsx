@@ -1,64 +1,115 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ExternalLink, Clock, ShieldCheck, Box } from 'lucide-react';
+import { motion, useReducedMotion } from 'motion/react';
+import { ShieldCheck, Box, ArrowUpRight } from 'lucide-react';
 import { Attestation } from '../../types';
 import { ValidityBadge } from './ValidityBadge';
-import { shortenAddress } from '../../utils/formatters';
+import { shortenAddress, formatDate, getClaimTypeDetails } from '../../utils/formatters';
+import { cn } from '../../utils/cn';
+import { fadeRise, settleTransition } from '../../lib/motion';
 
 interface AttestationCardProps {
   attestation: Attestation;
+  /** Position in a list — drives stagger delay */
+  index?: number;
 }
 
-export const AttestationCard: React.FC<AttestationCardProps> = ({ attestation }) => {
+export const AttestationCard: React.FC<AttestationCardProps> = ({ attestation, index = 0 }) => {
+  const shouldReduceMotion = useReducedMotion();
+  const claim = getClaimTypeDetails(attestation.claimType);
+
   return (
-    <div className="group relative w-full border border-neutral-800 bg-[#0a0a0c] p-5 hover:border-neutral-700 transition-colors flex flex-col gap-4">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <ValidityBadge status={attestation.validity} />
-          <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            {new Date(attestation.issuedAt * 1000).toLocaleDateString()}
-          </div>
-        </div>
-        <Link 
-          to={`/verify/${attestation.id}`}
-          className="text-[11px] font-mono text-emerald-500 hover:text-emerald-400 flex items-center gap-1 transition-colors uppercase tracking-widest"
+    <motion.article
+      initial={shouldReduceMotion ? false : 'hidden'}
+      animate="visible"
+      variants={fadeRise}
+      transition={{ ...settleTransition, delay: shouldReduceMotion ? 0 : index * 0.05 }}
+      className="group relative bg-surface border border-surface-border corner-ticks corner-ticks-accent transition-colors duration-200 hover:border-surface-border-strong flex flex-col"
+    >
+      {/* Ledger head: id · claim tag · validity */}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-5 pt-4">
+        <span className="font-mono text-[10px] text-ink-dim tracking-widest-xl">№{attestation.id}</span>
+        <span
+          className={cn(
+            'inline-flex items-center px-1.5 py-0.5 border font-mono text-[10px] uppercase tracking-widest',
+            claim.tagBg
+          )}
         >
-          Inspect Proof <ExternalLink className="h-3 w-3" />
-        </Link>
+          {claim.shortLabel}
+        </span>
+        <span className="ml-auto">
+          <ValidityBadge status={attestation.validity} />
+        </span>
       </div>
 
-      {/* Main Content */}
-      <div className="flex flex-col gap-2">
-        <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-widest">
-          {attestation.claimType.replace('_', ' ')}
-        </div>
-        <h3 className="text-lg font-medium text-neutral-200 group-hover:text-white transition-colors leading-tight">
-          {attestation.claimTitle}
-        </h3>
-        <p className="text-sm text-neutral-400 line-clamp-2 leading-relaxed">
+      {/* Title & description */}
+      <div className="px-5 pt-3 pb-4 flex flex-col gap-1.5">
+        <h3 className="text-base font-medium text-ink leading-snug">{attestation.claimTitle}</h3>
+        <p className="text-sm text-ink-muted line-clamp-2 leading-relaxed">
           {attestation.claimDescription}
         </p>
       </div>
 
-      {/* Footer Info */}
-      <div className="pt-4 mt-auto border-t border-neutral-900 grid grid-cols-2 gap-4">
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] font-mono text-neutral-600 uppercase tracking-widest">Issuer</span>
-          <Link to={`/profile/${attestation.issuer}`} className="flex items-center gap-1.5 text-xs text-neutral-300 hover:text-white">
-            <ShieldCheck className={`h-3.5 w-3.5 ${attestation.issuerAuthorized ? 'text-emerald-500' : 'text-neutral-500'}`} />
-            <span className="font-mono">{shortenAddress(attestation.issuer)}</span>
+      {/* Hairline ledger footer */}
+      <div className="mt-auto border-t border-surface-border grid grid-cols-2 divide-x divide-surface-border">
+        <div className="px-5 py-3 flex flex-col gap-1">
+          <span className="font-mono text-[9px] text-ink-dim uppercase tracking-widest-xl">Issuer</span>
+          <Link
+            to={`/profile/${attestation.issuer}`}
+            className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-muted hover:text-primary-bright transition-colors w-fit"
+          >
+            <ShieldCheck
+              className={cn('h-3.5 w-3.5', attestation.issuerAuthorized ? 'text-emerald-500' : 'text-ink-dim')}
+              aria-hidden="true"
+            />
+            {shortenAddress(attestation.issuer)}
           </Link>
         </div>
-        <div className="flex flex-col gap-1">
-          <span className="text-[10px] font-mono text-neutral-600 uppercase tracking-widest">Subject</span>
-          <Link to={`/profile/${attestation.subject}`} className="flex items-center gap-1.5 text-xs text-neutral-300 hover:text-white">
-            <Box className="h-3.5 w-3.5 text-neutral-500" />
-            <span className="font-mono">{shortenAddress(attestation.subject)}</span>
+        <div className="px-5 py-3 flex flex-col gap-1">
+          <span className="font-mono text-[9px] text-ink-dim uppercase tracking-widest-xl">Subject</span>
+          <Link
+            to={`/profile/${attestation.subject}`}
+            className="inline-flex items-center gap-1.5 font-mono text-xs text-ink-muted hover:text-primary-bright transition-colors w-fit"
+          >
+            <Box className="h-3.5 w-3.5 text-ink-dim" aria-hidden="true" />
+            {shortenAddress(attestation.subject)}
           </Link>
         </div>
       </div>
-    </div>
+
+      {/* Bottom strip: date + inspect */}
+      <div className="flex items-center justify-between gap-3 border-t border-surface-border px-5 py-2.5">
+        <span className="flex items-center gap-2 min-w-0">
+          <span className="font-mono text-[10px] text-ink-dim tracking-widest uppercase truncate">
+            Issued {formatDate(attestation.issuedAt)}
+          </span>
+          {!attestation.transactionHash && (
+            <span className="shrink-0 font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 border border-status-pending/40 text-status-pending bg-status-pending/[0.07]">
+              Local Fixture
+            </span>
+          )}
+        </span>
+        <Link
+          to={`/verify/${attestation.id}`}
+          className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-evidence hover:text-evidence/80 transition-colors focus-visible:text-evidence"
+          aria-label={`Inspect proof №${attestation.id}`}
+        >
+          Inspect Proof
+          <ArrowUpRight className="h-3 w-3 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+        </Link>
+      </div>
+
+      {/* Left edge indicator in claim-type hue */}
+      <span
+        className={cn(
+          'absolute left-0 top-0 bottom-0 w-px opacity-40 group-hover:opacity-90 transition-opacity',
+          attestation.validity === 'VALID' && 'bg-status-verified',
+          attestation.validity === 'REVOKED' && 'bg-status-revoked',
+          attestation.validity === 'EXPIRED' && 'bg-status-expired',
+          attestation.validity === 'INVALID_ISSUER' && 'bg-status-invalid-issuer'
+        )}
+        aria-hidden="true"
+      />
+    </motion.article>
   );
 };

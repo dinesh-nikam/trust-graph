@@ -1,33 +1,21 @@
 import { Attestation, ClaimType, IssuerProfile, TrustProfile, ValidityStatus } from '../types';
 import { MOCK_ATTESTATIONS, MOCK_ISSUERS, getProfileForAddress } from '../data/mockData';
-import { DEMO_WALLETS, TRUST_GRAPH_REGISTRY_ADDRESS, monadTestnet } from '../lib/contract/config';
+import { DEMO_WALLETS, TRUST_GRAPH_REGISTRY_ADDRESS } from '../lib/contract/config';
 import { computeSha256 } from '../utils/formatters';
-import { createPublicClient, http } from 'viem';
-import { TrustGraphRegistryABI } from '../lib/contract/abi';
 
 const STORAGE_KEY = 'trustgraph_attestations_v2';
 const STORAGE_ISSUERS_KEY = 'trustgraph_issuers_v2';
-const STORAGE_MODE_KEY = 'trustgraph_mode_v2'; // 'LIVE' | 'DEMO'
 
 class TrustGraphService {
   private attestations: Attestation[] = [];
   private issuers: IssuerProfile[] = [...MOCK_ISSUERS];
-  private isLiveMode = false;
-  private publicClient;
 
   constructor() {
-    this.publicClient = createPublicClient({
-      chain: monadTestnet,
-      transport: http('https://testnet-rpc.monad.xyz'),
-    });
     this.init();
   }
 
   private init() {
     try {
-      const mode = localStorage.getItem(STORAGE_MODE_KEY);
-      this.isLiveMode = mode === 'LIVE';
-
       const storedIssuers = localStorage.getItem(STORAGE_ISSUERS_KEY);
       if (storedIssuers) {
         this.issuers = JSON.parse(storedIssuers);
@@ -50,19 +38,9 @@ class TrustGraphService {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.attestations));
       localStorage.setItem(STORAGE_ISSUERS_KEY, JSON.stringify(this.issuers));
-      localStorage.setItem(STORAGE_MODE_KEY, this.isLiveMode ? 'LIVE' : 'DEMO');
     } catch (e) {
       console.warn('Failed to save TrustGraph state to localStorage', e);
     }
-  }
-
-  public getMode(): 'LIVE' | 'DEMO' {
-    return this.isLiveMode ? 'LIVE' : 'DEMO';
-  }
-
-  public setMode(mode: 'LIVE' | 'DEMO') {
-    this.isLiveMode = mode === 'LIVE';
-    this.save();
   }
 
   public async getAllAttestations(): Promise<Attestation[]> {
@@ -229,7 +207,7 @@ class TrustGraphService {
       revocationReason: reason.trim() || 'Revoked by authorized reviewer',
       revokedAt: Math.floor(Date.now() / 1000),
       validity: 'REVOKED',
-      validityExplanation: `This attestation was explicitly revoked on-chain: "${reason}"`,
+      validityExplanation: `This attestation was revoked: "${reason}"`,
     };
 
     this.attestations[index] = updated;
@@ -238,7 +216,8 @@ class TrustGraphService {
   }
 
   /**
-   * Verifies an off-chain manifest or content against the recorded on-chain evidence hash
+   * Verifies an off-chain manifest or content against the recorded evidence hash.
+   * A matching digest proves payload integrity, not the truth of the claim.
    */
   public async verifyEvidenceMatch(
     attestationId: string,

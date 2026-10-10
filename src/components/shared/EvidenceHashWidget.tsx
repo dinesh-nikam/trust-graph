@@ -1,6 +1,9 @@
-import React from 'react';
-import { Fingerprint, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, useReducedMotion } from 'motion/react';
+import { Fingerprint, Copy, Check, ShieldCheck } from 'lucide-react';
 import { ValidityStatus } from '../../types';
+import { SectionHeader } from '../ui/Panel';
+import { settleTransition } from '../../lib/motion';
 
 interface EvidenceHashWidgetProps {
   hash: string;
@@ -8,30 +11,65 @@ interface EvidenceHashWidgetProps {
 }
 
 export const EvidenceHashWidget: React.FC<EvidenceHashWidgetProps> = ({ hash, status }) => {
+  const [copied, setCopied] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
   const isValid = status === 'VALID';
 
-  return (
-    <div className="w-full border border-neutral-800 bg-[#0a0a0c] p-4 flex flex-col gap-3 relative overflow-hidden group">
-      {/* Background glow effect for valid hashes */}
-      {isValid && (
-        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 blur-[50px] pointer-events-none rounded-full" />
-      )}
-      
-      <div className="flex items-center justify-between border-b border-neutral-900 pb-2">
-        <div className="flex items-center gap-2 text-neutral-400">
-          <Fingerprint className="h-4 w-4" />
-          <span className="text-[11px] font-mono uppercase tracking-widest">Cryptographic Evidence Hash</span>
-        </div>
-        {isValid && (
-          <div className="flex items-center gap-1.5 text-emerald-500">
-            <CheckCircle2 className="h-3.5 w-3.5" />
-            <span className="text-[10px] font-mono uppercase tracking-widest font-bold">Verified Match</span>
-          </div>
-        )}
-      </div>
+  const copyHash = async () => {
+    try {
+      await navigator.clipboard.writeText(hash);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (e) {
+      console.error('Clipboard write failed', e);
+    }
+  };
 
-      <div className="font-mono text-sm sm:text-base text-neutral-300 break-all leading-relaxed relative z-10 selection:bg-emerald-900/50 selection:text-emerald-200">
-        {hash}
+  return (
+    <div className="w-full bg-surface-subtle border border-surface-border corner-ticks p-4 flex flex-col gap-3">
+      <SectionHeader
+        title="Evidence Hash"
+        index="⌗"
+        className="border-b-0 pb-0"
+        right={
+          isValid ? (
+            <motion.span
+              initial={shouldReduceMotion ? false : { opacity: 0, x: 6 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={settleTransition}
+              className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-emerald-400"
+            >
+              <ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />
+              Content Integral
+            </motion.span>
+          ) : (
+            <span className="font-mono text-[10px] uppercase tracking-widest text-ink-dim">
+              Unverified
+            </span>
+          )
+        }
+      />
+
+      <div className="flex items-start gap-3">
+        <Fingerprint className="h-4 w-4 mt-1 text-evidence shrink-0" aria-hidden="true" />
+        <code
+          className="flex-1 font-mono text-xs sm:text-sm text-ink break-all leading-relaxed select-all cursor-text"
+          title="Full evidence hash — select to copy"
+        >
+          {hash}
+        </code>
+        <button
+          type="button"
+          onClick={copyHash}
+          aria-label={copied ? 'Hash copied' : 'Copy evidence hash'}
+          className="shrink-0 p-2 border border-surface-border text-ink-dim hover:text-ink hover:border-surface-border-strong hover:bg-surface-hover transition-colors"
+        >
+          {copied ? (
+            <Check className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
+          ) : (
+            <Copy className="h-3.5 w-3.5" aria-hidden="true" />
+          )}
+        </button>
       </div>
     </div>
   );

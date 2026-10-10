@@ -5,47 +5,195 @@
 @layer base {
   :root {
     color-scheme: dark;
+
+    /* ── The Trust Instrument · token sheet ───────────── */
+    --tg-bg: #09090F;
+    --tg-surface: #141420;
+    --tg-surface-raised: #191926;
+    --tg-border: #23232F;
+    --tg-border-strong: #35354A;
+    --tg-ink: #EDEDF4;
+    --tg-ink-muted: #A0A0B8;
+    --tg-ink-dim: #62627A;
+    --tg-primary: #8B5CF6;
+    --tg-evidence: #22D3EE;
+    --tg-valid: #34D399;
+    --tg-revoked: #FB7185;
+    --tg-expired: #E5B567;
+    --tick-color: var(--tg-border-strong);
   }
-  
+
   body {
-    background-color: #09090b;
-    color: #f4f4f5;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    background-color: var(--tg-bg);
+    color: var(--tg-ink);
+    font-feature-settings: "ss01", "ss03";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Keyboard focus is always visible on the instrument panel */
+  :focus-visible {
+    outline: 2px solid var(--tg-primary);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 }
 
-/* Custom subtle scrollbar */
+/* ─── Scrollbar ──────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #09090b;
+  background: var(--tg-bg);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 3px;
+  background: var(--tg-border-strong);
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #46466A;
 }
 
-/* Subtle dot grid pattern */
+/* ─── Selection ──────────────────────────────────────── */
+::selection {
+  background: rgba(139, 92, 246, 0.30);
+  color: #F3EFFF;
+}
+
+/* ─── Corner tick marks · instrument registration marks ─
+   Four L-shaped ticks drawn with background gradients so
+   they layer over any background-color set via Tailwind. */
+.corner-ticks {
+  --tick-length: 9px;
+  --tick-thickness: 1px;
+  background-image:
+    linear-gradient(var(--tick-color), var(--tick-color)),
+    linear-gradient(var(--tick-color), var(--tick-color)),
+    linear-gradient(var(--tick-color), var(--tick-color)),
+    linear-gradient(var(--tick-color), var(--tick-color)),
+    linear-gradient(var(--tick-color), var(--tick-color)),
+    linear-gradient(var(--tick-color), var(--tick-color)),
+    linear-gradient(var(--tick-color), var(--tick-color)),
+    linear-gradient(var(--tick-color), var(--tick-color));
+  background-repeat: no-repeat;
+  background-size:
+    var(--tick-length) var(--tick-thickness),
+    var(--tick-thickness) var(--tick-length),
+    var(--tick-length) var(--tick-thickness),
+    var(--tick-thickness) var(--tick-length),
+    var(--tick-length) var(--tick-thickness),
+    var(--tick-thickness) var(--tick-length),
+    var(--tick-length) var(--tick-thickness),
+    var(--tick-thickness) var(--tick-length);
+  background-position:
+    left top, left top,
+    right top, right top,
+    left bottom, left bottom,
+    right bottom, right bottom;
+}
+
+/* Variant: ticks light up in primary violet on interactive surfaces */
+.corner-ticks-accent:hover {
+  --tick-color: var(--tg-primary);
+}
+
+/* ─── Blueprint grid · fine engineering paper ─────────── */
+.bg-blueprint {
+  background-image:
+    linear-gradient(rgba(139, 92, 246, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
 .bg-grid-pattern {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(160, 160, 184, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
-/* Glass card styling */
-.glass-panel {
-  background: rgba(18, 18, 22, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+/* ─── Film grain · kept extremely quiet ───────────────── */
+.bg-noise {
+  position: relative;
+}
+.bg-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
 }
 
-.glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.15);
+/* ─── Legacy surface helpers (retired pages still reference) ── */
+.terminal-card {
+  background: var(--tg-surface);
+  border: 1px solid var(--tg-border);
+  position: relative;
+}
+.glow-emerald {
+  box-shadow: 0 0 20px -5px rgba(52, 211, 153, 0.15);
+}
+.glow-rose {
+  box-shadow: 0 0 20px -5px rgba(251, 113, 133, 0.15);
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-page-enter {
+  animation: fadeInUp 0.4s ease-out both;
+}
+
+/* ─── Trust Explorer · React Flow chrome ─────────────── */
+.trust-flow .react-flow__handle {
+  opacity: 0;
+  pointer-events: none;
+}
+.trust-flow .react-flow__edge-path {
+  transition: stroke 0.35s ease, opacity 0.35s ease;
+}
+.trust-flow .react-flow__controls {
+  box-shadow: none;
+  border: 1px solid var(--tg-border);
+  background: var(--tg-bg);
+  overflow: hidden;
+}
+.trust-flow .react-flow__controls-button {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--tg-border);
+  width: 28px;
+  height: 28px;
+}
+.trust-flow .react-flow__controls-button:last-child {
+  border-bottom: none;
+}
+.trust-flow .react-flow__controls-button svg {
+  fill: var(--tg-ink-dim);
+}
+.trust-flow .react-flow__controls-button:hover {
+  background: var(--tg-surface-raised);
+}
+.trust-flow .react-flow__controls-button:hover svg {
+  fill: var(--tg-ink);
+}
+.trust-flow .react-flow__attribution {
+  background: transparent;
+}
+.trust-flow .react-flow__attribution a {
+  color: var(--tg-ink-dim);
+  opacity: 0.5;
+  font-size: 9px;
+}
+
+/* ─── Reduced motion · hard stop for CSS animation ────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

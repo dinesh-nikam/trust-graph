@@ -1,10 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
+import { useAccount, useWriteContract, usePublicClient, useReadContract } from 'wagmi';
 import { Attestation, ClaimType, TrustProfile } from '../types';
 import { trustGraphService } from '../services/trustGraphService';
 import { CONTRACT_CONFIG, TRUST_GRAPH_REGISTRY_ADDRESS } from '../lib/contract/config';
+import { MONAD_TESTNET_CHAIN_ID } from '../lib/blockchain/chain';
 import { stringToBytes32 } from '../utils/formatters';
+import { translateTxError } from '../lib/blockchain/errors';
+
+/** Max time to wait for a Monad receipt before surfacing a timeout error. */
+export const RECEIPT_TIMEOUT_MS = 120_000;
 
 export function useTrustProfile(address?: string) {
   const queryClient = useQueryClient();
@@ -82,15 +87,15 @@ export type TxStep =
 export function useIssueAttestation() {
   const queryClient = useQueryClient();
   const { address } = useAccount();
+  const publicClient = usePublicClient({ chainId: MONAD_TESTNET_CHAIN_ID });
 
   const [txStep, setTxStep] = useState<TxStep>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
   const [createdAttestation, setCreatedAttestation] = useState<Attestation | null>(null);
 
-  const { writeContractAsync, data: txHash } = useWriteContract();
-  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: txHash,
-  });
+  const { writeContractAsync } = useWriteContract();
+  const inFlightRef = useRef(false);
 
   const issue = async (input: {
     subject: `0x${string}`;
@@ -103,18 +108,23 @@ export function useIssueAttestation() {
     expiry: number; // 0 for perpetual, otherwise unix seconds
     isLiveOnChain?: boolean;
   }) => {
+    // Guard against duplicate submissions while a transaction is in flight.
+    if (inFlightRef.current) return undefined;
+    inFlightRef.current = true;
+
     setTxStep('preparing');
     setErrorMessage(null);
     setCreatedAttestation(null);
+    setTxHash(undefined);
 
     try {
-      let finalTxHash = txHash;
+      let finalTxHash: `0x${string}` | undefined;
+      let blockNumber: number | undefined;
+      const isLive = Boolean(input.isLiveOnChain && address);
 
-      // If user chooses live on-chain Monad transaction and wallet is connected
-      if (input.isLiveOnChain && address) {
+      // Live path: broadcast, then wait for the receipt before promoting state.
+      if (isLive) {
         setTxStep('waiting-wallet');
-
-        const claimBytes32 = stringToBytes32(input.claimType);
 
         finalTxHash = await writeContractAsync({
           address: TRUST_GRAPH_REGISTRY_ADDRESS,
@@ -122,22 +132,41 @@ export function useIssueAttestation() {
           functionName: 'issueAttestation',
           args: [
             input.subject,
-            claimBytes32,
+            stringToBytes32(input.claimType),
             input.evidenceHash,
             input.evidenceUrl,
             BigInt(input.expiry || 0),
           ],
         });
 
+        // Transaction hash received — broadcast, awaiting block inclusion.
+        setTxHash(finalTxHash);
         setTxStep('submitted');
+
+        if (!publicClient) {
+          throw new Error('No Monad Testnet RPC client is configured for receipt confirmation.');
+        }
+
+        setTxStep('confirming');
+        const receipt = await publicClient.waitForTransactionReceipt({
+          hash: finalTxHash,
+          timeout: RECEIPT_TIMEOUT_MS,
+        });
+
+        if (receipt.status !== 'success') {
+          throw new Error('Transaction reverted on Monad Testnet.');
+        }
+
+        blockNumber = Number(receipt.blockNumber);
       }
 
-      // Record in trust graph service
+      // Only reached once the live receipt is confirmed (or for a local sandbox record).
       const att = await trustGraphService.issueAttestation({
         ...input,
         issuer: (address || '0x92Fa656bE0656D1F08a6eD7D284976d8b948F721') as `0x${string}`,
         txHash: finalTxHash,
-        isLiveOnChain: Boolean(input.isLiveOnChain),
+        blockNumber,
+        isLiveOnChain: isLive,
       });
 
       setCreatedAttestation(att);
@@ -147,11 +176,13 @@ export function useIssueAttestation() {
       queryClient.invalidateQueries({ queryKey: ['attestation'] });
 
       return att;
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to issue attestation:', err);
       setTxStep('error');
-      setErrorMessage(err?.shortMessage || err?.message || 'Transaction was rejected or failed.');
+      setErrorMessage(translateTxError(err));
       throw err;
+    } finally {
+      inFlightRef.current = false;
     }
   };
 
@@ -159,6 +190,7 @@ export function useIssueAttestation() {
     setTxStep('idle');
     setErrorMessage(null);
     setCreatedAttestation(null);
+    setTxHash(undefined);
   };
 
   return {
@@ -167,8 +199,6 @@ export function useIssueAttestation() {
     txStep,
     errorMessage,
     txHash,
-    isConfirming,
-    isConfirmed,
     createdAttestation,
   };
 }
@@ -176,34 +206,62 @@ export function useIssueAttestation() {
 export function useRevokeAttestation() {
   const queryClient = useQueryClient();
   const { address } = useAccount();
+  const publicClient = usePublicClient({ chainId: MONAD_TESTNET_CHAIN_ID });
 
   const [txStep, setTxStep] = useState<TxStep>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
 
-  const { writeContractAsync, data: txHash } = useWriteContract();
+  const { writeContractAsync } = useWriteContract();
+  const inFlightRef = useRef(false);
 
   const revoke = async (
     attestationId: string,
     reason: string,
     options?: { isLiveOnChain?: boolean }
   ) => {
+    // Guard against duplicate submissions while a transaction is in flight.
+    if (inFlightRef.current) return undefined;
+    inFlightRef.current = true;
+
     setTxStep('preparing');
     setErrorMessage(null);
+    setTxHash(undefined);
 
     try {
-      if (options?.isLiveOnChain && address) {
+      const isLive = Boolean(options?.isLiveOnChain && address);
+
+      // Live path: broadcast, then wait for the receipt before promoting state.
+      if (isLive) {
         setTxStep('waiting-wallet');
 
-        await writeContractAsync({
+        const hash = await writeContractAsync({
           address: TRUST_GRAPH_REGISTRY_ADDRESS,
           abi: CONTRACT_CONFIG.abi,
           functionName: 'revokeAttestation',
           args: [BigInt(attestationId), reason],
         });
 
+        // Transaction hash received — broadcast, awaiting block inclusion.
+        setTxHash(hash);
         setTxStep('submitted');
+
+        if (!publicClient) {
+          throw new Error('No Monad Testnet RPC client is configured for receipt confirmation.');
+        }
+
+        setTxStep('confirming');
+        const receipt = await publicClient.waitForTransactionReceipt({
+          hash,
+          timeout: RECEIPT_TIMEOUT_MS,
+        });
+
+        if (receipt.status !== 'success') {
+          throw new Error('Revocation transaction reverted on Monad Testnet.');
+        }
       }
 
+      // Only reached once the live receipt is confirmed (or for a local sandbox record).
       const updated = await trustGraphService.revokeAttestation(
         attestationId,
         reason,
@@ -216,11 +274,13 @@ export function useRevokeAttestation() {
       queryClient.invalidateQueries({ queryKey: ['attestation', attestationId] });
 
       return updated;
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to revoke attestation:', err);
       setTxStep('error');
-      setErrorMessage(err?.shortMessage || err?.message || 'Revocation failed.');
+      setErrorMessage(translateTxError(err));
       throw err;
+    } finally {
+      inFlightRef.current = false;
     }
   };
 
