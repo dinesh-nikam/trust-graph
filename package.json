@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types test/trustGraph.test.ts",
+    "test:e2e": "e2e run",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -22,11 +23,13 @@
     "wagmi": "^2.14.6"
   },
   "devDependencies": {
+    "@e2e-dev/web": "^0.14.0",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "e2e": "^0.19.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2",

@@ -114,5 +114,6 @@ desktop.ini
 .omo/
 .turbo/
 .cache/
+.e2e/
 tmp/
 temp/
