@@ -2,21 +2,21 @@ import { monadTestnet, getExplorerTxUrl, getExplorerAddressUrl, MONAD_TESTNET_CH
 import { TrustGraphRegistryABI, ProofOfWorkRegistryABI } from './abi';
 import { getAddress, isAddress, zeroAddress } from 'viem';
 
-const configuredTrustGraphAddress = import.meta.env.VITE_TRUST_GRAPH_REGISTRY_ADDRESS;
-const configuredProofOfWorkAddress = import.meta.env.VITE_PROOF_OF_WORK_REGISTRY_ADDRESS;
+const configuredTrustGraphAddress = import.meta.env.VITE_TRUST_GRAPH_REGISTRY_ADDRESS || '0x2F8E77A048E55c2c2866721d0735ccA9012BB52A';
+const configuredProofOfWorkAddress = import.meta.env.VITE_PROOF_OF_WORK_REGISTRY_ADDRESS || '0xca65ada83f1f7765a712b28a6b79ca323395f8ac';
 
-if (configuredTrustGraphAddress && !isAddress(configuredTrustGraphAddress, { strict: false })) {
-  throw new Error('VITE_TRUST_GRAPH_REGISTRY_ADDRESS must be a valid EVM address.');
-}
+// if (configuredTrustGraphAddress && !isAddress(configuredTrustGraphAddress, { strict: false })) {
+//   throw new Error('VITE_TRUST_GRAPH_REGISTRY_ADDRESS must be a valid EVM address.');
+// }
+// 
+// if (configuredProofOfWorkAddress && !isAddress(configuredProofOfWorkAddress, { strict: false })) {
+//   throw new Error('VITE_PROOF_OF_WORK_REGISTRY_ADDRESS must be a valid EVM address.');
+// }
 
-if (configuredProofOfWorkAddress && !isAddress(configuredProofOfWorkAddress, { strict: false })) {
-  throw new Error('VITE_PROOF_OF_WORK_REGISTRY_ADDRESS must be a valid EVM address.');
-}
-
-export const TRUST_GRAPH_REGISTRY_ADDRESS = configuredTrustGraphAddress
+export const TRUST_GRAPH_REGISTRY_ADDRESS = (configuredTrustGraphAddress && isAddress(configuredTrustGraphAddress, { strict: false }))
   ? getAddress(configuredTrustGraphAddress)
   : zeroAddress;
-export const PROOF_OF_WORK_REGISTRY_ADDRESS = configuredProofOfWorkAddress
+export const PROOF_OF_WORK_REGISTRY_ADDRESS = (configuredProofOfWorkAddress && isAddress(configuredProofOfWorkAddress, { strict: false }))
   ? getAddress(configuredProofOfWorkAddress)
   : zeroAddress;
 export const REGISTRY_ADDRESS_CONFIGURED = TRUST_GRAPH_REGISTRY_ADDRESS !== zeroAddress;

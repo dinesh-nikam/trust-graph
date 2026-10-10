@@ -33,6 +33,7 @@ export const AppLayout: React.FC = () => {
         <div className="absolute inset-0 noise-overlay" />
       </div>
 
+      {/* 
       {mode === 'DEMO' ? (
         <div role="status" className="relative z-50 bg-amber-950/90 border-b border-amber-500/50 backdrop-blur-md text-[11px] py-1.5 px-4 text-center text-amber-200 font-mono font-semibold tracking-wider flex items-center justify-center gap-2 shadow-[0_1px_12px_rgba(245,158,11,0.15)]">
           <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" aria-hidden="true" />
@@ -46,6 +47,7 @@ export const AppLayout: React.FC = () => {
           </span>
         </div>
       )}
+      */}
 
       <Navbar />
 
