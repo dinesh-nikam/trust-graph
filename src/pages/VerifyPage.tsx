@@ -1,483 +1,384 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAccount } from 'wagmi';
-import { 
-  UserCheck, 
-  CheckCircle2, 
-  ArrowRight,
-  Clock,
-  ExternalLink,
-  ShieldAlert,
-  AlertTriangle,
-  FileCheck,
-  X,
-  XCircle
-} from 'lucide-react';
-import { useAllAttestations, useRegistryOwner, useRevokeAttestation } from '../hooks/useTrustGraph';
-import { 
-  shortenAddress, 
-  formatDate, 
-  formatDateTime,
-  getClaimTypeDetails, 
-  getValidityDetails 
-} from '../utils/formatters';
-import { Attestation, WorkSubmission } from '../types';
-import { trustGraphService } from '../services/trustGraphService';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { UserCheck, CheckCircle2, ArrowRight, X } from 'lucide-react';
+import {
+  useTrustProfile,
+  useRevokeAttestation,
+  type TxStep,
+} from '../hooks/useTrustGraph';
+import { shortenAddress, formatDate, getClaimTypeDetails } from '../utils/formatters';
+import { Attestation } from '../types';
+import { DEMO_WALLETS } from '../lib/contract/config';
+import { translateTxError } from '../lib/blockchain/errors';
+import { Panel, SectionHeader } from '../components/ui/Panel';
+import { ValidityBadge } from '../components/shared/ValidityBadge';
+import { fadeRise, staggerParent, settleTransition } from '../lib/motion';
+import { cn } from '../utils/cn';
+
+type QueueTab = 'ALL' | 'VALID' | 'REVOKED';
+
+const REVOKE_TX_LABELS: Record<TxStep, string> = {
+  idle: 'Ready',
+  preparing: 'Preparing…',
+  'waiting-wallet': 'Awaiting wallet signature…',
+  submitted: 'Recording local fixture…',
+  confirming: 'Confirming…',
+  confirmed: 'Recorded (local sandbox)',
+  error: 'Failed',
+};
 
 export const VerifyPage: React.FC = () => {
-  const navigate = useNavigate();
-  const { data: attestations = [], isLoading, error, refetch } = useAllAttestations();
-  const { address } = useAccount();
-  const { owner } = useRegistryOwner();
-  const { revoke } = useRevokeAttestation();
+  const { profile, isLoading, refetch } = useTrustProfile(DEMO_WALLETS.DEVELOPER.address);
+  const { revoke, txStep: revokeTxStep, errorMessage: revokeError } = useRevokeAttestation();
+  const shouldReduceMotion = useReducedMotion() ?? false;
 
-  const [activeTab, setActiveTab] = useState<'SUBMISSIONS' | 'ALL' | 'VALID' | 'REVOKED'>('SUBMISSIONS');
-  
-  // Attestation Revocation State
+  const enter = shouldReduceMotion ? false : 'hidden';
+
+  const [activeTab, setActiveTab] = useState<QueueTab>('ALL');
   const [selectedAttestation, setSelectedAttestation] = useState<Attestation | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [revokeReason, setRevokeReason] = useState('');
-  const [isRevokeModalOpen, setIsRevokeModalOpen] = useState(false);
-  const [revokeError, setRevokeError] = useState<string | null>(null);
-  const [isRevoking, setIsRevoking] = useState(false);
-
-  // Submissions State
-  const [submissions, setSubmissions] = useState<WorkSubmission[]>(() => trustGraphService.getSubmissions());
-  const [selectedSubmissionToReject, setSelectedSubmissionToReject] = useState<WorkSubmission | null>(null);
-  const [rejectReason, setRejectReason] = useState('');
-  const [rejectError, setRejectError] = useState<string | null>(null);
-
-  // Global UI Notification
   const [notification, setNotification] = useState<string | null>(null);
 
-  useEffect(() => {
-    const handleStorageUpdate = () => {
-      setSubmissions(trustGraphService.getSubmissions());
-    };
-    window.addEventListener('storage', handleStorageUpdate);
-    return () => window.removeEventListener('storage', handleStorageUpdate);
-  }, []);
+  const attestations = profile?.attestations || [];
+  const validCount = attestations.filter((a) => a.validity === 'VALID').length;
+  const revokedCount = attestations.filter((a) => a.validity === 'REVOKED').length;
 
-  const pendingSubmissionsCount = submissions.filter((s) => s.status === 'PENDING').length;
-
-  const displayedAttestations = attestations.filter((a) => {
+  const displayed = attestations.filter((a) => {
     if (activeTab === 'VALID') return a.validity === 'VALID';
     if (activeTab === 'REVOKED') return a.validity === 'REVOKED';
     return true;
   });
 
+  const revokePending =
+    revokeTxStep === 'preparing' || revokeTxStep === 'waiting-wallet' || revokeTxStep === 'submitted';
+
+  const closeRevokeModal = () => {
+    if (revokePending) return;
+    setIsModalOpen(false);
+    setSelectedAttestation(null);
+    setRevokeReason('');
+  };
+
   const handleRevokeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedAttestation || !revokeReason.trim()) return;
 
-    setIsRevoking(true);
-    setRevokeError(null);
     try {
-      await revoke(selectedAttestation.id, revokeReason.trim());
-      setNotification(`Attestation #${selectedAttestation.id} marked REVOKED.`);
-      setIsRevokeModalOpen(false);
+      const revokedId = selectedAttestation.id;
+      await revoke(revokedId, revokeReason.trim());
+      setNotification(`Attestation #${revokedId} marked REVOKED. Historical record preserved.`);
+      setIsModalOpen(false);
       setSelectedAttestation(null);
       setRevokeReason('');
       refetch();
-    } catch (err: unknown) {
-      setRevokeError(err instanceof Error ? err.message : 'Unknown revocation error.');
-    } finally {
-      setIsRevoking(false);
+    } catch {
+      // Error state is surfaced inline via the hook's errorMessage + translateTxError.
     }
   };
 
-  const handleRejectSubmissionSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedSubmissionToReject || !rejectReason.trim()) return;
-
-    setRejectError(null);
-    try {
-      await trustGraphService.rejectSubmission(selectedSubmissionToReject.id, rejectReason.trim());
-      setNotification(`Submission "${selectedSubmissionToReject.title}" rejected.`);
-      setSelectedSubmissionToReject(null);
-      setRejectReason('');
-      setSubmissions(trustGraphService.getSubmissions());
-    } catch (err: unknown) {
-      setRejectError(err instanceof Error ? err.message : 'Failed to reject submission.');
-    }
-  };
+  const tabs: Array<{ key: QueueTab; label: string; count: number }> = [
+    { key: 'ALL', label: 'ALL', count: attestations.length },
+    { key: 'VALID', label: 'VALID', count: validCount },
+    { key: 'REVOKED', label: 'REVOKED', count: revokedCount },
+  ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16">
-      
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-neutral-900 border border-neutral-800 text-xs font-mono text-neutral-400 mb-3">
-            <UserCheck className="h-3.5 w-3.5 text-neutral-300" />
-            <span>Authorized Attestation & Triage Portal</span>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16">
+      <motion.div variants={staggerParent(0.08, 0.05)} initial={enter} animate="visible">
+        {/* ─── Header ────────────────────────────────────────── */}
+        <motion.div variants={fadeRise} className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+          <div>
+            <div className="flex items-center gap-2.5 mb-2">
+              <UserCheck className="h-4 w-4 text-primary" aria-hidden="true" />
+              <span className="font-mono text-[10px] text-ink-dim uppercase tracking-widest-xl">
+                Authorized Reviewer Portal
+              </span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-ink tracking-tight">
+              Verifier Review Queue
+            </h1>
+            <p className="text-xs text-ink-muted mt-2 max-w-2xl leading-relaxed">
+              Triage recorded claims, inspect their evidence, and revoke attestations for cause. This
+              portal operates on the local sandbox — revocations are recorded locally and no Monad
+              transaction is submitted.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-            Reviewer Verification Management
-          </h1>
-          <p className="text-xs sm:text-sm text-neutral-400 mt-2">
-            Triage submitted developer claims, inspect evidence manifests, and anchor on-chain proofs on Monad.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-3">
-          <Link
-            to="/submit"
-            className="px-3.5 py-2 bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-300 font-medium text-xs rounded-lg transition-colors flex items-center gap-2 shrink-0"
-          >
-            <FileCheck className="h-3.5 w-3.5" />
-            <span>Submit Work</span>
-          </Link>
           <Link
             to="/issue"
-            className="px-4 py-2 bg-neutral-100 hover:bg-white text-neutral-950 font-semibold text-xs rounded-lg transition-colors flex items-center gap-2 shrink-0"
+            className="shrink-0 self-start sm:self-auto inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-bright text-white font-semibold text-xs rounded-sm transition-colors"
           >
-            <span>+ Direct Issuance</span>
-            <ArrowRight className="h-3.5 w-3.5" />
+            <span>Issue New Attestation</span>
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </Link>
-        </div>
-      </div>
+        </motion.div>
 
-      {notification && (
-        <div role="status" className="mb-6 p-4 rounded-xl bg-emerald-950/40 border border-emerald-800 text-xs text-emerald-300 flex items-center justify-between animate-fade-in">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4" />
-            <span>{notification}</span>
-          </div>
-          <button onClick={() => setNotification(null)} className="text-emerald-400 hover:text-white" aria-label="Close notification">
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      )}
-
-      {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-neutral-800 pb-3 mb-6 overflow-x-auto">
-        <button
-          onClick={() => setActiveTab('SUBMISSIONS')}
-          className={`px-3 py-1.5 rounded text-xs font-mono transition-colors flex items-center gap-2 ${
-            activeTab === 'SUBMISSIONS'
-              ? 'bg-neutral-800 text-white font-medium'
-              : 'text-neutral-400 hover:text-white'
-          }`}
-        >
-          <span>DEVELOPER SUBMISSIONS</span>
-          {pendingSubmissionsCount > 0 && (
-            <span className="px-1.5 py-0.2 bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] rounded-full">
-              {pendingSubmissionsCount}
-            </span>
+        {/* ─── Notification banner ───────────────────────────── */}
+        <AnimatePresence>
+          {notification && (
+            <motion.div
+              initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={settleTransition}
+              className="mb-6"
+              role="status"
+            >
+              <div className="flex items-start justify-between gap-3 p-4 bg-status-verified/10 border border-status-verified/40">
+                <div className="flex items-start gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-status-verified shrink-0 mt-0.5" aria-hidden="true" />
+                  <span className="text-xs text-status-verified font-mono">{notification}</span>
+                </div>
+                <button
+                  onClick={() => setNotification(null)}
+                  aria-label="Dismiss notification"
+                  className="text-status-verified/70 hover:text-ink transition-colors"
+                >
+                  <X className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+            </motion.div>
           )}
-        </button>
+        </AnimatePresence>
 
-        {(['ALL', 'VALID', 'REVOKED'] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-3 py-1.5 rounded text-xs font-mono transition-colors ${
-              activeTab === tab
-                ? 'bg-neutral-800 text-white font-medium'
-                : 'text-neutral-400 hover:text-white'
-            }`}
-          >
-            {tab === 'ALL' ? 'ALL ON-CHAIN ATTESTATIONS' : tab}
-          </button>
-        ))}
-      </div>
+        {/* ─── Filter rail ───────────────────────────────────── */}
+        <motion.div variants={fadeRise} className="mb-6">
+          <SectionHeader
+            index="01"
+            title="Triage Filter"
+            hint="Narrow the queue by current validity"
+            className="mb-4"
+          />
+          <div className="flex items-center gap-2" role="group" aria-label="Filter attestations by validity">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                aria-pressed={activeTab === tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={cn(
+                  'px-3 py-1.5 border font-mono text-xs transition-colors',
+                  activeTab === tab.key
+                    ? 'bg-surface-raised border-primary/50 text-ink'
+                    : 'bg-transparent border-surface-border text-ink-dim hover:text-ink hover:border-surface-border-strong'
+                )}
+              >
+                {tab.label}
+                <span className="ml-1.5 text-[10px] opacity-70">{tab.count}</span>
+              </button>
+            ))}
+          </div>
+        </motion.div>
 
-      {/* SUBMISSIONS TAB CONTENT */}
-      {activeTab === 'SUBMISSIONS' && (
-        <div className="space-y-4">
-          {submissions.length === 0 ? (
-            <div className="p-8 rounded-xl bg-neutral-900/40 border border-neutral-800 text-center text-xs text-neutral-400">
-              No developer work submissions found. Developers can submit work at{' '}
-              <Link to="/submit" className="text-emerald-400 hover:underline">/submit</Link>.
-            </div>
-          ) : (
-            submissions.map((sub) => {
-              const claimType = getClaimTypeDetails(sub.claimType);
-              const isPending = sub.status === 'PENDING';
-              const isApproved = sub.status === 'APPROVED';
-              const isRejected = sub.status === 'REJECTED';
+        {/* ─── Queue list ────────────────────────────────────── */}
+        <motion.div variants={fadeRise}>
+          <SectionHeader
+            index="02"
+            title="Attestation Queue"
+            hint={isLoading ? 'Fetching from registry…' : `${displayed.length} record${displayed.length === 1 ? '' : 's'} in view`}
+            className="mb-4"
+          />
+
+          <div className="space-y-3">
+            {displayed.map((att) => {
+              const claimType = getClaimTypeDetails(att.claimType);
 
               return (
-                <div
-                  key={sub.id}
-                  className="p-5 rounded-xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4"
-                >
-                  <div className="space-y-2 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${claimType.tagBg}`}>
-                        {claimType.label}
-                      </span>
-                      <span
-                        className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                          isPending
-                            ? 'bg-amber-950/60 text-amber-300 border-amber-800'
-                            : isApproved
-                            ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800'
-                            : 'bg-rose-950/60 text-rose-300 border-rose-800'
-                        }`}
-                      >
-                        {sub.status}
-                      </span>
-                      <span className="text-neutral-500 font-mono text-xs">ID: {sub.id}</span>
-                    </div>
-
-                    <h3 className="text-sm font-semibold text-white">{sub.title}</h3>
-                    <p className="text-xs text-neutral-300 leading-relaxed max-w-3xl">
-                      {sub.description}
-                    </p>
-
-                    <div className="text-xs text-neutral-400 font-mono flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
-                      <span>Developer: <Link to={`/profile/${sub.worker}`} className="text-neutral-300 hover:underline">{shortenAddress(sub.worker)}</Link></span>
-                      <span>Submitted: {formatDateTime(sub.submittedAt)}</span>
-                      {sub.evidenceUrl && (
-                        <a
-                          href={sub.evidenceUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-neutral-300 hover:text-white inline-flex items-center gap-1 underline"
+                <Panel as="article" key={att.id} interactive className="p-5">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div className="space-y-2 min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span
+                          className={cn(
+                            'inline-flex items-center px-2 py-0.5 border font-mono text-[10px] uppercase tracking-widest',
+                            claimType.tagBg
+                          )}
                         >
-                          <span>Evidence URL</span>
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
+                          {claimType.label}
+                        </span>
+                        <ValidityBadge status={att.validity} />
+                        <span className="font-mono text-xs text-ink-dim">#{att.id}</span>
+                        {!att.transactionHash && (
+                          <span className="font-mono text-[9px] uppercase tracking-widest px-1.5 py-0.5 border border-status-pending/40 text-status-pending bg-status-pending/[0.07]">
+                            Local Fixture
+                          </span>
+                        )}
+                      </div>
+
+                      <h3 className="text-sm font-semibold text-ink truncate">{att.claimTitle}</h3>
+
+                      <div className="text-xs text-ink-muted font-mono flex flex-wrap items-center gap-x-4 gap-y-1">
+                        <span>Subject: {shortenAddress(att.subject)}</span>
+                        <span>Issued: {formatDate(att.issuedAt)}</span>
+                      </div>
+
+                      {att.revoked && att.revocationReason && (
+                        <p className="text-[11px] text-status-revoked/90 font-mono leading-relaxed">
+                          Revoked for cause: “{att.revocationReason}”
+                        </p>
                       )}
                     </div>
 
-                    <div className="text-[11px] font-mono text-neutral-500 bg-neutral-950/80 p-2 rounded border border-neutral-800/80 break-all">
-                      SHA-256: <span className="text-neutral-300">{sub.evidenceHash}</span>
-                    </div>
-
-                    {isRejected && sub.rejectionReason && (
-                      <div className="text-xs text-rose-300 bg-rose-950/40 p-2.5 rounded border border-rose-900/60">
-                        <strong>Rejection Reason:</strong> {sub.rejectionReason}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex sm:flex-col items-center sm:items-end gap-2 shrink-0 pt-2 sm:pt-0">
-                    {isPending && (
-                      <>
-                        <button
-                          onClick={() => {
-                            const query = new URLSearchParams({
-                              subject: sub.worker,
-                              type: sub.claimType,
-                              title: sub.title,
-                              description: sub.description,
-                              url: sub.evidenceUrl,
-                              manifest: sub.evidenceManifest,
-                              submissionId: sub.id,
-                            }).toString();
-                            navigate(`/issue?${query}`);
-                          }}
-                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
-                        >
-                          <span>Review & Issue</span>
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            setSelectedSubmissionToReject(sub);
-                            setRejectReason('');
-                            setRejectError(null);
-                          }}
-                          className="px-3 py-1.5 bg-neutral-800 hover:bg-rose-950/60 hover:text-rose-300 hover:border-rose-800 border border-neutral-700 text-neutral-300 text-xs font-mono rounded-lg transition-colors"
-                        >
-                          Reject
-                        </button>
-                      </>
-                    )}
-
-                    {isApproved && sub.attestationId && (
+                    <div className="flex items-center gap-2 shrink-0 self-start lg:self-center">
                       <Link
-                        to={`/verify/${sub.attestationId}`}
-                        className="px-3.5 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-mono rounded-lg transition-colors flex items-center gap-1.5"
+                        to={`/verify/${att.id}`}
+                        className="px-3 py-1.5 bg-surface-raised hover:bg-surface-border text-ink border border-surface-border font-mono text-xs transition-colors"
                       >
-                        <span>Audit Proof #{sub.attestationId}</span>
-                        <ArrowRight className="h-3.5 w-3.5" />
+                        Audit Details
                       </Link>
-                    )}
+
+                      {!att.revoked && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedAttestation(att);
+                            setRevokeReason('');
+                            setIsModalOpen(true);
+                          }}
+                          className="px-3 py-1.5 bg-status-revoked/10 hover:bg-status-revoked/20 text-status-revoked border border-status-revoked/40 font-mono text-xs transition-colors"
+                        >
+                          Revoke
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
+                </Panel>
               );
-            })
-          )}
-        </div>
-      )}
+            })}
 
-      {/* ON-CHAIN ATTESTATIONS TAB CONTENT */}
-      {activeTab !== 'SUBMISSIONS' && (
-        <div className="space-y-4">
-          {isLoading && <p className="text-sm text-neutral-400 mb-6">Loading attestation records from Monad Testnet...</p>}
-          {error && (
-            <div role="alert" className="text-sm text-rose-300 mb-6 p-4 rounded-xl bg-rose-950/40 border border-rose-800">
-              Registry read failed: {error instanceof Error ? error.message : 'Unknown RPC error.'}{' '}
-              <button onClick={() => refetch()} className="underline ml-2 font-medium">Retry</button>
-            </div>
-          )}
-          {!isLoading && !error && displayedAttestations.length === 0 && (
-            <p className="text-sm text-neutral-400 mb-6">No attestations match this filter.</p>
-          )}
+            {!isLoading && displayed.length === 0 && (
+              <Panel className="p-10 text-center">
+                <p className="font-mono text-xs text-ink-dim mb-4">
+                  No attestations in this view.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('ALL')}
+                  className="px-3.5 py-1.5 bg-surface-raised hover:bg-surface-border text-ink border border-surface-border font-mono text-xs transition-colors"
+                >
+                  Reset Filter
+                </button>
+              </Panel>
+            )}
+          </div>
+        </motion.div>
+      </motion.div>
 
-          {displayedAttestations.map((att) => {
-            const claimType = getClaimTypeDetails(att.claimType);
-            const validity = getValidityDetails(att.validity);
-
-            return (
-              <div
-                key={att.id}
-                className="p-5 rounded-xl bg-neutral-900/60 border border-neutral-800 hover:border-neutral-700 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-              >
-                <div className="space-y-1.5 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${claimType.tagBg}`}>
-                      {claimType.label}
-                    </span>
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${validity.badgeClass}`}>
-                      {validity.label}
-                    </span>
-                    <span className="text-neutral-500 font-mono text-xs">#{att.id}</span>
-                  </div>
-
-                  <h3 className="text-sm font-semibold text-white">{att.claimTitle}</h3>
-                  <div className="text-xs text-neutral-400 font-mono flex items-center gap-4">
-                    <span>Subject: {shortenAddress(att.subject)}</span>
-                    <span>Issued: {formatDate(att.issuedAt)}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 shrink-0">
-                  <Link
-                    to={`/verify/${att.id}`}
-                    className="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-xs font-mono text-white transition-colors"
+      {/* ─── Revocation modal ────────────────────────────────── */}
+      <AnimatePresence>
+        {isModalOpen && selectedAttestation && (
+          <motion.div
+            key="revoke-overlay"
+            initial={shouldReduceMotion ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="fixed inset-0 z-50 bg-background/85 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={closeRevokeModal}
+          >
+            <motion.div
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 14, scale: 0.985 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.99 }}
+              transition={settleTransition}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="revoke-modal-title"
+              className="w-full max-w-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Panel className="p-6 bg-surface-raised">
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <h3 id="revoke-modal-title" className="text-base font-bold text-ink">
+                    Revoke Attestation #{selectedAttestation.id}
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={closeRevokeModal}
+                    disabled={revokePending}
+                    aria-label="Close revocation dialog"
+                    className="text-ink-dim hover:text-ink disabled:opacity-40 transition-colors"
                   >
-                    Audit Details
-                  </Link>
-
-                  {!att.revoked && address && (address.toLowerCase() === att.issuer.toLowerCase() || address.toLowerCase() === owner?.toLowerCase()) && (
-                    <button
-                      onClick={() => {
-                        setSelectedAttestation(att);
-                        setIsRevokeModalOpen(true);
-                        setRevokeError(null);
-                      }}
-                      className="px-3 py-1.5 rounded bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800 text-xs font-mono transition-colors"
-                    >
-                      Revoke
-                    </button>
-                  )}
+                    <X className="h-4 w-4" aria-hidden="true" />
+                  </button>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
 
-      {/* Revocation Modal */}
-      {isRevokeModalOpen && selectedAttestation && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-neutral-900 border border-neutral-800 rounded-xl max-w-md w-full p-6 animate-scale-in">
-            <h3 className="text-base font-bold text-white mb-2">Revoke Attestation #{selectedAttestation.id}</h3>
-            <p className="text-xs text-neutral-400 mb-4 leading-relaxed">
-              Revocation is recorded on Monad. The historical record will be preserved with status <code>REVOKED</code>.
-            </p>
+                <p className="text-xs text-ink-muted leading-relaxed mb-4">
+                  Revocation is recorded in the local sandbox. The historical record is preserved with
+                  status <code className="font-mono text-status-revoked">REVOKED</code> and a reason. No
+                  Monad transaction is submitted.
+                </p>
 
-            {revokeError && (
-              <div role="alert" className="mb-4 p-3 rounded-lg bg-rose-950/60 border border-rose-800 text-xs text-rose-300">
-                {revokeError}
-              </div>
-            )}
+                <form onSubmit={handleRevokeSubmit} className="space-y-4">
+                  <div>
+                    <label htmlFor="revoke-reason-modal" className="block font-mono text-[10px] uppercase tracking-widest-xl text-status-revoked mb-1.5">
+                      Reason for Revocation *
+                    </label>
+                    <textarea
+                      id="revoke-reason-modal"
+                      required
+                      rows={3}
+                      value={revokeReason}
+                      onChange={(e) => setRevokeReason(e.target.value)}
+                      placeholder="e.g. Audit revealed a security issue; evidence invalidated; work deprecated…"
+                      className="w-full bg-surface-subtle border border-surface-border p-2.5 text-xs text-ink placeholder-ink-dim font-mono focus:outline-none focus:border-status-revoked/60 focus:ring-1 focus:ring-status-revoked/30 transition-colors"
+                    />
+                  </div>
 
-            <form onSubmit={handleRevokeSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">
-                  Reason for Revocation *
-                </label>
-                <textarea
-                  required
-                  rows={3}
-                  value={revokeReason}
-                  onChange={(e) => setRevokeReason(e.target.value)}
-                  placeholder="e.g. Audit revealed security issue; evidence invalidated..."
-                  className="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-xs text-neutral-200 focus:outline-none focus:border-rose-600"
-                />
-              </div>
+                  <div className="font-mono text-[10px] uppercase tracking-widest-xl text-ink-dim flex items-center gap-2">
+                    Record State
+                    <span
+                      className={cn(
+                        'px-2 py-0.5 border',
+                        revokeTxStep === 'error' && 'text-status-revoked border-status-revoked/40',
+                        revokePending && 'text-status-pending border-status-pending/40',
+                        revokeTxStep === 'confirmed' && 'text-status-verified border-status-verified/40',
+                        revokeTxStep === 'idle' && 'text-ink-dim border-surface-border'
+                      )}
+                    >
+                      {REVOKE_TX_LABELS[revokeTxStep]}
+                    </span>
+                  </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  disabled={isRevoking}
-                  onClick={() => setIsRevokeModalOpen(false)}
-                  className="px-3 py-2 text-xs text-neutral-400 hover:text-white"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isRevoking || !revokeReason.trim()}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-semibold text-xs rounded-lg transition-colors flex items-center gap-1.5"
-                >
-                  {isRevoking ? 'Confirming...' : 'Confirm Revocation'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+                  <AnimatePresence>
+                    {revokeTxStep === 'error' && revokeError && (
+                      <motion.div
+                        initial={shouldReduceMotion ? false : { opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        role="alert"
+                        className="p-3 bg-status-revoked/10 border border-status-revoked/40 text-xs text-status-revoked font-mono"
+                      >
+                        {translateTxError(revokeError)}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-      {/* Reject Submission Modal */}
-      {selectedSubmissionToReject && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-neutral-900 border border-neutral-800 rounded-xl max-w-md w-full p-6 animate-scale-in">
-            <h3 className="text-base font-bold text-white mb-2">
-              Reject Submission: {selectedSubmissionToReject.title}
-            </h3>
-            <p className="text-xs text-neutral-400 mb-4 leading-relaxed">
-              Record a rationale for declining this submission. The developer will see this status in their dashboard.
-            </p>
-
-            {rejectError && (
-              <div role="alert" className="mb-4 p-3 rounded-lg bg-rose-950/60 border border-rose-800 text-xs text-rose-300">
-                {rejectError}
-              </div>
-            )}
-
-            <form onSubmit={handleRejectSubmissionSubmit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1">
-                  Rejection Rationale *
-                </label>
-                <textarea
-                  required
-                  rows={3}
-                  value={rejectReason}
-                  onChange={(e) => setRejectReason(e.target.value)}
-                  placeholder="e.g. Contract bytecode not found at address; GitHub PR was not merged..."
-                  className="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-xs text-neutral-200 focus:outline-none focus:border-rose-600"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setSelectedSubmissionToReject(null)}
-                  className="px-3 py-2 text-xs text-neutral-400 hover:text-white"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={!rejectReason.trim()}
-                  className="px-4 py-2 bg-rose-600 hover:bg-rose-500 disabled:opacity-50 text-white font-semibold text-xs rounded-lg transition-colors"
-                >
-                  Reject Submission
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
+                  <div className="flex items-center justify-end gap-2.5 pt-1">
+                    <button
+                      type="button"
+                      onClick={closeRevokeModal}
+                      disabled={revokePending}
+                      className="px-3 py-2 text-xs text-ink-muted hover:text-ink disabled:opacity-40 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={revokePending || revokeTxStep === 'confirmed'}
+                      className="px-4 py-2 bg-status-revoked hover:bg-status-revoked/80 disabled:opacity-40 text-background font-semibold text-xs transition-colors"
+                    >
+                      {revokeTxStep === 'waiting-wallet' ? 'Sign in Wallet…' : 'Confirm Revocation'}
+                    </button>
+                  </div>
+                </form>
+              </Panel>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

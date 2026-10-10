@@ -43,7 +43,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     claimDescription:
       'Deployed gas-optimized token streaming & batch disbursement contract on Monad Testnet with full execution test coverage.',
     evidenceUrl: 'https://github.com/sarah-dev/monad-stream-pay',
-    evidenceHash: '0x6e5a4d3c2b1a0f9e8d7c6b5a4f3e2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a6f5e',
+    evidenceHash: '0x9a7574dcdfbcce09175d2937f113873dade598cff6b2051c716d11b7d79d00a5',
     evidenceManifest:
       'Repo: https://github.com/sarah-dev/monad-stream-pay\nContract: 0x4386926019A8B74431eBDeF7c2718E340621B903\nChain: Monad Testnet (10143)\nBytecode verified against git commit 7c89f2a',
     issuedAt: Math.floor(Date.now() / 1000) - 86400 * 4,
@@ -52,9 +52,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'VALID',
     validityExplanation:
       'Attestation is active. Reviewer is authorized on Monad testnet registry. Contract has no expiration and has not been revoked.',
-    transactionHash: '0x99a2245b90f42b8e3a23cb9e9432f8319a8d9a241e7f920f1883bc0d9841bbce',
-    blockNumber: 1429512,
-  },
+          },
 
   // 2. CHALLENGE_COMPLETED (VALID)
   {
@@ -70,7 +68,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     claimDescription:
       'Architected parallelized AMM order routing contract achieving sub-400ms inclusion and zero state collisions across 1,000 parallel test transfers.',
     evidenceUrl: 'https://devpost.com/software/monad-parallel-amm',
-    evidenceHash: '0x5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c',
+    evidenceHash: '0x72b1cccb70ea829072ee8c4bc9bca0043b3c47357af7e4cada1c2d6bce1c278f',
     evidenceManifest:
       'Hackathon: Monad Global Hackathon 2026\nSubmission: https://devpost.com/software/monad-parallel-amm\nJury Score: 98/100\nIndependent Benchmark: Pass',
     issuedAt: Math.floor(Date.now() / 1000) - 86400 * 12,
@@ -79,9 +77,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'VALID',
     validityExplanation:
       'Attestation is active. Jury issuer holds valid registry authority. Evidence manifest benchmark passed.',
-    transactionHash: '0x77b19283fca820129bcfe345109bcf7823e49811234091a1829cbdf819283c74',
-    blockNumber: 1398410,
-  },
+          },
 
   // 3. CONTRIBUTION_VERIFIED (VALID)
   {
@@ -97,7 +93,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     claimDescription:
       'Authored upstream pull request optimizing cold state disk reads by 32% under synthetic Monad testnet benchmark load.',
     evidenceUrl: 'https://github.com/monad-developers/node/pull/482',
-    evidenceHash: '0x4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b',
+    evidenceHash: '0x78176ec7dc8810e6ff4471dd7684e0cbf84e87dfcb2d68728c97b9fced0e13dd',
     evidenceManifest:
       'PR: https://github.com/monad-developers/node/pull/482\nCommit: a812f04e1984\nMerged by core maintainer: yes',
     issuedAt: Math.floor(Date.now() / 1000) - 86400 * 20,
@@ -106,9 +102,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'VALID',
     validityExplanation:
       'Attestation is active. Issuer reviewed merged PR and tested reproducibility.',
-    transactionHash: '0x519a8491bbdf9012384a8bc894719283bcf819283a48194bcf90184bdf719482',
-    blockNumber: 1312094,
-  },
+          },
 
   // 4. REVOKED SAMPLE (Intentionally Revoked)
   {
@@ -124,7 +118,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     claimDescription:
       'Cross-chain message verification adapter. Revoked after security audit revealed vulnerable signature malleability.',
     evidenceUrl: 'https://github.com/sarah-dev/legacy-bridge-adapter',
-    evidenceHash: '0x3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a',
+    evidenceHash: '0x958cffdc44273de1dfbb8468f2d749c6a03e3b25de01ca7cb11c2dad90b2bb7f',
     evidenceManifest:
       'Repo: https://github.com/sarah-dev/legacy-bridge-adapter\nContract: 0x1111111111111111111111111111111111111111\nAudit status: Vulnerability identified post-verification',
     issuedAt: Math.floor(Date.now() / 1000) - 86400 * 45,
@@ -136,9 +130,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'REVOKED',
     validityExplanation:
       'This attestation was explicitly revoked on-chain by the issuing reviewer. The historical record is preserved, but the claim no longer stands.',
-    transactionHash: '0x22f8194bcf90184bdf719482519a8491bbdf9012384a8bc894719283bcf81928',
-    blockNumber: 1289410,
-  },
+          },
 
   // 5. EXPIRED SAMPLE (Expired Attestation)
   {
@@ -154,7 +146,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     claimDescription:
       'Time-bounded 30-day validator node uptime and block production stress test participant.',
     evidenceUrl: 'https://telemetry.monad.xyz/node/sarah-node-01',
-    evidenceHash: '0x2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f',
+    evidenceHash: '0xea0d3d52991454869bb6bd3eb5febdef4c41811a778db5b743254af2179cc87e',
     evidenceManifest:
       'Sprint: Q1 Testnet Sprint\nUptime: 99.8%\nExpiry Policy: 30 days post-sprint completion',
     issuedAt: Math.floor(Date.now() / 1000) - 86400 * 90,
@@ -163,9 +155,7 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     validity: 'EXPIRED',
     validityExplanation:
       'This attestation was time-bounded and has passed its registered expiration timestamp.',
-    transactionHash: '0x11119283fca820129bcfe345109bcf7823e49811234091a1829cbdf819283c74',
-    blockNumber: 1109281,
-  },
+          },
 
   // 6. Alex / Developer 2 Sample
   {
@@ -181,18 +171,16 @@ export const MOCK_ATTESTATIONS: Attestation[] = [
     claimDescription:
       'Original creator and deployer of the TrustGraph on-chain verification registry on Monad testnet.',
     evidenceUrl: 'https://testnet.monadexplorer.com/address/0x4386926019A8B74431eBDeF7c2718E340621B903',
-    evidenceHash: '0x1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e',
+    evidenceHash: '0x03a6238fdd71389a233e664250311d9f2a1dcb18d543eaa004ef0e42060d34ba',
     evidenceManifest:
-      'Contract: 0x4386926019A8B74431eBDeF7c2718E340621B903\nVerified Compiler: Solidity 0.8.20\nTx: 0x4486926019A8B74431eBDeF7c2718E340621B903112233445566778899aabbcc',
+      'Contract: 0x4386926019A8B74431eBDeF7c2718E340621B903\nVerified Compiler: Solidity 0.8.20',
     issuedAt: Math.floor(Date.now() / 1000) - 86400 * 60,
     expiry: 0,
     revoked: false,
     validity: 'VALID',
     validityExplanation:
       'Verified contract deployment on Monad testnet with matching bytecode hash.',
-    transactionHash: '0x4486926019A8B74431eBDeF7c2718E340621B903112233445566778899aabbcc',
-    blockNumber: 1000100,
-  },
+          },
 ];
 
 export function getProfileForAddress(rawAddress: string): TrustProfile {

@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAccount, useBalance, useConnect, useDisconnect, useSwitchChain } from 'wagmi';
+import { useAccount, useBalance, useSwitchChain, useConnect, useDisconnect } from 'wagmi';
 import {
+  GitGraph,
   Search,
   ChevronDown,
   Wallet,
@@ -18,11 +19,14 @@ import {
   LayoutGrid,
   LogOut,
   FileCheck,
+  Cpu,
 } from 'lucide-react';
+import { formatUnits } from 'viem';
 import { shortenAddress } from '../../utils/formatters';
 import { MONAD_TESTNET_CHAIN_ID, getExplorerAddressUrl } from '../../lib/blockchain/chain';
-import { BrandMark } from '../ui/BrandMark';
-import { trustGraphService } from '../../services/trustGraphService';
+import { DEMO_WALLETS } from '../../lib/contract/config';
+import { translateTxError } from '../../lib/blockchain/errors';
+import { cn } from '../../utils/cn';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
@@ -32,64 +36,33 @@ export const Navbar: React.FC = () => {
     address,
     chainId: MONAD_TESTNET_CHAIN_ID,
   });
-  const { connect, connectors, isPending: isConnecting } = useConnect();
-  const { disconnect } = useDisconnect();
   const { switchChain, isPending: isSwitching } = useSwitchChain();
+  const { connect, connectors, error: connectError, isPending: isConnecting } = useConnect();
+  const { disconnect } = useDisconnect();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isWalletMenuOpen, setIsWalletMenuOpen] = useState(false);
+  const [isDemoMenuOpen, setIsDemoMenuOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const [appMode, setAppMode] = useState<'LIVE' | 'DEMO'>(() => trustGraphService.getMode());
-  const walletMenuRef = useRef<HTMLDivElement>(null);
+  const [showConnectHint, setShowConnectHint] = useState(false);
 
   const isWrongNetwork = isConnected && chainId !== MONAD_TESTNET_CHAIN_ID;
+  const hasInjectedWallet = connectors.length > 0;
+  const connectMessage = !hasInjectedWallet
+    ? 'No EVM wallet detected. Install an EIP-6963 browser wallet (e.g. MetaMask, Rabby) to connect.'
+    : connectError
+      ? translateTxError(connectError)
+      : null;
 
-  useEffect(() => {
-    const onStorage = () => setAppMode(trustGraphService.getMode());
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  useEffect(() => {
-    setIsMobileOpen(false);
-    setIsWalletMenuOpen(false);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setIsMobileOpen(false);
-        setIsWalletMenuOpen(false);
-      }
-    };
-    const onPointer = (e: PointerEvent) => {
-      if (walletMenuRef.current && !walletMenuRef.current.contains(e.target as Node)) {
-        setIsWalletMenuOpen(false);
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    window.addEventListener('pointerdown', onPointer);
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      window.removeEventListener('pointerdown', onPointer);
-    };
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = isMobileOpen ? 'hidden' : '';
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isMobileOpen]);
+  const handleConnect = () => {
+    if (!hasInjectedWallet) {
+      setShowConnectHint(true);
+      return;
+    }
+    setShowConnectHint(false);
+    connect({ connector: connectors[0] });
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,211 +84,281 @@ export const Navbar: React.FC = () => {
   };
 
   const isActive = (path: string) => {
-    if (path === '/') return location.pathname === '/';
-    return location.pathname.startsWith(path);
+    if (path === '/' && location.pathname === '/') return true;
+    if (path !== '/' && location.pathname.startsWith(path)) return true;
+    return false;
   };
+
+  const navLinkClass = (path: string, exact = false) =>
+    cn(
+      'relative px-2 py-1.5 text-[13px] transition-colors',
+      (exact ? location.pathname === path : isActive(path))
+        ? 'text-ink'
+        : 'text-ink-muted hover:text-ink'
+    );
+
+  const ActiveDot = ({ active }: { active: boolean }) => (
+    <span
+      className={cn(
+        'absolute left-2 right-2 -bottom-px h-px transition-opacity',
+        active ? 'bg-primary opacity-100' : 'opacity-0'
+      )}
+      aria-hidden="true"
+    />
+  );
 
   const navItems = [
     { label: 'Overview', to: '/', match: '/', icon: LayoutGrid },
     { label: 'Submit Work', to: '/submit', match: '/submit', icon: FileCheck },
-    { label: 'Trust Profile', to: address ? `/profile/${address}` : '/', match: '/profile', icon: UserCheck },
-    { label: 'Trust Graph', to: address ? `/graph/${address}` : '/', match: '/graph', icon: Share2 },
+    { label: 'Trust Profile', to: address ? `/profile/${address}` : `/profile/${DEMO_WALLETS.DEVELOPER.address}`, match: '/profile', icon: UserCheck },
+    { label: 'Trust Graph', to: address ? `/graph/${address}` : `/graph/${DEMO_WALLETS.DEVELOPER.address}`, match: '/graph', icon: Share2 },
     { label: 'Issue Attestation', to: '/issue', match: '/issue', icon: PlusCircle },
-    { label: 'Inspect Claim', to: '/verify', match: '/verify', icon: ShieldCheck },
+    { label: 'Inspect Claim', to: '/verify/1', match: '/verify', icon: ShieldCheck },
   ];
 
-  const handleConnect = () => {
-    const connector = connectors[0];
-    if (connector) {
-      connect({ connector });
-    }
-  };
-
   return (
-    <header
-      className={`sticky top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300 ${
-        scrolled || isMobileOpen
-          ? 'bg-background/80 backdrop-blur-xl border-b border-white/[0.07]'
-          : 'bg-transparent border-b border-transparent'
-      }`}
-    >
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-4">
+    <header className="sticky top-0 z-50 border-b border-surface-border bg-background/85 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 gap-3">
 
-          <div className="flex items-center gap-4 min-w-0">
-            <Link to="/" className="flex items-center gap-2.5 group shrink-0" aria-label="TrustGraph home">
-              <BrandMark className="h-8 w-8 transition-transform duration-300 group-hover:scale-105" />
-              <div className="flex flex-col leading-none">
-                <span className="font-bold text-[15px] tracking-tight text-neutral-50">TrustGraph</span>
-                <span className="text-[10px] text-neutral-500 font-mono tracking-wider mt-1 hidden sm:block">
-                  Monad Verification Registry
+          {/* Logo & Network */}
+          <div className="flex items-center gap-4">
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <span className="h-8 w-8 corner-ticks flex items-center justify-center text-primary group-hover:text-primary-bright transition-colors" aria-hidden="true">
+                <GitGraph className="h-4 w-4" />
+              </span>
+              <span className="flex flex-col">
+                <span className="font-semibold text-sm tracking-tight text-ink group-hover:text-primary-bright transition-colors">
+                  TrustGraph
                 </span>
-              </div>
+                <span className="text-[9px] text-ink-dim font-mono uppercase tracking-widest-xl">
+                  Evidence Verification Registry
+                </span>
+              </span>
             </Link>
 
             {isWrongNetwork ? (
               <button
                 onClick={() => switchChain({ chainId: MONAD_TESTNET_CHAIN_ID })}
                 disabled={isSwitching}
-                className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-950/70 border border-amber-600/60 text-[11px] font-mono text-amber-300 hover:bg-amber-900/60 transition-colors"
+                className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-[11px] font-mono text-amber-300 hover:bg-amber-500/20 transition-colors"
                 title="Click to switch to Monad Testnet"
               >
-                <AlertTriangle className="h-3 w-3 text-amber-400" />
+                <AlertTriangle className="h-3 w-3 text-amber-400" aria-hidden="true" />
                 <span>Wrong Network — Switch to Monad</span>
               </button>
             ) : (
-              <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.03] border border-white/[0.07] text-[11px] font-mono">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60 animate-ping" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                </span>
-                <span className="text-neutral-500">Monad</span>
-                <span className="text-neutral-200">10143</span>
-              </div>
+              <span className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 bg-surface-subtle border border-surface-border text-[10px] uppercase tracking-widest font-mono text-ink-dim">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+                <span>Monad</span>
+                <span className="text-emerald-400 font-medium">10143</span>
+              </span>
             )}
 
-            <button
-              type="button"
-              onClick={() => {
-                const next = appMode === 'LIVE' ? 'DEMO' : 'LIVE';
-                trustGraphService.setMode(next);
-                setAppMode(next);
-              }}
-              title="Toggle between Live Monad Testnet and Local Sandbox fixtures"
-              className={`hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-mono border transition-colors ${
-                appMode === 'LIVE'
-                  ? 'bg-emerald-950/70 border-emerald-600/60 text-emerald-300 hover:bg-emerald-900/60'
-                  : 'bg-amber-950/70 border-amber-600/60 text-amber-300 hover:bg-amber-900/60'
-              }`}
+            {/* Data-source indicator (non-interactive).
+                Records always come from local fixtures — no on-chain read path
+                exists yet, so a "LIVE" toggle would misrepresent the data. */}
+            <span
+              className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 text-[10px] uppercase tracking-widest font-mono border bg-surface-subtle text-ink-dim border-surface-border"
+              title="Records are sourced from local fixture data, not from Monad chain state."
             >
-              <span className={`h-1.5 w-1.5 rounded-full ${appMode === 'LIVE' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-              <span>{appMode === 'LIVE' ? 'Mode: Live' : 'Mode: Demo'}</span>
-            </button>
+              <Cpu className="h-2.5 w-2.5 text-ink-dim" aria-hidden="true" />
+              <strong className="text-ink-muted">LOCAL FIXTURES</strong>
+            </span>
           </div>
 
-          <nav aria-label="Primary" className="hidden lg:flex items-center gap-0.5 text-[13px] font-medium">
-            {navItems.map((item) => {
-              const active = isActive(item.match);
-              return (
-                <Link
-                  key={item.label}
-                  to={item.to}
-                  aria-current={active ? 'page' : undefined}
-                  className={`relative px-3 py-2 rounded-lg transition-colors ${
-                    active ? 'text-neutral-50' : 'text-neutral-400 hover:text-neutral-50 hover:bg-white/[0.04]'
-                  }`}
-                >
-                  {item.label}
-                  {active && (
-                    <span
-                      aria-hidden="true"
-                      className="absolute left-1/2 -bottom-[13px] h-[2px] w-6 -translate-x-1/2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(41,233,191,0.8)]"
-                    />
-                  )}
-                </Link>
-              );
-            })}
+          {/* Nav Links */}
+          <nav className="hidden md:flex items-center gap-1" aria-label="Primary">
+            <Link to="/" className={navLinkClass('/', true)}>
+              Overview
+              <ActiveDot active={location.pathname === '/'} />
+            </Link>
+            <Link to={`/profile/${DEMO_WALLETS.DEVELOPER.address}`} className={cn(navLinkClass('/profile'), 'flex items-center gap-1.5')}>
+              <UserCheck className="h-3.5 w-3.5 text-ink-dim" aria-hidden="true" />
+              <span>Trust Profile</span>
+              <ActiveDot active={isActive('/profile')} />
+            </Link>
+            <Link to={`/graph/${DEMO_WALLETS.DEVELOPER.address}`} className={cn(navLinkClass('/graph'), 'flex items-center gap-1.5')}>
+              <Share2 className="h-3.5 w-3.5 text-ink-dim" aria-hidden="true" />
+              <span>Trust Graph</span>
+              <ActiveDot active={isActive('/graph')} />
+            </Link>
+            <Link to="/issue" className={cn(navLinkClass('/issue'), 'flex items-center gap-1.5')}>
+              <PlusCircle className="h-3.5 w-3.5 text-ink-dim" aria-hidden="true" />
+              <span>Issue Attestation</span>
+              <ActiveDot active={isActive('/issue')} />
+            </Link>
+            <Link to="/verify/1" className={cn(navLinkClass('/verify'), 'flex items-center gap-1.5')}>
+              <ShieldCheck className="h-3.5 w-3.5 text-ink-dim" aria-hidden="true" />
+              <span>Inspect Claim</span>
+              <ActiveDot active={isActive('/verify')} />
+            </Link>
           </nav>
 
+          {/* Right Controls: Search, Demo Wallets, and Connect */}
           <div className="flex items-center gap-2">
-            <form onSubmit={handleSearchSubmit} className="relative hidden xl:block w-56" role="search">
-              <label htmlFor="nav-search" className="sr-only">Search wallet address or claim ID</label>
+            {/* Quick Search */}
+            <form onSubmit={handleSearchSubmit} className="relative hidden xl:block w-44" role="search">
               <input
                 id="nav-search"
                 type="text"
-                placeholder="Search 0x... or Claim #1"
+                placeholder="0x… or Claim #1"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/[0.03] border border-white/[0.08] rounded-lg py-2 pl-8 pr-3 text-xs text-neutral-200 placeholder-neutral-500 focus:outline-none focus:border-emerald-400/50 focus:bg-white/[0.05] transition-all font-mono"
+                aria-label="Search by address or claim number"
+                className="w-full bg-surface-subtle border border-surface-border py-1.5 pl-8 pr-3 text-xs text-ink placeholder-ink-dim focus:outline-none focus:border-primary/60 focus:ring-1 focus:ring-primary/40 transition-colors font-mono"
               />
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-neutral-500" aria-hidden="true" />
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-ink-dim" aria-hidden="true" />
             </form>
 
-            <div className="relative" ref={walletMenuRef}>
+            {/* Demo Wallets Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsDemoMenuOpen(!isDemoMenuOpen)}
+                aria-expanded={isDemoMenuOpen}
+                className="flex items-center gap-1 px-2.5 py-1.5 bg-surface-subtle border border-surface-border hover:border-surface-border-strong text-xs text-ink-muted transition-colors"
+                title="Quick demo personas"
+              >
+                <span className="hidden 2xl:inline text-ink-dim text-[11px]">Personas:</span>
+                <span className="font-mono text-ink">Demo</span>
+                <ChevronDown className="h-3 w-3 text-ink-dim" aria-hidden="true" />
+              </button>
+
+              {isDemoMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-72 bg-surface-raised border border-surface-border-strong shadow-card py-1.5 z-50">
+                  <div className="px-3 py-1.5 text-[10px] font-mono text-ink-dim uppercase tracking-widest border-b border-surface-border">
+                    Demo Identities
+                  </div>
+                  <button
+                    onClick={() => {
+                      navigate(`/profile/${DEMO_WALLETS.DEVELOPER.address}`);
+                      setIsDemoMenuOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 hover:bg-surface-hover text-xs transition-colors"
+                  >
+                    <div className="font-medium text-ink">1. Developer (Subject)</div>
+                    <div className="text-[11px] text-ink-dim">Sarah • Inspect claims, graph & evidence</div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate('/issue');
+                      setIsDemoMenuOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 hover:bg-surface-hover text-xs transition-colors border-t border-surface-border"
+                  >
+                    <div className="font-medium text-ink">2. Reviewer (Authorized Issuer)</div>
+                    <div className="text-[11px] text-ink-dim">Issue CONTRACT_DEPLOYED on Monad</div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate(`/profile/${DEMO_WALLETS.ORGANIZER.address}`);
+                      setIsDemoMenuOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 hover:bg-surface-hover text-xs transition-colors border-t border-surface-border"
+                  >
+                    <div className="font-medium text-ink">3. Organizer (Admin / Owner)</div>
+                    <div className="text-[11px] text-ink-dim">Alex • Registry administration</div>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Wallet Connect & State Detection */}
+            <div className="relative">
               {isConnected && address ? (
                 <>
                   <button
                     onClick={() => setIsWalletMenuOpen(!isWalletMenuOpen)}
                     aria-expanded={isWalletMenuOpen}
-                    aria-haspopup="menu"
-                    className="flex items-center gap-2 px-3 py-2 bg-white/[0.03] border border-white/[0.08] rounded-lg text-xs font-mono text-neutral-200 hover:border-white/[0.16] hover:bg-white/[0.05] transition-colors"
+                    className="flex items-center gap-2 px-3 py-1.5 bg-surface-subtle border border-surface-border font-mono text-xs text-ink hover:border-surface-border-strong transition-colors"
                   >
-                    <span className={`h-2 w-2 rounded-full ${isWrongNetwork ? 'bg-amber-400' : 'bg-emerald-400'}`} aria-hidden="true" />
+                    <span className={cn('h-2 w-2 rounded-full', isWrongNetwork ? 'bg-amber-400' : 'bg-emerald-400')} aria-hidden="true" />
                     <span>{shortenAddress(address)}</span>
-                    <ChevronDown className={`h-3 w-3 text-neutral-400 transition-transform ${isWalletMenuOpen ? 'rotate-180' : ''}`} aria-hidden="true" />
+                    <ChevronDown className="h-3 w-3 text-ink-dim" aria-hidden="true" />
                   </button>
 
                   {isWalletMenuOpen && (
-                    <div role="menu" className="absolute right-0 top-full mt-2 w-72 rounded-2xl bg-neutral-950/95 backdrop-blur-xl border border-white/[0.08] shadow-float py-1.5 z-50 animate-drawer-in">
-                      <div className="px-4 py-3 border-b border-white/[0.06]">
-                        <div className="flex items-center justify-between text-[11px] text-neutral-400 mb-1.5">
+                    <div className="absolute right-0 top-full mt-2 w-64 bg-surface-raised border border-surface-border-strong shadow-card py-1 z-50">
+                      <div className="px-3 py-2.5 border-b border-surface-border">
+                        <div className="flex items-center justify-between text-[11px] text-ink-muted mb-1">
                           <span>Connected Wallet</span>
-                          <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono ${
-                            isWrongNetwork ? 'bg-amber-950 text-amber-300 border border-amber-800' : 'bg-emerald-950 text-emerald-300 border border-emerald-800'
-                          }`}>
+                          <span className={cn(
+                            'px-1.5 py-0.5 text-[10px] font-mono border',
+                            isWrongNetwork
+                              ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                              : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
+                          )}>
                             {isWrongNetwork ? 'Wrong Network' : 'Monad 10143'}
                           </span>
                         </div>
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-mono text-neutral-200 truncate">{address}</span>
+                        <div className="flex items-center justify-between gap-2 mt-1">
+                          <span className="text-xs font-mono text-ink truncate">{address}</span>
                           <button
                             onClick={() => copyAddress(address)}
-                            className="p-1 hover:bg-white/[0.06] rounded-md text-neutral-400 hover:text-white transition-colors"
-                            aria-label="Copy address"
+                            className="p-1 hover:bg-surface-hover text-ink-dim hover:text-ink transition-colors"
+                            title="Copy Address"
+                            aria-label="Copy wallet address"
                           >
-                            {copiedAddress ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+                            {copiedAddress ? <Check className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" /> : <Copy className="h-3.5 w-3.5" aria-hidden="true" />}
                           </button>
                         </div>
                         <div className="flex items-center justify-between text-[11px] text-neutral-400 mt-2 pt-2 border-t border-white/[0.04]">
                           <span>Balance:</span>
                           <span className="font-mono text-emerald-400 font-medium">
-                            {balanceData ? `${parseFloat(balanceData.formatted).toFixed(4)} ${balanceData.symbol}` : '0.0000 MON'}
+                            {balanceData ? `${parseFloat(formatUnits(balanceData.value, balanceData.decimals)).toFixed(4)} ${balanceData.symbol}` : '0.0000 MON'}
                           </span>
                         </div>
                       </div>
 
                       {isWrongNetwork && (
-                        <div className="p-2 border-b border-white/[0.06]">
+                        <div className="p-2 border-b border-surface-border bg-amber-500/[0.06]">
                           <button
                             onClick={() => {
                               switchChain({ chainId: MONAD_TESTNET_CHAIN_ID });
                               setIsWalletMenuOpen(false);
                             }}
                             disabled={isSwitching}
-                            className="w-full text-center px-2 py-2 bg-amber-900/50 hover:bg-amber-800/60 text-amber-200 border border-amber-700 text-xs font-medium rounded-lg transition-colors"
+                            className="w-full text-center px-2 py-1.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-200 border border-amber-500/40 text-xs font-medium transition-colors"
                           >
                             Switch to Monad Testnet (10143)
                           </button>
                         </div>
                       )}
 
-                      {[
-                        { to: `/profile/${address}`, label: 'My Trust Profile', icon: UserCheck },
-                        { to: `/graph/${address}`, label: 'My Trust Graph', icon: Share2 },
-                        { to: '/issue', label: 'Issue Attestation', icon: PlusCircle },
-                      ].map((item) => (
-                        <Link
-                          key={item.label}
-                          role="menuitem"
-                          to={item.to}
-                          onClick={() => setIsWalletMenuOpen(false)}
-                          className="flex items-center gap-2.5 mx-1.5 px-2.5 py-2 rounded-lg text-xs text-neutral-300 hover:bg-white/[0.05] hover:text-white transition-colors"
-                        >
-                          <item.icon className="h-3.5 w-3.5 text-neutral-500" aria-hidden="true" />
-                          <span>{item.label}</span>
-                        </Link>
-                      ))}
+                      <Link
+                        to={`/profile/${address}`}
+                        onClick={() => setIsWalletMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs text-ink-muted hover:bg-surface-hover hover:text-ink transition-colors"
+                      >
+                        <UserCheck className="h-3.5 w-3.5 text-ink-dim" aria-hidden="true" />
+                        <span>My Trust Profile</span>
+                      </Link>
 
-                      <div className="my-1.5 hairline" />
+                      <Link
+                        to={`/graph/${address}`}
+                        onClick={() => setIsWalletMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs text-ink-muted hover:bg-surface-hover hover:text-ink transition-colors"
+                      >
+                        <Share2 className="h-3.5 w-3.5 text-ink-dim" aria-hidden="true" />
+                        <span>My Trust Graph</span>
+                      </Link>
+
+                      <Link
+                        to="/issue"
+                        onClick={() => setIsWalletMenuOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-xs text-ink-muted hover:bg-surface-hover hover:text-ink transition-colors"
+                      >
+                        <PlusCircle className="h-3.5 w-3.5 text-ink-dim" aria-hidden="true" />
+                        <span>Issue Attestation</span>
+                      </Link>
 
                       <a
-                        role="menuitem"
                         href={getExplorerAddressUrl(address)}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-2.5 mx-1.5 px-2.5 py-2 rounded-lg text-xs text-neutral-400 hover:bg-white/[0.05] hover:text-neutral-200 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 text-xs text-ink-dim hover:bg-surface-hover hover:text-ink-muted transition-colors border-t border-surface-border"
                       >
-                        <ExternalLink className="h-3.5 w-3.5 text-neutral-500" aria-hidden="true" />
+                        <ExternalLink className="h-3.5 w-3.5 text-ink-dim" aria-hidden="true" />
                         <span>View on Monad Explorer</span>
                       </a>
 
@@ -325,7 +368,7 @@ export const Navbar: React.FC = () => {
                           disconnect();
                           setIsWalletMenuOpen(false);
                         }}
-                        className="w-[calc(100%-12px)] mx-1.5 text-left flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs text-rose-400 hover:bg-rose-950/40 transition-colors"
+                        className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs text-rose-400 hover:bg-surface-hover transition-colors border-t border-surface-border"
                       >
                         <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
                         <span>Disconnect</span>
@@ -334,14 +377,28 @@ export const Navbar: React.FC = () => {
                   )}
                 </>
               ) : (
-                <button
-                  onClick={handleConnect}
-                  disabled={isConnecting}
-                  className="btn-primary !px-3.5 !py-2 !text-xs !rounded-lg"
-                >
-                  <Wallet className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>{isConnecting ? 'Connecting...' : 'Connect Wallet'}</span>
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={handleConnect}
+                    disabled={isConnecting}
+                    className="flex items-center gap-2 px-3.5 py-1.5 bg-ink hover:bg-white text-background font-medium text-xs transition-colors active:scale-95 disabled:opacity-60"
+                  >
+                    <Wallet className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>{isConnecting ? 'Connecting…' : 'Connect Wallet'}</span>
+                  </button>
+
+                  {showConnectHint && connectMessage && (
+                    <div
+                      role="alert"
+                      className="absolute right-0 top-full mt-2 w-72 bg-surface-raised border border-status-pending/40 shadow-card p-3 text-[11px] text-ink-muted leading-relaxed z-50"
+                    >
+                      <div className="flex items-start gap-2">
+                        <AlertTriangle className="h-3.5 w-3.5 text-status-pending shrink-0 mt-0.5" aria-hidden="true" />
+                        <span>{connectMessage}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
             </div>
 

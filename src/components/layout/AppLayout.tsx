@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
+import { DemoModeBanner } from '../shared/DemoModeBanner';
 import { TRUST_GRAPH_REGISTRY_ADDRESS, REGISTRY_ADDRESS_CONFIGURED, MONAD_TESTNET_CHAIN_ID } from '../../lib/contract/config';
-import { trustGraphService } from '../../services/trustGraphService';
+import { shortenAddress } from '../../utils/formatters';
+import trustGraphService from '../../services/trustGraphService';
 
 export const AppLayout: React.FC = () => {
   const [mode, setMode] = useState<'LIVE' | 'DEMO'>(trustGraphService.getMode());
@@ -15,11 +17,20 @@ export const AppLayout: React.FC = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-background isolate">
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 ambient-glow" />
-        <div className="absolute inset-x-0 top-0 h-[900px] bg-grid-pattern" />
-        <div className="absolute inset-0 noise-overlay" />
+    <div className="min-h-screen flex flex-col bg-background selection:bg-primary/30 selection:text-primary-bright">
+      <DemoModeBanner />
+
+      {/* Protocol status strip */}
+      <div className="border-b border-surface-border bg-surface-subtle">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-7 flex items-center justify-between font-mono text-[10px] uppercase tracking-widest text-ink-dim">
+          <span className="inline-flex items-center gap-2">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+            Monad Testnet · Chain 10143
+          </span>
+          <span className="hidden sm:inline">
+            Registry <span className="text-ink-muted">{shortenAddress(TRUST_GRAPH_REGISTRY_ADDRESS, 4)}</span>
+          </span>
+        </div>
       </div>
 
       {mode === 'DEMO' ? (
