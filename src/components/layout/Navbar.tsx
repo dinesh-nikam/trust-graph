@@ -27,6 +27,7 @@ import { MONAD_TESTNET_CHAIN_ID, getExplorerAddressUrl } from '../../lib/blockch
 import { DEMO_WALLETS } from '../../lib/contract/config';
 import { translateTxError } from '../../lib/blockchain/errors';
 import { cn } from '../../utils/cn';
+import { trustGraphService } from '../../services/trustGraphService';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
@@ -47,6 +48,42 @@ export const Navbar: React.FC = () => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [showConnectHint, setShowConnectHint] = useState(false);
+  const [appMode, setAppMode] = useState<'LIVE' | 'DEMO'>(() => trustGraphService.getMode());
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const modalSearchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleStorage = () => setAppMode(trustGraphService.getMode());
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
+  const toggleMode = () => {
+    const next = appMode === 'LIVE' ? 'DEMO' : 'LIVE';
+    trustGraphService.setMode(next);
+    setAppMode(next);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchModalOpen((prev) => !prev);
+      }
+      if (e.key === 'Escape') {
+        setIsSearchModalOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (isSearchModalOpen) {
+      setTimeout(() => modalSearchInputRef.current?.focus(), 50);
+    }
+  }, [isSearchModalOpen]);
 
   const isWrongNetwork = isConnected && chainId !== MONAD_TESTNET_CHAIN_ID;
   const hasInjectedWallet = connectors.length > 0;
@@ -125,7 +162,8 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-surface-border bg-background/85 backdrop-blur-md">
+    <>
+      <header className="sticky top-0 z-50 border-b border-surface-border bg-background/85 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-3">
 
@@ -208,6 +246,7 @@ export const Navbar: React.FC = () => {
             {/* Quick Search */}
             <form onSubmit={handleSearchSubmit} className="relative hidden xl:block w-44" role="search">
               <input
+                ref={searchInputRef}
                 id="nav-search"
                 type="text"
                 placeholder="0x… or Claim #1"
@@ -526,7 +565,7 @@ export const Navbar: React.FC = () => {
                   <div className="flex items-center justify-between pt-2 border-t border-white/[0.06]">
                     <span className="text-neutral-400">Balance</span>
                     <span className="font-mono text-emerald-400 font-semibold">
-                      {balanceData ? `${parseFloat(balanceData.formatted).toFixed(4)} ${balanceData.symbol}` : '0.0000 MON'}
+                      {balanceData ? `${parseFloat(formatUnits(balanceData.value, balanceData.decimals)).toFixed(4)} ${balanceData.symbol}` : '0.0000 MON'}
                     </span>
                   </div>
                   <button
