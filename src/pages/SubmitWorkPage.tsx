@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
+import { isAddress, getAddress } from 'viem';
 import { 
   Send, 
   CheckCircle2, 
@@ -10,13 +11,15 @@ import {
   FileCheck,
   Info,
   Clock,
-  Sparkles
+  Sparkles,
+  AlertTriangle
 } from 'lucide-react';
 import { ClaimType } from '../types';
 import { useRegisterWork } from '../hooks/useWorkRegistry';
 import { 
   computeCanonicalEvidenceHash, 
-  computeDeterministicWorkId 
+  computeDeterministicWorkId,
+  shortenAddress 
 } from '../utils/formatters';
 import { trustGraphService } from '../services/trustGraphService';
 import { DEMO_WALLETS, PROOF_OF_WORK_REGISTRY_CONFIGURED, getExplorerTxUrl } from '../lib/contract/config';
@@ -49,10 +52,11 @@ export const SubmitWorkPage: React.FC = () => {
   const [isDemoSubmission, setIsDemoSubmission] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Sync wallet address if connected
+  // Sync wallet address if connected or switched
   useEffect(() => {
     if (address) {
       setWorker(address);
+      setError(null);
     }
   }, [address]);
 
@@ -90,7 +94,9 @@ export const SubmitWorkPage: React.FC = () => {
   }, [manifestText, primaryUrl, title, claimType, worker, address]);
 
   const loadDemoData = () => {
-    setWorker(DEMO_WALLETS.DEVELOPER.address);
+    if (!address) {
+      setWorker(DEMO_WALLETS.DEVELOPER.address);
+    }
     setClaimType('CONTRACT_DEPLOYED');
     setTitle('Monad Parallel State Router v2');
     setDescription('High-performance automated router maximizing parallel transaction execution throughput on Monad EVM.');
@@ -99,7 +105,7 @@ export const SubmitWorkPage: React.FC = () => {
       'Repository: https://github.com/monad-developers/parallel-router\n' +
       'Bytecode Hash: 0x98124b892a01cf...819\n' +
       'Monad Benchmark: 10,000 tx/sec under 400ms finality\n' +
-      'Author: Developer Sarah'
+      `Author: ${address ? shortenAddress(address) : 'Developer Sarah'}`
     );
   };
 
@@ -113,8 +119,8 @@ export const SubmitWorkPage: React.FC = () => {
       return;
     }
 
-    if (!/^0x[0-9a-fA-F]{40}$/.test(worker.trim())) {
-      setError('Developer address must be a valid 42-character EVM address.');
+    if (!isAddress(worker.trim(), { strict: false })) {
+      setError('Developer address must be a valid EVM address.');
       return;
     }
 
@@ -147,8 +153,8 @@ export const SubmitWorkPage: React.FC = () => {
       } else {
         if (!address) throw new Error('Connect a wallet on Monad Testnet to register work on-chain.');
         if (!PROOF_OF_WORK_REGISTRY_CONFIGURED) throw new Error('ProofOfWorkRegistry address is not configured. Live submission is disabled.');
-        if (worker.trim().toLowerCase() !== address.toLowerCase()) {
-          throw new Error('Worker address must match the connected wallet that will submit this transaction.');
+        if (getAddress(worker.trim()) !== getAddress(address)) {
+          throw new Error(`Worker address (${shortenAddress(worker.trim())}) must match your connected wallet (${shortenAddress(address)}) which signs the transaction on Monad Testnet.`);
         }
         setIsDemoSubmission(false);
         const result = await register({
@@ -276,9 +282,20 @@ export const SubmitWorkPage: React.FC = () => {
         
         {/* Worker Address */}
         <div className="p-6 rounded-xl bg-neutral-900/60 border border-neutral-800 space-y-4">
-          <label className="block text-xs font-medium text-neutral-300">
-            Developer Subject Wallet Address (0x...) *
-          </label>
+          <div className="flex items-center justify-between">
+            <label className="block text-xs font-medium text-neutral-300">
+              Developer Subject Wallet Address (0x...) *
+            </label>
+            {address && isAddress(worker.trim(), { strict: false }) && getAddress(worker.trim()) !== getAddress(address) && (
+              <button
+                type="button"
+                onClick={() => { setWorker(address); setError(null); }}
+                className="text-[11px] font-mono text-emerald-400 hover:text-emerald-300 transition-colors"
+              >
+                Use Connected Wallet ({shortenAddress(address)})
+              </button>
+            )}
+          </div>
           <input
             type="text"
             required
@@ -287,9 +304,16 @@ export const SubmitWorkPage: React.FC = () => {
             placeholder="0x3a48Bf2c8d8E02d91B0c82Ae27909A4D517e92D1"
             className="w-full bg-neutral-950 border border-neutral-800 rounded-lg px-3.5 py-2.5 text-xs text-neutral-200 placeholder-neutral-600 font-mono focus:outline-none focus:border-neutral-600 focus:ring-1 focus:ring-neutral-600"
           />
-          <p className="text-[11px] text-neutral-500 font-mono">
-            The developer wallet address that built the software and will hold the verified proof.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-neutral-500">
+            <span>The developer wallet address that built the software and will hold the verified proof.</span>
+            {address && (
+              <span className={isAddress(worker.trim(), { strict: false }) && getAddress(worker.trim()) === getAddress(address) ? 'text-emerald-400' : 'text-amber-400'}>
+                {isAddress(worker.trim(), { strict: false }) && getAddress(worker.trim()) === getAddress(address)
+                  ? '✓ Matches Connected Wallet'
+                  : `Connected: ${shortenAddress(address)}`}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Claim Type Selection */}

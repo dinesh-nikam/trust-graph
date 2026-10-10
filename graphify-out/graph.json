@@ -13,24 +13,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "revealprops",
       "source_file": "src/components/ui/Reveal.tsx",
       "source_location": "L3"
-    },
-    {
-      "id": "src_config_wagmi_register",
-      "label": "Register",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "useWorkRegistry.ts",
-      "file_type": "code",
-      "norm_label": "register",
-      "source_file": "src/config/wagmi.ts",
-      "source_location": "L16"
     },
     {
       "id": "src_hooks_usetrustgraph_txstep",
@@ -39,11 +26,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "txstep",
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L63"
+      "source_location": "L71"
     },
     {
       "id": "src_hooks_useworkregistry_onchainwork",
@@ -52,7 +39,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "onchainwork",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -65,7 +52,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "txstep",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -78,11 +65,24 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "claimtype",
       "source_file": "src/types/index.ts",
       "source_location": "L10"
+    },
+    {
+      "id": "src_types_index_trustprofile",
+      "label": "TrustProfile",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "trustGraphService.ts",
+      "file_type": "code",
+      "norm_label": "trustprofile",
+      "source_file": "src/types/index.ts",
+      "source_location": "L93"
     },
     {
       "id": "src_types_index_validitystatus",
@@ -91,7 +91,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "validitystatus",
       "source_file": "src/types/index.ts",
@@ -117,7 +117,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "selectednode",
       "source_file": "src/pages/TrustGraphPage.tsx",
@@ -130,11 +130,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "trustgraphservice",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L694"
+      "source_location": "L1002"
     },
     {
       "id": "src_types_index_attestation",
@@ -143,7 +143,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "attestation",
       "source_file": "src/types/index.ts",
@@ -156,24 +156,11 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "issuerprofile",
       "source_file": "src/types/index.ts",
       "source_location": "L104"
-    },
-    {
-      "id": "src_types_index_trustprofile",
-      "label": "TrustProfile",
-      "_callable": true,
-      "_callable_class": true,
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trustGraphService.ts",
-      "file_type": "code",
-      "norm_label": "trustprofile",
-      "source_file": "src/types/index.ts",
-      "source_location": "L93"
     },
     {
       "id": "src_types_index_worksubmission",
@@ -182,7 +169,7 @@
       "_callable_class": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "worksubmission",
       "source_file": "src/types/index.ts",
@@ -384,12 +371,25 @@
       "source_location": "L3"
     },
     {
+      "id": "src_config_wagmi_register",
+      "label": "Register",
+      "_callable": true,
+      "_callable_class": true,
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "main.tsx",
+      "file_type": "code",
+      "norm_label": "register",
+      "source_file": "src/config/wagmi.ts",
+      "source_location": "L16"
+    },
+    {
       "id": "src_app_app",
       "label": "App()",
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "app()",
       "source_file": "src/App.tsx",
@@ -401,11 +401,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "applayout()",
       "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L14"
+      "source_location": "L15"
     },
     {
       "id": "src_components_layout_footer_footer",
@@ -413,7 +413,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "footer()",
       "source_file": "src/components/layout/Footer.tsx",
@@ -425,7 +425,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "navbar()",
       "source_file": "src/components/layout/Navbar.tsx",
@@ -437,7 +437,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "brandmark()",
       "source_file": "src/components/ui/BrandMark.tsx",
@@ -449,7 +449,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "reveal()",
       "source_file": "src/components/ui/Reveal.tsx",
@@ -461,11 +461,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "errortext()",
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L65"
+      "source_location": "L73"
     },
     {
       "id": "src_hooks_usetrustgraph_requiremonadwallet",
@@ -473,11 +473,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "requiremonadwallet()",
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L75"
+      "source_location": "L83"
     },
     {
       "id": "src_hooks_usetrustgraph_useallattestations",
@@ -485,7 +485,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useallattestations()",
       "source_file": "src/hooks/useTrustGraph.ts",
@@ -497,11 +497,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useattestation()",
       "source_file": "src/hooks/useTrustGraph.ts",
       "source_location": "L21"
+    },
+    {
+      "id": "src_hooks_usetrustgraph_usecontractstatus",
+      "label": "useContractStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "trustGraphService.ts",
+      "file_type": "code",
+      "norm_label": "usecontractstatus()",
+      "source_file": "src/hooks/useTrustGraph.ts",
+      "source_location": "L63"
     },
     {
       "id": "src_hooks_usetrustgraph_useissueattestation",
@@ -509,11 +521,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useissueattestation()",
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L80"
+      "source_location": "L88"
     },
     {
       "id": "src_hooks_usetrustgraph_useissuerstatus",
@@ -521,7 +533,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useissuerstatus()",
       "source_file": "src/hooks/useTrustGraph.ts",
@@ -533,7 +545,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useregistryowner()",
       "source_file": "src/hooks/useTrustGraph.ts",
@@ -545,11 +557,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "userevokeattestation()",
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L163"
+      "source_location": "L171"
     },
     {
       "id": "src_hooks_usetrustgraph_usetrustprofile",
@@ -557,7 +569,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "usetrustprofile()",
       "source_file": "src/hooks/useTrustGraph.ts",
@@ -569,7 +581,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "assertproofofworkregistry()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -581,7 +593,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "parseuserfriendlyerror()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -593,7 +605,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "requiremonadwallet()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -605,7 +617,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useregisterwork()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -617,7 +629,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "userejectwork()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -629,7 +641,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "userevokework()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -641,7 +653,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useverifierqueue()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -653,7 +665,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useverifierqueuepaginated()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -665,7 +677,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useverifierstatus()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -677,7 +689,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useverifywork()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -689,7 +701,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useworkactions()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -701,7 +713,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useworkitem()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -713,7 +725,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useworksbyworkerpaginated()",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -725,7 +737,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "getexploreraddressurl()",
       "source_file": "src/lib/blockchain/chain.ts",
@@ -737,7 +749,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "getexplorertxurl()",
       "source_file": "src/lib/blockchain/chain.ts",
@@ -749,7 +761,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "homepage()",
       "source_file": "src/pages/HomePage.tsx",
@@ -761,7 +773,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "issueattestationpage()",
       "source_file": "src/pages/IssueAttestationPage.tsx",
@@ -773,11 +785,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "submitworkpage()",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L24"
+      "source_location": "L27"
     },
     {
       "id": "src_pages_trustgraphpage_trustgraphpage",
@@ -785,7 +797,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "trustgraphpage()",
       "source_file": "src/pages/TrustGraphPage.tsx",
@@ -797,7 +809,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "trustprofilepage()",
       "source_file": "src/pages/TrustProfilePage.tsx",
@@ -809,11 +821,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "verificationdetailpage()",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L37"
+      "source_location": "L40"
     },
     {
       "id": "src_pages_verifypage_verifypage",
@@ -821,23 +833,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "verifypage()",
       "source_file": "src/pages/VerifyPage.tsx",
       "source_location": "L36"
-    },
-    {
-      "id": "src_services_trustgraphservice_trustgraphservice_verifyevidencematch",
-      "label": ".verifyEvidenceMatch()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "useWorkRegistry.ts",
-      "file_type": "code",
-      "norm_label": ".verifyevidencematch()",
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L582"
     },
     {
       "id": "src_utils_formatters_computecanonicalevidencehash",
@@ -845,7 +845,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "computecanonicalevidencehash()",
       "source_file": "src/utils/formatters.ts",
@@ -857,7 +857,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "computedeterministicworkid()",
       "source_file": "src/utils/formatters.ts",
@@ -869,7 +869,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "computesha256()",
       "source_file": "src/utils/formatters.ts",
@@ -881,7 +881,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "enumindextostatus()",
       "source_file": "src/utils/formatters.ts",
@@ -893,7 +893,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "enumindextoworktype()",
       "source_file": "src/utils/formatters.ts",
@@ -905,7 +905,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "formatdate()",
       "source_file": "src/utils/formatters.ts",
@@ -917,7 +917,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "formatdatetime()",
       "source_file": "src/utils/formatters.ts",
@@ -929,7 +929,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "getclaimtypedetails()",
       "source_file": "src/utils/formatters.ts",
@@ -941,7 +941,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "getvaliditydetails()",
       "source_file": "src/utils/formatters.ts",
@@ -953,7 +953,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "shortenaddress()",
       "source_file": "src/utils/formatters.ts",
@@ -965,7 +965,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "shortenhash()",
       "source_file": "src/utils/formatters.ts",
@@ -977,7 +977,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "statustoenumindex()",
       "source_file": "src/utils/formatters.ts",
@@ -989,7 +989,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "stringtobytes32()",
       "source_file": "src/utils/formatters.ts",
@@ -1001,7 +1001,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "worktypetoenumindex()",
       "source_file": "src/utils/formatters.ts",
@@ -1038,22 +1038,6 @@
       "norm_label": "constructor()",
       "source_file": "contracts/TrustGraphRegistry.sol",
       "source_location": "L101"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_approveissuer_1_address",
-      "label": "approveIssuer()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "function"
-      },
-      "norm_label": "approveissuer()",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L113"
     },
     {
       "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_getallattestationids_0",
@@ -1200,8 +1184,8 @@
       "source_location": "L250"
     },
     {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_issueattestation_5_address_bytes32_bytes32_string_uint256",
-      "label": "issueAttestation()",
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_isissuer_1_address",
+      "label": "isIssuer()",
       "_callable": true,
       "_origin": "ast",
       "community": 1,
@@ -1211,9 +1195,9 @@
         "language": "solidity",
         "kind": "function"
       },
-      "norm_label": "issueattestation()",
+      "norm_label": "isissuer()",
       "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L150"
+      "source_location": "L135"
     },
     {
       "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_isvalid_1_uint256",
@@ -1232,22 +1216,6 @@
       "source_location": "L236"
     },
     {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_removeissuer_1_address",
-      "label": "removeIssuer()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "function"
-      },
-      "norm_label": "removeissuer()",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L124"
-    },
-    {
       "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_revokeattestation_2_uint256_string",
       "label": "revokeAttestation()",
       "_callable": true,
@@ -1262,70 +1230,6 @@
       "norm_label": "revokeattestation()",
       "source_file": "contracts/TrustGraphRegistry.sol",
       "source_location": "L200"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_transferownership_1_address",
-      "label": "transferOwnership()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "function"
-      },
-      "norm_label": "transferownership()",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L360"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_modifier_onlyissuer_0",
-      "label": "onlyIssuer()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "modifier"
-      },
-      "norm_label": "onlyissuer()",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L91"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_modifier_onlyowner_0",
-      "label": "onlyOwner()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "modifier"
-      },
-      "norm_label": "onlyowner()",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L86"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_isissuer_1_address",
-      "label": "isIssuer()",
-      "_callable": true,
-      "_origin": "ast",
-      "community": 13,
-      "community_name": "TrustGraph",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "function"
-      },
-      "norm_label": "isissuer()",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L135"
     },
     {
       "id": "test_trustgraph_test_assertvalidtransition",
@@ -1393,7 +1297,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "getprofileforaddress()",
       "source_file": "src/data/mockData.ts",
@@ -1405,11 +1309,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "decodeclaimtype()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L54"
+      "source_location": "L57"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_approvesubmission",
@@ -1417,11 +1321,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".approvesubmission()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L673"
+      "source_location": "L981"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_assertregistryavailable",
@@ -1429,11 +1333,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".assertregistryavailable()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L150"
+      "source_location": "L219"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_constructor",
@@ -1441,11 +1345,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".constructor()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L83"
+      "source_location": "L86"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_evaluatevalidity",
@@ -1453,11 +1357,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".evaluatevalidity()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L472"
+      "source_location": "L780"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_getallattestations",
@@ -1465,11 +1369,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".getallattestations()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L360"
+      "source_location": "L500"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_getattestationbyid",
@@ -1477,11 +1381,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".getattestationbyid()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L313"
+      "source_location": "L396"
+    },
+    {
+      "id": "src_services_trustgraphservice_trustgraphservice_getcontractstatus",
+      "label": ".getContractStatus()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trustGraphService",
+      "file_type": "code",
+      "norm_label": ".getcontractstatus()",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L166"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_getissuers",
@@ -1489,11 +1405,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".getissuers()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L444"
+      "source_location": "L753"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_getmode",
@@ -1501,11 +1417,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".getmode()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L129"
+      "source_location": "L132"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_getpendingsubmissions",
@@ -1513,11 +1429,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".getpendingsubmissions()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L656"
+      "source_location": "L964"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_getprofile",
@@ -1525,11 +1441,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".getprofile()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L370"
+      "source_location": "L582"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_getregistryowner",
@@ -1537,11 +1453,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".getregistryowner()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L164"
+      "source_location": "L230"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_getsubmissions",
@@ -1549,11 +1465,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".getsubmissions()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L652"
+      "source_location": "L960"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_hascontractbytecode",
@@ -1561,11 +1477,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".hascontractbytecode()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L142"
+      "source_location": "L145"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_init",
@@ -1573,11 +1489,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".init()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L87"
+      "source_location": "L90"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_isissuerauthorized",
@@ -1585,11 +1501,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".isissuerauthorized()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L432"
+      "source_location": "L706"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_issueattestation",
@@ -1597,11 +1513,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".issueattestation()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L505"
+      "source_location": "L813"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_readonchainattestation",
@@ -1609,11 +1525,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".readonchainattestation()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L169"
+      "source_location": "L252"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_readonchainattestationsbatch",
@@ -1621,11 +1537,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".readonchainattestationsbatch()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L221"
+      "source_location": "L304"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_rejectsubmission",
@@ -1633,11 +1549,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".rejectsubmission()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L660"
+      "source_location": "L968"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_resetsandbox",
@@ -1645,11 +1561,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".resetsandbox()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L686"
+      "source_location": "L994"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_revokeattestation",
@@ -1657,11 +1573,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".revokeattestation()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L556"
+      "source_location": "L864"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_save",
@@ -1669,11 +1585,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".save()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L118"
+      "source_location": "L121"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_setmode",
@@ -1681,11 +1597,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".setmode()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L133"
+      "source_location": "L136"
     },
     {
       "id": "src_services_trustgraphservice_trustgraphservice_submitwork",
@@ -1693,11 +1609,23 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": ".submitwork()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L625"
+      "source_location": "L933"
+    },
+    {
+      "id": "src_services_trustgraphservice_trustgraphservice_verifyevidencematch",
+      "label": ".verifyEvidenceMatch()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 2,
+      "community_name": "trustGraphService",
+      "file_type": "code",
+      "norm_label": ".verifyevidencematch()",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L890"
     },
     {
       "id": "src_services_trustgraphservice_validityexplanation",
@@ -1705,11 +1633,11 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "validityexplanation()",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L60"
+      "source_location": "L63"
     },
     {
       "id": "src_utils_formatters_bytes32tostring",
@@ -1717,7 +1645,7 @@
       "_callable": true,
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "bytes32tostring()",
       "source_file": "src/utils/formatters.ts",
@@ -2708,6 +2636,102 @@
       "source_location": "L440"
     },
     {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_approveissuer_1_address",
+      "label": "approveIssuer()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "onlyOwner",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "function"
+      },
+      "norm_label": "approveissuer()",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L113"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_removeissuer_1_address",
+      "label": "removeIssuer()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "onlyOwner",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "function"
+      },
+      "norm_label": "removeissuer()",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L124"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_transferownership_1_address",
+      "label": "transferOwnership()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "onlyOwner",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "function"
+      },
+      "norm_label": "transferownership()",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L360"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_modifier_onlyowner_0",
+      "label": "onlyOwner()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 75,
+      "community_name": "onlyOwner",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "modifier"
+      },
+      "norm_label": "onlyowner()",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L86"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_function_issueattestation_5_address_bytes32_bytes32_string_uint256",
+      "label": "issueAttestation()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 76,
+      "community_name": "issueAttestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "function"
+      },
+      "norm_label": "issueattestation()",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L150"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_modifier_onlyissuer_0",
+      "label": "onlyIssuer()",
+      "_callable": true,
+      "_origin": "ast",
+      "community": 76,
+      "community_name": "issueAttestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "modifier"
+      },
+      "norm_label": "onlyissuer()",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L91"
+    },
+    {
       "id": "contracts_proofofworkregistry_contract_proofofworkregistry",
       "label": "ProofOfWorkRegistry",
       "_callable": true,
@@ -2920,7 +2944,7 @@
       "label": "App.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "app.tsx",
       "source_file": "src/App.tsx",
@@ -2931,7 +2955,7 @@
       "label": "AppLayout.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "applayout.tsx",
       "source_file": "src/components/layout/AppLayout.tsx",
@@ -2942,7 +2966,7 @@
       "label": "Footer.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "footer.tsx",
       "source_file": "src/components/layout/Footer.tsx",
@@ -2953,7 +2977,7 @@
       "label": "productLinks",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "productlinks",
       "source_file": "src/components/layout/Footer.tsx",
@@ -2964,7 +2988,7 @@
       "label": "Navbar.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "navbar.tsx",
       "source_file": "src/components/layout/Navbar.tsx",
@@ -2975,7 +2999,7 @@
       "label": "BrandMark.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "brandmark.tsx",
       "source_file": "src/components/ui/BrandMark.tsx",
@@ -2986,7 +3010,7 @@
       "label": "Reveal.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "reveal.tsx",
       "source_file": "src/components/ui/Reveal.tsx",
@@ -2997,51 +3021,18 @@
       "label": "config/chain.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "config/chain.ts",
       "source_file": "src/config/chain.ts",
       "source_location": "L1"
     },
     {
-      "id": "src_config_wagmi",
-      "label": "wagmi.ts",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "useWorkRegistry.ts",
-      "file_type": "code",
-      "norm_label": "wagmi.ts",
-      "source_file": "src/config/wagmi.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_config_wagmi_config",
-      "label": "config",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "useWorkRegistry.ts",
-      "file_type": "code",
-      "norm_label": "config",
-      "source_file": "src/config/wagmi.ts",
-      "source_location": "L5"
-    },
-    {
-      "id": "src_config_wagmi_wagmi",
-      "label": "wagmi",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "useWorkRegistry.ts",
-      "file_type": "code",
-      "norm_label": "wagmi",
-      "source_file": "src/config/wagmi.ts",
-      "source_location": "L15"
-    },
-    {
       "id": "src_contracts_proofofworkregistryabi",
       "label": "ProofOfWorkRegistryABI.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "proofofworkregistryabi.ts",
       "source_file": "src/contracts/ProofOfWorkRegistryABI.ts",
@@ -3052,7 +3043,7 @@
       "label": "useTrustGraph.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "usetrustgraph.ts",
       "source_file": "src/hooks/useTrustGraph.ts",
@@ -3063,7 +3054,7 @@
       "label": "useWorkRegistry.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "useworkregistry.ts",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -3074,7 +3065,7 @@
       "label": "usePassport",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "usepassport",
       "source_file": "src/hooks/useWorkRegistry.ts",
@@ -3085,7 +3076,7 @@
       "label": "blockchain/chain.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "blockchain/chain.ts",
       "source_file": "src/lib/blockchain/chain.ts",
@@ -3096,7 +3087,7 @@
       "label": "MONAD_TESTNET_CHAIN_ID",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "monad_testnet_chain_id",
       "source_file": "src/lib/blockchain/chain.ts",
@@ -3107,7 +3098,7 @@
       "label": "monadTestnet",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "monadtestnet",
       "source_file": "src/lib/blockchain/chain.ts",
@@ -3118,7 +3109,7 @@
       "label": "abi.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "abi.ts",
       "source_file": "src/lib/contract/abi.ts",
@@ -3129,7 +3120,7 @@
       "label": "ProofOfWorkRegistryABI",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "proofofworkregistryabi",
       "source_file": "src/lib/contract/abi.ts",
@@ -3140,7 +3131,7 @@
       "label": "TrustGraphRegistryABI",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "trustgraphregistryabi",
       "source_file": "src/lib/contract/abi.ts",
@@ -3151,7 +3142,7 @@
       "label": "config.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "config.ts",
       "source_file": "src/lib/contract/config.ts",
@@ -3162,7 +3153,7 @@
       "label": "CONTRACT_ADDRESSES",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "contract_addresses",
       "source_file": "src/lib/contract/config.ts",
@@ -3173,18 +3164,29 @@
       "label": "CONTRACT_CONFIG",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "contract_config",
       "source_file": "src/lib/contract/config.ts",
       "source_location": "L47"
     },
     {
+      "id": "src_lib_contract_config_demo_wallets",
+      "label": "DEMO_WALLETS",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "trustGraphService.ts",
+      "file_type": "code",
+      "norm_label": "demo_wallets",
+      "source_file": "src/lib/contract/config.ts",
+      "source_location": "L26"
+    },
+    {
       "id": "src_lib_contract_config_proof_of_work_contract_config",
       "label": "PROOF_OF_WORK_CONTRACT_CONFIG",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "proof_of_work_contract_config",
       "source_file": "src/lib/contract/config.ts",
@@ -3195,7 +3197,7 @@
       "label": "PROOF_OF_WORK_REGISTRY_ADDRESS",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "proof_of_work_registry_address",
       "source_file": "src/lib/contract/config.ts",
@@ -3206,51 +3208,40 @@
       "label": "PROOF_OF_WORK_REGISTRY_CONFIGURED",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "proof_of_work_registry_configured",
       "source_file": "src/lib/contract/config.ts",
       "source_location": "L23"
     },
     {
+      "id": "src_lib_contract_config_registry_address_configured",
+      "label": "REGISTRY_ADDRESS_CONFIGURED",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "trustGraphService.ts",
+      "file_type": "code",
+      "norm_label": "registry_address_configured",
+      "source_file": "src/lib/contract/config.ts",
+      "source_location": "L22"
+    },
+    {
       "id": "src_lib_contract_config_trust_graph_registry_address",
       "label": "TRUST_GRAPH_REGISTRY_ADDRESS",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "trust_graph_registry_address",
       "source_file": "src/lib/contract/config.ts",
       "source_location": "L16"
     },
     {
-      "id": "src_main",
-      "label": "main.tsx",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "useWorkRegistry.ts",
-      "file_type": "code",
-      "norm_label": "main.tsx",
-      "source_file": "src/main.tsx",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_main_queryclient",
-      "label": "queryClient",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "useWorkRegistry.ts",
-      "file_type": "code",
-      "norm_label": "queryclient",
-      "source_file": "src/main.tsx",
-      "source_location": "L9"
-    },
-    {
       "id": "src_pages_homepage",
       "label": "HomePage.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "homepage.tsx",
       "source_file": "src/pages/HomePage.tsx",
@@ -3261,7 +3252,7 @@
       "label": "actors",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "actors",
       "source_file": "src/pages/HomePage.tsx",
@@ -3272,7 +3263,7 @@
       "label": "anatomyRows",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "anatomyrows",
       "source_file": "src/pages/HomePage.tsx",
@@ -3283,7 +3274,7 @@
       "label": "lifecycle",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "lifecycle",
       "source_file": "src/pages/HomePage.tsx",
@@ -3294,7 +3285,7 @@
       "label": "questions",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "questions",
       "source_file": "src/pages/HomePage.tsx",
@@ -3305,7 +3296,7 @@
       "label": "IssueAttestationPage.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "issueattestationpage.tsx",
       "source_file": "src/pages/IssueAttestationPage.tsx",
@@ -3316,18 +3307,18 @@
       "label": "SubmitPage",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "submitpage",
       "source_file": "src/pages/IssueAttestationPage.tsx",
-      "source_location": "L485"
+      "source_location": "L534"
     },
     {
       "id": "src_pages_passportpage",
       "label": "PassportPage.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "passportpage.tsx",
       "source_file": "src/pages/PassportPage.tsx",
@@ -3338,7 +3329,7 @@
       "label": "ProofDetailPage.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "proofdetailpage.tsx",
       "source_file": "src/pages/ProofDetailPage.tsx",
@@ -3349,7 +3340,7 @@
       "label": "SubmitPage.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "submitpage.tsx",
       "source_file": "src/pages/SubmitPage.tsx",
@@ -3360,7 +3351,7 @@
       "label": "SubmitWorkPage.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "submitworkpage.tsx",
       "source_file": "src/pages/SubmitWorkPage.tsx",
@@ -3371,7 +3362,7 @@
       "label": "TrustGraphPage.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "trustgraphpage.tsx",
       "source_file": "src/pages/TrustGraphPage.tsx",
@@ -3382,7 +3373,7 @@
       "label": "TrustProfilePage.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "trustprofilepage.tsx",
       "source_file": "src/pages/TrustProfilePage.tsx",
@@ -3393,7 +3384,7 @@
       "label": "PassportPage",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "passportpage",
       "source_file": "src/pages/TrustProfilePage.tsx",
@@ -3404,7 +3395,7 @@
       "label": "VerificationDetailPage.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "verificationdetailpage.tsx",
       "source_file": "src/pages/VerificationDetailPage.tsx",
@@ -3415,29 +3406,84 @@
       "label": "ProofDetailPage",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "proofdetailpage",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L491"
+      "source_location": "L508"
     },
     {
       "id": "src_pages_verifypage",
       "label": "VerifyPage.tsx",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "verifypage.tsx",
       "source_file": "src/pages/VerifyPage.tsx",
       "source_location": "L1"
     },
     {
+      "id": "src_services_trustgraphservice",
+      "label": "trustGraphService.ts",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "trustGraphService.ts",
+      "file_type": "code",
+      "norm_label": "trustgraphservice.ts",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_services_trustgraphservice_claimtypes",
+      "label": "claimTypes",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "trustGraphService.ts",
+      "file_type": "code",
+      "norm_label": "claimtypes",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L43"
+    },
+    {
+      "id": "src_services_trustgraphservice_publicclient",
+      "label": "publicClient",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "trustGraphService.ts",
+      "file_type": "code",
+      "norm_label": "publicclient",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L38"
+    },
+    {
+      "id": "src_services_trustgraphservice_seed_submissions",
+      "label": "SEED_SUBMISSIONS",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "trustGraphService.ts",
+      "file_type": "code",
+      "norm_label": "seed_submissions",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L23"
+    },
+    {
+      "id": "src_services_trustgraphservice_validitybycode",
+      "label": "validityByCode",
+      "_origin": "ast",
+      "community": 0,
+      "community_name": "trustGraphService.ts",
+      "file_type": "code",
+      "norm_label": "validitybycode",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L49"
+    },
+    {
       "id": "src_utils_formatters",
       "label": "formatters.ts",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "formatters.ts",
       "source_file": "src/utils/formatters.ts",
@@ -3448,7 +3494,7 @@
       "label": "getStatusDetails",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "getstatusdetails",
       "source_file": "src/utils/formatters.ts",
@@ -3459,7 +3505,7 @@
       "label": "getWorkTypeDetails",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "code",
       "norm_label": "getworktypedetails",
       "source_file": "src/utils/formatters.ts",
@@ -3470,7 +3516,7 @@
       "label": "lucide-react",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "concept",
       "norm_label": "lucide-react",
       "source_file": "package.json",
@@ -3481,51 +3527,29 @@
       "label": "react",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "concept",
       "norm_label": "react",
       "source_file": "package.json",
       "source_location": "L27"
     },
     {
-      "id": "ref_react_dom",
-      "label": "react-dom",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "useWorkRegistry.ts",
-      "file_type": "concept",
-      "norm_label": "react-dom",
-      "source_file": "package.json",
-      "source_location": "L28"
-    },
-    {
       "id": "ref_react_router_dom",
       "label": "react-router-dom",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "concept",
       "norm_label": "react-router-dom",
       "source_file": "package.json",
       "source_location": "L29"
     },
     {
-      "id": "ref_tanstack_react_query",
-      "label": "@tanstack/react-query",
-      "_origin": "ast",
-      "community": 0,
-      "community_name": "useWorkRegistry.ts",
-      "file_type": "concept",
-      "norm_label": "@tanstack/react-query",
-      "source_file": "package.json",
-      "source_location": "L24"
-    },
-    {
       "id": "ref_viem",
       "label": "viem",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "concept",
       "norm_label": "viem",
       "source_file": "package.json",
@@ -3536,7 +3560,7 @@
       "label": "wagmi",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "concept",
       "norm_label": "wagmi",
       "source_file": "package.json",
@@ -3547,7 +3571,7 @@
       "label": "Presentation & Business Logic Coupling",
       "_origin": "ast",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "file_type": "document",
       "node_kind": "heading",
       "norm_label": "presentation & business logic coupling",
@@ -3568,96 +3592,6 @@
       "norm_label": "trustgraphregistry.sol",
       "source_file": "contracts/TrustGraphRegistry.sol",
       "source_location": "L1"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus",
-      "label": "ValidityStatus",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "enum"
-      },
-      "norm_label": "validitystatus",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L40"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus_expired",
-      "label": "EXPIRED",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "enum_value"
-      },
-      "norm_label": "expired",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L44"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus_invalid_issuer",
-      "label": "INVALID_ISSUER",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "enum_value"
-      },
-      "norm_label": "invalid_issuer",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L45"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus_not_found",
-      "label": "NOT_FOUND",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "enum_value"
-      },
-      "norm_label": "not_found",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L41"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus_revoked",
-      "label": "REVOKED",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "enum_value"
-      },
-      "norm_label": "revoked",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L43"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus_valid",
-      "label": "VALID",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "enum_value"
-      },
-      "norm_label": "valid",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L42"
     },
     {
       "id": "contracts_trustgraphregistry_contract_trustgraphregistry_event_attestationissued_attestationissued",
@@ -3838,171 +3772,6 @@
       "norm_label": "subjectattestationids",
       "source_file": "contracts/TrustGraphRegistry.sol",
       "source_location": "L55"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation",
-      "label": "Attestation",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "struct"
-      },
-      "norm_label": "attestation",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L27"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_claimtype",
-      "label": "claimType",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "field"
-      },
-      "norm_label": "claimtype",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L31"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_evidencehash",
-      "label": "evidenceHash",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "field"
-      },
-      "norm_label": "evidencehash",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L32"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_evidenceuri",
-      "label": "evidenceUri",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "field"
-      },
-      "norm_label": "evidenceuri",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L33"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_expiry",
-      "label": "expiry",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "field"
-      },
-      "norm_label": "expiry",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L35"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_id",
-      "label": "id",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "field"
-      },
-      "norm_label": "id",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L28"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_issuedat",
-      "label": "issuedAt",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "field"
-      },
-      "norm_label": "issuedat",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L34"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_issuer",
-      "label": "issuer",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "field"
-      },
-      "norm_label": "issuer",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L29"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_revocationreason",
-      "label": "revocationReason",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "field"
-      },
-      "norm_label": "revocationreason",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L37"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_revoked",
-      "label": "revoked",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "field"
-      },
-      "norm_label": "revoked",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L36"
-    },
-    {
-      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_subject",
-      "label": "subject",
-      "_origin": "ast",
-      "community": 1,
-      "community_name": "TrustGraphRegistry",
-      "file_type": "code",
-      "metadata": {
-        "language": "solidity",
-        "kind": "field"
-      },
-      "norm_label": "subject",
-      "source_file": "contracts/TrustGraphRegistry.sol",
-      "source_location": "L30"
     },
     {
       "id": "tsconfig",
@@ -4736,208 +4505,328 @@
       "source_location": "L1"
     },
     {
-      "id": "readme_1_product_model",
-      "label": "1. Product Model",
+      "id": "readme_1_clone_install_dependencies",
+      "label": "1. Clone & Install Dependencies",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "1. product model",
+      "norm_label": "1. clone & install dependencies",
       "source_file": "README.md",
-      "source_location": "L22"
+      "source_location": "L208"
     },
     {
-      "id": "readme_2_core_user_roles",
-      "label": "2. Core User Roles",
+      "id": "readme_1_trust_profile_profile_address",
+      "label": "1. Trust Profile (`/profile/:address`)",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "2. core user roles",
+      "norm_label": "1. trust profile (`/profile/:address`)",
       "source_file": "README.md",
-      "source_location": "L43"
+      "source_location": "L104"
     },
     {
-      "id": "readme_3_supported_claim_types",
-      "label": "3. Supported Claim Types",
+      "id": "readme_2_configure_environment",
+      "label": "2. Configure Environment",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "3. supported claim types",
+      "norm_label": "2. configure environment",
       "source_file": "README.md",
-      "source_location": "L60"
+      "source_location": "L216"
     },
     {
-      "id": "readme_4_four_primary_mvp_pages",
-      "label": "4. Four Primary MVP Pages",
+      "id": "readme_2_work_registration_attestation_submit_issue",
+      "label": "2. Work Registration & Attestation (`/submit` & `/issue`)",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "4. four primary mvp pages",
+      "norm_label": "2. work registration & attestation (`/submit` & `/issue`)",
       "source_file": "README.md",
-      "source_location": "L69"
+      "source_location": "L109"
     },
     {
-      "id": "readme_5_smart_contract_architecture",
-      "label": "5. Smart Contract Architecture",
+      "id": "readme_3_interactive_trust_graph_canvas_graph_address",
+      "label": "3. Interactive Trust Graph Canvas (`/graph/:address`)",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "5. smart contract architecture",
+      "norm_label": "3. interactive trust graph canvas (`/graph/:address`)",
       "source_file": "README.md",
-      "source_location": "L102"
+      "source_location": "L114"
     },
     {
-      "id": "readme_6_testing_verification",
-      "label": "6. Testing & Verification",
+      "id": "readme_3_run_the_development_server",
+      "label": "3. Run the Development Server",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "6. testing & verification",
+      "norm_label": "3. run the development server",
       "source_file": "README.md",
-      "source_location": "L147"
+      "source_location": "L230"
     },
     {
-      "id": "readme_7_demo_personas",
-      "label": "7. Demo Personas",
+      "id": "readme_4_verifier_portal_deep_audit_verify_verify_id",
+      "label": "4. Verifier Portal & Deep Audit (`/verify` & `/verify/:id`)",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "7. demo personas",
+      "norm_label": "4. verifier portal & deep audit (`/verify` & `/verify/:id`)",
       "source_file": "README.md",
-      "source_location": "L173"
+      "source_location": "L119"
     },
     {
-      "id": "readme_core_functions",
-      "label": "Core Functions:",
+      "id": "readme_architecture_protocol_lifecycle",
+      "label": "\u26a1 Architecture & Protocol Lifecycle",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "core functions:",
+      "norm_label": "\u26a1 architecture & protocol lifecycle",
       "source_file": "README.md",
-      "source_location": "L133"
+      "source_location": "L45"
     },
     {
-      "id": "readme_discrete_validity_states",
-      "label": "Discrete Validity States:",
+      "id": "readme_comprehensive_verification_test_suite",
+      "label": "\ud83e\uddea Comprehensive Verification & Test Suite",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "discrete validity states:",
+      "norm_label": "\ud83e\uddea comprehensive verification & test suite",
       "source_file": "README.md",
-      "source_location": "L122"
+      "source_location": "L240"
     },
     {
-      "id": "readme_page_1_trust_profile_profile_address",
-      "label": "Page 1 \u2014 Trust Profile (`/profile/:address`)",
+      "id": "readme_contracts_overview",
+      "label": "Contracts Overview",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "page 1 \u2014 trust profile (`/profile/:address`)",
+      "norm_label": "contracts overview",
       "source_file": "README.md",
-      "source_location": "L71"
+      "source_location": "L152"
     },
     {
-      "id": "readme_page_2_issue_attestation_issue",
-      "label": "Page 2 \u2014 Issue Attestation (`/issue`)",
+      "id": "readme_core_contract_data_structures",
+      "label": "Core Contract Data Structures",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "page 2 \u2014 issue attestation (`/issue`)",
+      "norm_label": "core contract data structures",
       "source_file": "README.md",
-      "source_location": "L77"
+      "source_location": "L157"
     },
     {
-      "id": "readme_page_3_trust_graph_graph_address",
-      "label": "Page 3 \u2014 Trust Graph (`/graph/:address`)",
+      "id": "readme_demo_personas",
+      "label": "\ud83d\udc65 Demo Personas",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "page 3 \u2014 trust graph (`/graph/:address`)",
+      "norm_label": "\ud83d\udc65 demo personas",
+      "source_file": "README.md",
+      "source_location": "L293"
+    },
+    {
+      "id": "readme_evidence_backed_proof_of_work_passport_on_monad",
+      "label": "Evidence-Backed Proof-of-Work Passport on Monad",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "evidence-backed proof-of-work passport on monad",
+      "source_file": "README.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "readme_executive_overview",
+      "label": "\ud83d\udccc Executive Overview",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udccc executive overview",
+      "source_file": "README.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "readme_formal_state_transition_table",
+      "label": "Formal State Transition Table",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "formal state transition table",
       "source_file": "README.md",
       "source_location": "L84"
     },
     {
-      "id": "readme_page_4_verification_detail_verify_id",
-      "label": "Page 4 \u2014 Verification Detail (`/verify/:id`)",
+      "id": "readme_mathematical_state_machine_guardrails",
+      "label": "\ud83d\udd04 Mathematical State Machine & Guardrails",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "page 4 \u2014 verification detail (`/verify/:id`)",
+      "norm_label": "\ud83d\udd04 mathematical state machine & guardrails",
       "source_file": "README.md",
-      "source_location": "L89"
+      "source_location": "L76"
     },
     {
-      "id": "readme_production_build",
-      "label": "Production Build:",
+      "id": "readme_monad_testnet_network_configuration",
+      "label": "Monad Testnet Network Configuration",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "production build:",
+      "norm_label": "monad testnet network configuration",
       "source_file": "README.md",
-      "source_location": "L166"
+      "source_location": "L187"
     },
     {
-      "id": "readme_run_automated_security_lifecycle_test_suite",
-      "label": "Run Automated Security & Lifecycle Test Suite:",
+      "id": "readme_prerequisites",
+      "label": "Prerequisites",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "run automated security & lifecycle test suite:",
+      "norm_label": "prerequisites",
       "source_file": "README.md",
-      "source_location": "L149"
+      "source_location": "L202"
     },
     {
-      "id": "readme_run_typescript_verification",
-      "label": "Run TypeScript Verification:",
+      "id": "readme_primary_application_surfaces",
+      "label": "\ud83d\udda5\ufe0f Primary Application Surfaces",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "run typescript verification:",
+      "norm_label": "\ud83d\udda5\ufe0f primary application surfaces",
       "source_file": "README.md",
-      "source_location": "L161"
+      "source_location": "L98"
     },
     {
-      "id": "readme_the_core_architectural_distinction",
-      "label": "The Core Architectural Distinction:",
+      "id": "readme_quick_start_guide",
+      "label": "\ud83d\ude80 Quick Start Guide",
       "_origin": "ast",
       "community": 13,
       "community_name": "TrustGraph",
       "file_type": "document",
       "node_kind": "heading",
-      "norm_label": "the core architectural distinction:",
+      "norm_label": "\ud83d\ude80 quick start guide",
       "source_file": "README.md",
-      "source_location": "L38"
+      "source_location": "L200"
+    },
+    {
+      "id": "readme_repository_directory_structure",
+      "label": "\ud83d\udcc1 Repository Directory Structure",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcc1 repository directory structure",
+      "source_file": "README.md",
+      "source_location": "L304"
+    },
+    {
+      "id": "readme_run_all_tests",
+      "label": "Run All Tests",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "run all tests",
+      "source_file": "README.md",
+      "source_location": "L244"
+    },
+    {
+      "id": "readme_security_integrity_invariants",
+      "label": "\ud83d\udee1\ufe0f Security & Integrity Invariants",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udee1\ufe0f security & integrity invariants",
+      "source_file": "README.md",
+      "source_location": "L346"
+    },
+    {
+      "id": "readme_smart_contract_architecture",
+      "label": "\ud83d\udcdc Smart Contract Architecture",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udcdc smart contract architecture",
+      "source_file": "README.md",
+      "source_location": "L148"
+    },
+    {
+      "id": "readme_test_results_breakdown",
+      "label": "Test Results Breakdown",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "test results breakdown",
+      "source_file": "README.md",
+      "source_location": "L258"
+    },
+    {
+      "id": "readme_the_5_step_lifecycle_pipeline",
+      "label": "The 5-Step Lifecycle Pipeline",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "the 5-step lifecycle pipeline",
+      "source_file": "README.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "readme_the_7_independent_integrity_questions",
+      "label": "\ud83d\udd0d The 7 Independent Integrity Questions",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "\ud83d\udd0d the 7 independent integrity questions",
+      "source_file": "README.md",
+      "source_location": "L126"
     },
     {
       "id": "readme_trustgraph",
@@ -4949,7 +4838,31 @@
       "node_kind": "heading",
       "norm_label": "trustgraph",
       "source_file": "README.md",
-      "source_location": "L1"
+      "source_location": "L3"
+    },
+    {
+      "id": "readme_type_checking_production_build",
+      "label": "Type Checking & Production Build",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "type checking & production build",
+      "source_file": "README.md",
+      "source_location": "L281"
+    },
+    {
+      "id": "readme_why_trustgraph_on_monad",
+      "label": "Why TrustGraph on Monad?",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "TrustGraph",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "why trustgraph on monad?",
+      "source_file": "README.md",
+      "source_location": "L32"
     },
     {
       "id": "agents_skills_scaffold_skill",
@@ -5982,7 +5895,7 @@
       "label": "mockData.ts",
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "mockdata.ts",
       "source_file": "src/data/mockData.ts",
@@ -5993,7 +5906,7 @@
       "label": "MOCK_ATTESTATIONS",
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "mock_attestations",
       "source_file": "src/data/mockData.ts",
@@ -6004,7 +5917,7 @@
       "label": "MOCK_ISSUERS",
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "mock_issuers",
       "source_file": "src/data/mockData.ts",
@@ -6015,7 +5928,7 @@
       "label": "MOCK_PASSPORTS",
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "mock_passports",
       "source_file": "src/data/mockData.ts",
@@ -6026,7 +5939,7 @@
       "label": "MOCK_VERIFIERS",
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "mock_verifiers",
       "source_file": "src/data/mockData.ts",
@@ -6037,88 +5950,11 @@
       "label": "MOCK_WORKS",
       "_origin": "ast",
       "community": 2,
-      "community_name": "trustGraphService.ts",
+      "community_name": "trustGraphService",
       "file_type": "code",
       "norm_label": "mock_works",
       "source_file": "src/data/mockData.ts",
       "source_location": "L251"
-    },
-    {
-      "id": "src_lib_contract_config_demo_wallets",
-      "label": "DEMO_WALLETS",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trustGraphService.ts",
-      "file_type": "code",
-      "norm_label": "demo_wallets",
-      "source_file": "src/lib/contract/config.ts",
-      "source_location": "L26"
-    },
-    {
-      "id": "src_lib_contract_config_registry_address_configured",
-      "label": "REGISTRY_ADDRESS_CONFIGURED",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trustGraphService.ts",
-      "file_type": "code",
-      "norm_label": "registry_address_configured",
-      "source_file": "src/lib/contract/config.ts",
-      "source_location": "L22"
-    },
-    {
-      "id": "src_services_trustgraphservice",
-      "label": "trustGraphService.ts",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trustGraphService.ts",
-      "file_type": "code",
-      "norm_label": "trustgraphservice.ts",
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L1"
-    },
-    {
-      "id": "src_services_trustgraphservice_claimtypes",
-      "label": "claimTypes",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trustGraphService.ts",
-      "file_type": "code",
-      "norm_label": "claimtypes",
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L40"
-    },
-    {
-      "id": "src_services_trustgraphservice_publicclient",
-      "label": "publicClient",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trustGraphService.ts",
-      "file_type": "code",
-      "norm_label": "publicclient",
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L35"
-    },
-    {
-      "id": "src_services_trustgraphservice_seed_submissions",
-      "label": "SEED_SUBMISSIONS",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trustGraphService.ts",
-      "file_type": "code",
-      "norm_label": "seed_submissions",
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L20"
-    },
-    {
-      "id": "src_services_trustgraphservice_validitybycode",
-      "label": "validityByCode",
-      "_origin": "ast",
-      "community": 2,
-      "community_name": "trustGraphService.ts",
-      "file_type": "code",
-      "norm_label": "validitybycode",
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L46"
     },
     {
       "id": "package_devdependencies",
@@ -7471,18 +7307,6 @@
       "norm_label": "write instructions the model can execute",
       "source_file": ".agents/skills/e2e/references/agent.md",
       "source_location": "L193"
-    },
-    {
-      "id": "agents_skills_e2e_references_writing_tests",
-      "label": "writing-tests.md",
-      "_origin": "ast",
-      "community": 27,
-      "community_name": "Writing tests",
-      "file_type": "document",
-      "node_kind": "page",
-      "norm_label": "writing-tests.md",
-      "source_file": ".agents/skills/e2e/references/writing-tests.md",
-      "source_location": "L1"
     },
     {
       "id": "agents_skills_e2e_references_writing_tests_a_complete_file",
@@ -12459,6 +12283,18 @@
       "source_location": "L1"
     },
     {
+      "id": "agents_skills_e2e_references_writing_tests",
+      "label": "writing-tests.md",
+      "_origin": "ast",
+      "community": 50,
+      "community_name": "e2e/SKILL.md",
+      "file_type": "document",
+      "node_kind": "page",
+      "norm_label": "writing-tests.md",
+      "source_file": ".agents/skills/e2e/references/writing-tests.md",
+      "source_location": "L1"
+    },
+    {
       "id": "agents_skills_e2e_skill_e2e_agentic_end_to_end_tests_in_typescript",
       "label": "e2e: agentic end-to-end tests in TypeScript",
       "_origin": "ast",
@@ -13848,15 +13684,336 @@
       "source_location": "L19"
     },
     {
-      "id": "served_verify",
-      "label": "served-verify.js",
+      "id": "src_config_wagmi",
+      "label": "wagmi.ts",
       "_origin": "ast",
       "community": 72,
-      "community_name": "ref",
+      "community_name": "main.tsx",
       "file_type": "code",
-      "norm_label": "served-verify.js",
-      "source_file": "served-verify.js",
+      "norm_label": "wagmi.ts",
+      "source_file": "src/config/wagmi.ts",
       "source_location": "L1"
+    },
+    {
+      "id": "src_config_wagmi_config",
+      "label": "config",
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "main.tsx",
+      "file_type": "code",
+      "norm_label": "config",
+      "source_file": "src/config/wagmi.ts",
+      "source_location": "L5"
+    },
+    {
+      "id": "src_config_wagmi_wagmi",
+      "label": "wagmi",
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "main.tsx",
+      "file_type": "code",
+      "norm_label": "wagmi",
+      "source_file": "src/config/wagmi.ts",
+      "source_location": "L15"
+    },
+    {
+      "id": "src_main",
+      "label": "main.tsx",
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "main.tsx",
+      "file_type": "code",
+      "norm_label": "main.tsx",
+      "source_file": "src/main.tsx",
+      "source_location": "L1"
+    },
+    {
+      "id": "src_main_queryclient",
+      "label": "queryClient",
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "main.tsx",
+      "file_type": "code",
+      "norm_label": "queryclient",
+      "source_file": "src/main.tsx",
+      "source_location": "L9"
+    },
+    {
+      "id": "ref_react_dom",
+      "label": "react-dom",
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "main.tsx",
+      "file_type": "concept",
+      "norm_label": "react-dom",
+      "source_file": "package.json",
+      "source_location": "L28"
+    },
+    {
+      "id": "ref_tanstack_react_query",
+      "label": "@tanstack/react-query",
+      "_origin": "ast",
+      "community": 72,
+      "community_name": "main.tsx",
+      "file_type": "concept",
+      "norm_label": "@tanstack/react-query",
+      "source_file": "package.json",
+      "source_location": "L24"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation",
+      "label": "Attestation",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "struct"
+      },
+      "norm_label": "attestation",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L27"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_claimtype",
+      "label": "claimType",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "field"
+      },
+      "norm_label": "claimtype",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L31"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_evidencehash",
+      "label": "evidenceHash",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "field"
+      },
+      "norm_label": "evidencehash",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L32"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_evidenceuri",
+      "label": "evidenceUri",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "field"
+      },
+      "norm_label": "evidenceuri",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L33"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_expiry",
+      "label": "expiry",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "field"
+      },
+      "norm_label": "expiry",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L35"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_id",
+      "label": "id",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "field"
+      },
+      "norm_label": "id",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L28"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_issuedat",
+      "label": "issuedAt",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "field"
+      },
+      "norm_label": "issuedat",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L34"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_issuer",
+      "label": "issuer",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "field"
+      },
+      "norm_label": "issuer",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L29"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_revocationreason",
+      "label": "revocationReason",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "field"
+      },
+      "norm_label": "revocationreason",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L37"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_revoked",
+      "label": "revoked",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "field"
+      },
+      "norm_label": "revoked",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L36"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_struct_attestation_attestation_field_subject",
+      "label": "subject",
+      "_origin": "ast",
+      "community": 73,
+      "community_name": "Attestation",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "field"
+      },
+      "norm_label": "subject",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L30"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus",
+      "label": "ValidityStatus",
+      "_origin": "ast",
+      "community": 74,
+      "community_name": "ValidityStatus",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "enum"
+      },
+      "norm_label": "validitystatus",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L40"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus_expired",
+      "label": "EXPIRED",
+      "_origin": "ast",
+      "community": 74,
+      "community_name": "ValidityStatus",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "enum_value"
+      },
+      "norm_label": "expired",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L44"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus_invalid_issuer",
+      "label": "INVALID_ISSUER",
+      "_origin": "ast",
+      "community": 74,
+      "community_name": "ValidityStatus",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "enum_value"
+      },
+      "norm_label": "invalid_issuer",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L45"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus_not_found",
+      "label": "NOT_FOUND",
+      "_origin": "ast",
+      "community": 74,
+      "community_name": "ValidityStatus",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "enum_value"
+      },
+      "norm_label": "not_found",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L41"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus_revoked",
+      "label": "REVOKED",
+      "_origin": "ast",
+      "community": 74,
+      "community_name": "ValidityStatus",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "enum_value"
+      },
+      "norm_label": "revoked",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L43"
+    },
+    {
+      "id": "contracts_trustgraphregistry_contract_trustgraphregistry_enum_validitystatus_validitystatus_valid",
+      "label": "VALID",
+      "_origin": "ast",
+      "community": 74,
+      "community_name": "ValidityStatus",
+      "file_type": "code",
+      "metadata": {
+        "language": "solidity",
+        "kind": "enum_value"
+      },
+      "norm_label": "valid",
+      "source_file": "contracts/TrustGraphRegistry.sol",
+      "source_location": "L42"
     },
     {
       "id": "agents_skills_create_verification_skill_references_example_verify_playground_features_forms",
@@ -14366,21 +14523,10 @@
       "source_location": "L58"
     },
     {
-      "id": "src_index",
-      "label": "src_index",
-      "community": 0,
-      "community_name": "useWorkRegistry.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "src_index",
-      "source_file": "",
-      "type": "external"
-    },
-    {
       "id": "src_lib_contract_config_getexploreraddressurl",
       "label": "src_lib_contract_config_getexploreraddressurl",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "src_lib_contract_config_getexploreraddressurl",
@@ -14391,7 +14537,7 @@
       "id": "src_lib_contract_config_getexplorertxurl",
       "label": "src_lib_contract_config_getexplorertxurl",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "src_lib_contract_config_getexplorertxurl",
@@ -14402,10 +14548,21 @@
       "id": "src_lib_contract_config_monad_testnet_chain_id",
       "label": "src_lib_contract_config_monad_testnet_chain_id",
       "community": 0,
-      "community_name": "useWorkRegistry.ts",
+      "community_name": "trustGraphService.ts",
       "external": true,
       "file_type": "concept",
       "norm_label": "src_lib_contract_config_monad_testnet_chain_id",
+      "source_file": "",
+      "type": "external"
+    },
+    {
+      "id": "src_lib_contract_config_monadtestnet",
+      "label": "src_lib_contract_config_monadtestnet",
+      "community": 0,
+      "community_name": "trustGraphService.ts",
+      "external": true,
+      "file_type": "concept",
+      "norm_label": "src_lib_contract_config_monadtestnet",
       "source_file": "",
       "type": "external"
     },
@@ -14450,17 +14607,6 @@
       "external": true,
       "file_type": "concept",
       "norm_label": "ref_node_path",
-      "source_file": "",
-      "type": "external"
-    },
-    {
-      "id": "src_lib_contract_config_monadtestnet",
-      "label": "src_lib_contract_config_monadtestnet",
-      "community": 2,
-      "community_name": "trustGraphService.ts",
-      "external": true,
-      "file_type": "concept",
-      "norm_label": "src_lib_contract_config_monadtestnet",
       "source_file": "",
       "type": "external"
     },
@@ -14531,13 +14677,13 @@
       "type": "external"
     },
     {
-      "id": "ref",
-      "label": "ref",
+      "id": "src_index",
+      "label": "src_index",
       "community": 72,
-      "community_name": "ref",
+      "community_name": "main.tsx",
       "external": true,
       "file_type": "concept",
-      "norm_label": "ref",
+      "norm_label": "src_index",
       "source_file": "",
       "type": "external"
     }
@@ -14641,6 +14787,18 @@
     },
     {
       "source": "src_components_layout_applayout_applayout",
+      "target": "src_hooks_usetrustgraph_usecontractstatus",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/components/layout/AppLayout.tsx",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_layout_applayout_applayout",
       "target": "src_services_trustgraphservice_trustgraphservice_setmode",
       "relation": "calls",
       "_origin": "ast",
@@ -14648,7 +14806,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L18",
+      "source_location": "L20",
       "weight": 1.0
     },
     {
@@ -14660,7 +14818,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L45",
+      "source_location": "L50",
       "weight": 1.0
     },
     {
@@ -14672,7 +14830,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L51",
+      "source_location": "L56",
       "weight": 1.0
     },
     {
@@ -14756,7 +14914,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L105",
+      "source_location": "L113",
       "weight": 1.0
     },
     {
@@ -14768,7 +14926,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L119",
+      "source_location": "L127",
       "weight": 1.0
     },
     {
@@ -14780,7 +14938,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L148",
+      "source_location": "L156",
       "weight": 1.0
     },
     {
@@ -14792,7 +14950,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L176",
+      "source_location": "L184",
       "weight": 1.0
     },
     {
@@ -14804,7 +14962,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L209",
+      "source_location": "L217",
       "weight": 1.0
     },
     {
@@ -15188,7 +15346,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/IssueAttestationPage.tsx",
-      "source_location": "L149",
+      "source_location": "L151",
       "weight": 1.0
     },
     {
@@ -15200,7 +15358,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/IssueAttestationPage.tsx",
-      "source_location": "L195",
+      "source_location": "L226",
       "weight": 1.0
     },
     {
@@ -15229,6 +15387,18 @@
     },
     {
       "source": "src_pages_issueattestationpage_issueattestationpage",
+      "target": "src_hooks_usetrustgraph_usecontractstatus",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/pages/IssueAttestationPage.tsx",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_issueattestationpage_issueattestationpage",
       "target": "src_utils_formatters_computesha256",
       "relation": "calls",
       "_origin": "ast",
@@ -15236,7 +15406,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/IssueAttestationPage.tsx",
-      "source_location": "L78",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_submitworkpage_submitworkpage",
+      "target": "src_utils_formatters_shortenaddress",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/pages/SubmitWorkPage.tsx",
+      "source_location": "L108",
       "weight": 1.0
     },
     {
@@ -15248,7 +15430,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L131",
+      "source_location": "L137",
       "weight": 1.0
     },
     {
@@ -15260,7 +15442,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L202",
+      "source_location": "L208",
       "weight": 1.0
     },
     {
@@ -15272,7 +15454,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L35",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -15284,7 +15466,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L69",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -15464,7 +15646,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L125",
+      "source_location": "L140",
       "weight": 1.0
     },
     {
@@ -15476,7 +15658,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L129",
+      "source_location": "L144",
       "weight": 1.0
     },
     {
@@ -15488,7 +15670,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L360",
+      "source_location": "L377",
       "weight": 1.0
     },
     {
@@ -15500,7 +15682,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L369",
+      "source_location": "L386",
       "weight": 1.0
     },
     {
@@ -15512,19 +15694,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L391",
-      "weight": 1.0
-    },
-    {
-      "source": "src_pages_verificationdetailpage_verificationdetailpage",
-      "target": "src_hooks_usetrustgraph_useattestation",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L40",
+      "source_location": "L408",
       "weight": 1.0
     },
     {
@@ -15536,7 +15706,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L409",
+      "source_location": "L426",
       "weight": 1.0
     },
     {
@@ -15548,7 +15718,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L414",
+      "source_location": "L431",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_verificationdetailpage_verificationdetailpage",
+      "target": "src_hooks_usetrustgraph_useattestation",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/pages/VerificationDetailPage.tsx",
+      "source_location": "L44",
       "weight": 1.0
     },
     {
@@ -15560,7 +15742,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L42",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_verificationdetailpage_verificationdetailpage",
+      "target": "src_hooks_useworkregistry_userevokework",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/pages/VerificationDetailPage.tsx",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_verificationdetailpage_verificationdetailpage",
+      "target": "src_hooks_useworkregistry_useverifierstatus",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/pages/VerificationDetailPage.tsx",
+      "source_location": "L48",
       "weight": 1.0
     },
     {
@@ -15572,7 +15778,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L43",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -15584,7 +15790,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L69",
+      "source_location": "L75",
       "weight": 1.0
     },
     {
@@ -15596,7 +15802,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerifyPage.tsx",
-      "source_location": "L123",
+      "source_location": "L119",
       "weight": 1.0
     },
     {
@@ -15608,19 +15814,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerifyPage.tsx",
-      "source_location": "L296",
-      "weight": 1.0
-    },
-    {
-      "source": "src_pages_verifypage_verifypage",
-      "target": "src_utils_formatters_formatdatetime",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/pages/VerifyPage.tsx",
-      "source_location": "L333",
+      "source_location": "L346",
       "weight": 1.0
     },
     {
@@ -15633,6 +15827,18 @@
       "context": "call",
       "source_file": "src/pages/VerifyPage.tsx",
       "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_verifypage_verifypage",
+      "target": "src_utils_formatters_formatdatetime",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/pages/VerifyPage.tsx",
+      "source_location": "L383",
       "weight": 1.0
     },
     {
@@ -15661,6 +15867,18 @@
     },
     {
       "source": "src_pages_verifypage_verifypage",
+      "target": "src_hooks_useworkregistry_useverifierstatus",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/pages/VerifyPage.tsx",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_verifypage_verifypage",
       "target": "src_utils_formatters_getvaliditydetails",
       "relation": "calls",
       "_origin": "ast",
@@ -15668,7 +15886,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerifyPage.tsx",
-      "source_location": "L416",
+      "source_location": "L466",
       "weight": 1.0
     },
     {
@@ -15680,19 +15898,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/pages/VerifyPage.tsx",
-      "source_location": "L437",
-      "weight": 1.0
-    },
-    {
-      "source": "src_pages_verifypage_verifypage",
-      "target": "src_hooks_useworkregistry_useverifierstatus",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/pages/VerifyPage.tsx",
-      "source_location": "L44",
+      "source_location": "L487",
       "weight": 1.0
     },
     {
@@ -15752,7 +15958,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L55",
+      "source_location": "L58",
       "weight": 1.0
     },
     {
@@ -15764,7 +15970,19 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L681",
+      "source_location": "L989",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice_assertregistryavailable",
+      "target": "src_services_trustgraphservice_trustgraphservice_hascontractbytecode",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L224",
       "weight": 1.0
     },
     {
@@ -15776,7 +15994,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L84",
+      "source_location": "L87",
       "weight": 1.0
     },
     {
@@ -15788,7 +16006,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L362",
+      "source_location": "L502",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice_getallattestations",
+      "target": "src_utils_formatters_enumindextoworktype",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L527",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice_getallattestations",
+      "target": "src_utils_formatters_shortenaddress",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L533",
       "weight": 1.0
     },
     {
@@ -15800,7 +16042,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L364",
+      "source_location": "L569",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice_getattestationbyid",
+      "target": "src_utils_formatters_enumindextoworktype",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L414",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice_getattestationbyid",
+      "target": "src_utils_formatters_shortenaddress",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L420",
       "weight": 1.0
     },
     {
@@ -15812,7 +16078,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L317",
+      "source_location": "L453",
       "weight": 1.0
     },
     {
@@ -15824,7 +16090,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L357",
+      "source_location": "L497",
       "weight": 1.0
     },
     {
@@ -15836,7 +16102,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L446",
+      "source_location": "L755",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice_getissuers",
+      "target": "src_services_trustgraphservice_trustgraphservice_isissuerauthorized",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L761",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice_getissuers",
+      "target": "src_utils_formatters_shortenaddress",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L770",
       "weight": 1.0
     },
     {
@@ -15848,7 +16138,31 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L375",
+      "source_location": "L587",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice_getprofile",
+      "target": "src_utils_formatters_enumindextoworktype",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L614",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice_getprofile",
+      "target": "src_utils_formatters_shortenaddress",
+      "relation": "calls",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "call",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L620",
       "weight": 1.0
     },
     {
@@ -15860,7 +16174,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L381",
+      "source_location": "L660",
       "weight": 1.0
     },
     {
@@ -15872,31 +16186,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L429",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice_trustgraphservice_getregistryowner",
-      "target": "src_services_trustgraphservice_trustgraphservice_assertregistryavailable",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L165",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice_trustgraphservice_isissuerauthorized",
-      "target": "src_services_trustgraphservice_trustgraphservice_assertregistryavailable",
-      "relation": "calls",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "call",
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L435",
+      "source_location": "L703",
       "weight": 1.0
     },
     {
@@ -15908,7 +16198,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L523",
+      "source_location": "L831",
       "weight": 1.0
     },
     {
@@ -15920,7 +16210,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L552",
+      "source_location": "L860",
       "weight": 1.0
     },
     {
@@ -15932,7 +16222,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L173",
+      "source_location": "L256",
       "weight": 1.0
     },
     {
@@ -15944,7 +16234,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L195",
+      "source_location": "L278",
       "weight": 1.0
     },
     {
@@ -15956,7 +16246,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L216",
+      "source_location": "L299",
       "weight": 1.0
     },
     {
@@ -15968,7 +16258,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L223",
+      "source_location": "L306",
       "weight": 1.0
     },
     {
@@ -15980,7 +16270,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L281",
+      "source_location": "L364",
       "weight": 1.0
     },
     {
@@ -15992,7 +16282,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L301",
+      "source_location": "L384",
       "weight": 1.0
     },
     {
@@ -16004,7 +16294,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L308",
+      "source_location": "L391",
       "weight": 1.0
     },
     {
@@ -16016,7 +16306,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L668",
+      "source_location": "L976",
       "weight": 1.0
     },
     {
@@ -16028,7 +16318,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L690",
+      "source_location": "L998",
       "weight": 1.0
     },
     {
@@ -16040,7 +16330,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L578",
+      "source_location": "L886",
       "weight": 1.0
     },
     {
@@ -16052,7 +16342,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L135",
+      "source_location": "L138",
       "weight": 1.0
     },
     {
@@ -16064,7 +16354,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L647",
+      "source_location": "L955",
       "weight": 1.0
     },
     {
@@ -16076,7 +16366,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L592",
+      "source_location": "L900",
       "weight": 1.0
     },
     {
@@ -16088,7 +16378,7 @@
       "confidence_score": 1.0,
       "context": "call",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L603",
+      "source_location": "L911",
       "weight": 1.0
     },
     {
@@ -16412,7 +16702,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L78",
+      "source_location": "L81",
       "weight": 1.0
     },
     {
@@ -16424,7 +16714,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L79",
+      "source_location": "L82",
       "weight": 1.0
     },
     {
@@ -16436,7 +16726,7 @@
       "confidence_score": 1.0,
       "context": "field",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L80",
+      "source_location": "L83",
       "weight": 1.0
     },
     {
@@ -16448,7 +16738,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L673",
+      "source_location": "L981",
       "weight": 1.0
     },
     {
@@ -16460,7 +16750,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L360",
+      "source_location": "L500",
       "weight": 1.0
     },
     {
@@ -16472,7 +16762,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L313",
+      "source_location": "L396",
       "weight": 1.0
     },
     {
@@ -16484,7 +16774,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L444",
+      "source_location": "L753",
       "weight": 1.0
     },
     {
@@ -16496,7 +16786,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L370",
+      "source_location": "L582",
       "weight": 1.0
     },
     {
@@ -16508,7 +16798,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L505",
+      "source_location": "L813",
       "weight": 1.0
     },
     {
@@ -16520,7 +16810,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L169",
+      "source_location": "L252",
       "weight": 1.0
     },
     {
@@ -16532,7 +16822,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L221",
+      "source_location": "L304",
       "weight": 1.0
     },
     {
@@ -16544,7 +16834,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L660",
+      "source_location": "L968",
       "weight": 1.0
     },
     {
@@ -16556,7 +16846,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L556",
+      "source_location": "L864",
       "weight": 1.0
     },
     {
@@ -16568,7 +16858,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L625",
+      "source_location": "L933",
       "weight": 1.0
     },
     {
@@ -16580,7 +16870,7 @@
       "confidence_score": 1.0,
       "context": "generic_arg",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L582",
+      "source_location": "L890",
       "weight": 1.0
     },
     {
@@ -17061,6 +17351,18 @@
       "context": "import",
       "source_file": "src/components/layout/AppLayout.tsx",
       "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_layout_applayout",
+      "target": "src_hooks_usetrustgraph_usecontractstatus",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/components/layout/AppLayout.tsx",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -17701,6 +18003,18 @@
     },
     {
       "source": "src_pages_issueattestationpage",
+      "target": "src_hooks_usetrustgraph_usecontractstatus",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/IssueAttestationPage.tsx",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_issueattestationpage",
       "target": "src_hooks_usetrustgraph_useissueattestation",
       "relation": "imports",
       "_origin": "ast",
@@ -17828,7 +18142,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L15",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -17840,7 +18154,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -17852,7 +18166,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -17864,7 +18178,19 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L17",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_submitworkpage",
+      "target": "src_utils_formatters_shortenaddress",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/SubmitWorkPage.tsx",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -17876,7 +18202,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L21",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -17888,7 +18214,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L22",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -17900,7 +18226,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L22",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -17912,7 +18238,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L22",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -17924,7 +18250,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L22",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -18253,7 +18579,7 @@
     },
     {
       "source": "src_pages_verificationdetailpage",
-      "target": "src_utils_formatters_computesha256",
+      "target": "src_hooks_useworkregistry_userevokework",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -18261,6 +18587,30 @@
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
       "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_verificationdetailpage",
+      "target": "src_hooks_useworkregistry_useverifierstatus",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/VerificationDetailPage.tsx",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_verificationdetailpage",
+      "target": "src_utils_formatters_computesha256",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/VerificationDetailPage.tsx",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -18272,7 +18622,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -18284,7 +18634,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -18296,7 +18646,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -18308,7 +18658,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -18320,7 +18670,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -18332,7 +18682,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L22",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -18344,7 +18694,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -18356,7 +18706,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -18368,7 +18718,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -18380,7 +18730,31 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_verificationdetailpage",
+      "target": "src_lib_contract_config_proof_of_work_registry_address",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/VerificationDetailPage.tsx",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_verificationdetailpage",
+      "target": "src_lib_contract_config_proof_of_work_registry_configured",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/VerificationDetailPage.tsx",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -18392,7 +18766,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -18637,6 +19011,18 @@
     },
     {
       "source": "src_services_trustgraphservice",
+      "target": "src_lib_contract_abi_proofofworkregistryabi",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice",
       "target": "src_utils_formatters_bytes32tostring",
       "relation": "imports",
       "_origin": "ast",
@@ -18644,7 +19030,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L11",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -18656,7 +19042,43 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L11",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice",
+      "target": "src_utils_formatters_enumindextostatus",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice",
+      "target": "src_utils_formatters_enumindextoworktype",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice",
+      "target": "src_utils_formatters_shortenaddress",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -18668,7 +19090,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L12",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -18680,7 +19102,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L12",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -18692,7 +19114,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L12",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -18830,6 +19252,30 @@
     {
       "source": "src_services_trustgraphservice",
       "target": "src_lib_contract_config_monadtestnet",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice",
+      "target": "src_lib_contract_config_proof_of_work_registry_address",
+      "relation": "imports",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice",
+      "target": "src_lib_contract_config_proof_of_work_registry_configured",
       "relation": "imports",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -19033,18 +19479,6 @@
       "weight": 1.0
     },
     {
-      "source": "served_verify",
-      "target": "ref",
-      "relation": "imports_from",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "context": "import",
-      "source_file": "served-verify.js",
-      "source_location": "L46",
-      "weight": 1.0
-    },
-    {
       "source": "src_app",
       "target": "ref_react",
       "relation": "imports_from",
@@ -19186,6 +19620,18 @@
       "context": "import",
       "source_file": "src/components/layout/AppLayout.tsx",
       "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "src_components_layout_applayout",
+      "target": "src_hooks_usetrustgraph",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/components/layout/AppLayout.tsx",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -19965,7 +20411,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L15",
+      "source_location": "L17",
       "weight": 1.0
     },
     {
@@ -19977,7 +20423,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L16",
+      "source_location": "L18",
       "weight": 1.0
     },
     {
@@ -19989,7 +20435,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L17",
+      "source_location": "L19",
       "weight": 1.0
     },
     {
@@ -20013,7 +20459,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L21",
+      "source_location": "L24",
       "weight": 1.0
     },
     {
@@ -20025,7 +20471,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L22",
+      "source_location": "L25",
       "weight": 1.0
     },
     {
@@ -20042,7 +20488,7 @@
     },
     {
       "source": "src_pages_submitworkpage",
-      "target": "ref_lucide_react",
+      "target": "ref_viem",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -20050,6 +20496,18 @@
       "context": "import",
       "source_file": "src/pages/SubmitWorkPage.tsx",
       "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_submitworkpage",
+      "target": "ref_lucide_react",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/SubmitWorkPage.tsx",
+      "source_location": "L5",
       "weight": 1.0
     },
     {
@@ -20258,7 +20716,7 @@
     },
     {
       "source": "src_pages_verificationdetailpage",
-      "target": "src_utils_formatters",
+      "target": "src_hooks_useworkregistry",
       "relation": "imports_from",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -20266,6 +20724,18 @@
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
       "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "src_pages_verificationdetailpage",
+      "target": "src_utils_formatters",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/pages/VerificationDetailPage.tsx",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -20289,7 +20759,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0
     },
     {
@@ -20438,6 +20908,18 @@
     },
     {
       "source": "src_services_trustgraphservice",
+      "target": "src_lib_contract_abi",
+      "relation": "imports_from",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "context": "import",
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice",
       "target": "src_utils_formatters",
       "relation": "imports_from",
       "_origin": "ast",
@@ -20445,7 +20927,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L11",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -20457,7 +20939,7 @@
       "confidence_score": 1.0,
       "context": "import",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L12",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -20745,7 +21227,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L505",
+      "source_location": "L813",
       "weight": 1.0
     },
     {
@@ -20757,7 +21239,7 @@
       "confidence_score": 1.0,
       "context": "parameter_type",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L625",
+      "source_location": "L933",
       "weight": 1.0
     },
     {
@@ -20973,7 +21455,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L472",
+      "source_location": "L780",
       "weight": 1.0
     },
     {
@@ -20985,7 +21467,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L656",
+      "source_location": "L964",
       "weight": 1.0
     },
     {
@@ -20997,7 +21479,7 @@
       "confidence_score": 1.0,
       "context": "return_type",
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L652",
+      "source_location": "L960",
       "weight": 1.0
     },
     {
@@ -28389,45 +28871,67 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L1",
+      "source_location": "L3",
       "weight": 1.0
     },
     {
-      "source": "readme_1_product_model",
-      "target": "readme_the_core_architectural_distinction",
+      "source": "readme_architecture_protocol_lifecycle",
+      "target": "readme_the_5_step_lifecycle_pipeline",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L38",
+      "source_location": "L53",
       "weight": 1.0
     },
     {
-      "source": "readme_4_four_primary_mvp_pages",
-      "target": "readme_page_1_trust_profile_profile_address",
+      "source": "readme_comprehensive_verification_test_suite",
+      "target": "readme_run_all_tests",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L71",
+      "source_location": "L244",
       "weight": 1.0
     },
     {
-      "source": "readme_4_four_primary_mvp_pages",
-      "target": "readme_page_2_issue_attestation_issue",
+      "source": "readme_comprehensive_verification_test_suite",
+      "target": "readme_test_results_breakdown",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L77",
+      "source_location": "L258",
       "weight": 1.0
     },
     {
-      "source": "readme_4_four_primary_mvp_pages",
-      "target": "readme_page_3_trust_graph_graph_address",
+      "source": "readme_comprehensive_verification_test_suite",
+      "target": "readme_type_checking_production_build",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L281",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_executive_overview",
+      "target": "readme_why_trustgraph_on_monad",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_mathematical_state_machine_guardrails",
+      "target": "readme_formal_state_transition_table",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -28437,146 +28941,256 @@
       "weight": 1.0
     },
     {
-      "source": "readme_4_four_primary_mvp_pages",
-      "target": "readme_page_4_verification_detail_verify_id",
+      "source": "readme_primary_application_surfaces",
+      "target": "readme_1_trust_profile_profile_address",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L89",
+      "source_location": "L104",
       "weight": 1.0
     },
     {
-      "source": "readme_5_smart_contract_architecture",
-      "target": "readme_discrete_validity_states",
+      "source": "readme_primary_application_surfaces",
+      "target": "readme_2_work_registration_attestation_submit_issue",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L122",
+      "source_location": "L109",
       "weight": 1.0
     },
     {
-      "source": "readme_5_smart_contract_architecture",
-      "target": "readme_core_functions",
+      "source": "readme_primary_application_surfaces",
+      "target": "readme_3_interactive_trust_graph_canvas_graph_address",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L133",
+      "source_location": "L114",
       "weight": 1.0
     },
     {
-      "source": "readme_6_testing_verification",
-      "target": "readme_run_automated_security_lifecycle_test_suite",
+      "source": "readme_primary_application_surfaces",
+      "target": "readme_4_verifier_portal_deep_audit_verify_verify_id",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L149",
+      "source_location": "L119",
       "weight": 1.0
     },
     {
-      "source": "readme_6_testing_verification",
-      "target": "readme_run_typescript_verification",
+      "source": "readme_quick_start_guide",
+      "target": "readme_prerequisites",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L161",
+      "source_location": "L202",
       "weight": 1.0
     },
     {
-      "source": "readme_6_testing_verification",
-      "target": "readme_production_build",
+      "source": "readme_quick_start_guide",
+      "target": "readme_1_clone_install_dependencies",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L166",
+      "source_location": "L208",
       "weight": 1.0
     },
     {
-      "source": "readme_trustgraph",
-      "target": "readme_5_smart_contract_architecture",
+      "source": "readme_quick_start_guide",
+      "target": "readme_2_configure_environment",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L102",
+      "source_location": "L216",
       "weight": 1.0
     },
     {
-      "source": "readme_trustgraph",
-      "target": "readme_6_testing_verification",
+      "source": "readme_quick_start_guide",
+      "target": "readme_3_run_the_development_server",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L147",
+      "source_location": "L230",
       "weight": 1.0
     },
     {
-      "source": "readme_trustgraph",
-      "target": "readme_7_demo_personas",
+      "source": "readme_smart_contract_architecture",
+      "target": "readme_contracts_overview",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L173",
+      "source_location": "L152",
       "weight": 1.0
     },
     {
-      "source": "readme_trustgraph",
-      "target": "readme_1_product_model",
+      "source": "readme_smart_contract_architecture",
+      "target": "readme_core_contract_data_structures",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L22",
+      "source_location": "L157",
       "weight": 1.0
     },
     {
-      "source": "readme_trustgraph",
-      "target": "readme_2_core_user_roles",
+      "source": "readme_smart_contract_architecture",
+      "target": "readme_monad_testnet_network_configuration",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L43",
-      "weight": 1.0
-    },
-    {
-      "source": "readme_trustgraph",
-      "target": "readme_3_supported_claim_types",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "README.md",
-      "source_location": "L60",
+      "source_location": "L187",
       "weight": 1.0
     },
     {
       "source": "readme_trustgraph",
-      "target": "readme_4_four_primary_mvp_pages",
+      "target": "readme_the_7_independent_integrity_questions",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "README.md",
-      "source_location": "L69",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_evidence_backed_proof_of_work_passport_on_monad",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_smart_contract_architecture",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L148",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_quick_start_guide",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L200",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_executive_overview",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_comprehensive_verification_test_suite",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L240",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_demo_personas",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L293",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_repository_directory_structure",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_security_integrity_invariants",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L346",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_architecture_protocol_lifecycle",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_mathematical_state_machine_guardrails",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_trustgraph",
+      "target": "readme_primary_application_surfaces",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "README.md",
+      "source_location": "L98",
       "weight": 1.0
     },
     {
@@ -28686,7 +29300,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/components/layout/AppLayout.tsx",
-      "source_location": "L14",
+      "source_location": "L15",
       "weight": 1.0
     },
     {
@@ -28873,7 +29487,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L163",
+      "source_location": "L171",
       "weight": 1.0
     },
     {
@@ -28922,7 +29536,7 @@
     },
     {
       "source": "src_hooks_usetrustgraph",
-      "target": "src_hooks_usetrustgraph_txstep",
+      "target": "src_hooks_usetrustgraph_usecontractstatus",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
@@ -28933,13 +29547,24 @@
     },
     {
       "source": "src_hooks_usetrustgraph",
+      "target": "src_hooks_usetrustgraph_txstep",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/hooks/useTrustGraph.ts",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "src_hooks_usetrustgraph",
       "target": "src_hooks_usetrustgraph_errortext",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L65",
+      "source_location": "L73",
       "weight": 1.0
     },
     {
@@ -28950,7 +29575,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L75",
+      "source_location": "L83",
       "weight": 1.0
     },
     {
@@ -28961,7 +29586,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/hooks/useTrustGraph.ts",
-      "source_location": "L80",
+      "source_location": "L88",
       "weight": 1.0
     },
     {
@@ -29379,7 +30004,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/IssueAttestationPage.tsx",
-      "source_location": "L485",
+      "source_location": "L534",
       "weight": 1.0
     },
     {
@@ -29390,7 +30015,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/SubmitWorkPage.tsx",
-      "source_location": "L24",
+      "source_location": "L27",
       "weight": 1.0
     },
     {
@@ -29445,7 +30070,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L37",
+      "source_location": "L40",
       "weight": 1.0
     },
     {
@@ -29456,7 +30081,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/VerificationDetailPage.tsx",
-      "source_location": "L491",
+      "source_location": "L508",
       "weight": 1.0
     },
     {
@@ -29472,13 +30097,24 @@
     },
     {
       "source": "src_services_trustgraphservice",
+      "target": "src_services_trustgraphservice_trustgraphservice",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L1002",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice",
       "target": "src_services_trustgraphservice_seed_submissions",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L20",
+      "source_location": "L23",
       "weight": 1.0
     },
     {
@@ -29489,7 +30125,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L35",
+      "source_location": "L38",
       "weight": 1.0
     },
     {
@@ -29500,7 +30136,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L40",
+      "source_location": "L43",
       "weight": 1.0
     },
     {
@@ -29511,7 +30147,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L46",
+      "source_location": "L49",
       "weight": 1.0
     },
     {
@@ -29522,7 +30158,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L54",
+      "source_location": "L57",
       "weight": 1.0
     },
     {
@@ -29533,18 +30169,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L60",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice",
-      "target": "src_services_trustgraphservice_trustgraphservice",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L694",
+      "source_location": "L63",
       "weight": 1.0
     },
     {
@@ -31566,7 +32191,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L118",
+      "source_location": "L121",
       "weight": 1.0
     },
     {
@@ -31577,7 +32202,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L129",
+      "source_location": "L132",
       "weight": 1.0
     },
     {
@@ -31588,7 +32213,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L133",
+      "source_location": "L136",
       "weight": 1.0
     },
     {
@@ -31599,7 +32224,18 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L142",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice",
+      "target": "src_services_trustgraphservice_trustgraphservice_getcontractstatus",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L166",
       "weight": 1.0
     },
     {
@@ -31610,7 +32246,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L150",
+      "source_location": "L219",
       "weight": 1.0
     },
     {
@@ -31621,7 +32257,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L164",
+      "source_location": "L230",
       "weight": 1.0
     },
     {
@@ -31632,7 +32268,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L169",
+      "source_location": "L252",
       "weight": 1.0
     },
     {
@@ -31643,7 +32279,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L221",
+      "source_location": "L304",
       "weight": 1.0
     },
     {
@@ -31654,7 +32290,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L313",
+      "source_location": "L396",
       "weight": 1.0
     },
     {
@@ -31665,7 +32301,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L360",
+      "source_location": "L500",
       "weight": 1.0
     },
     {
@@ -31676,7 +32312,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L370",
+      "source_location": "L582",
       "weight": 1.0
     },
     {
@@ -31687,7 +32323,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L432",
+      "source_location": "L706",
       "weight": 1.0
     },
     {
@@ -31698,7 +32334,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L444",
+      "source_location": "L753",
       "weight": 1.0
     },
     {
@@ -31709,7 +32345,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L472",
+      "source_location": "L780",
       "weight": 1.0
     },
     {
@@ -31720,95 +32356,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L505",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice_trustgraphservice",
-      "target": "src_services_trustgraphservice_trustgraphservice_revokeattestation",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L556",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice_trustgraphservice",
-      "target": "src_services_trustgraphservice_trustgraphservice_verifyevidencematch",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L582",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice_trustgraphservice",
-      "target": "src_services_trustgraphservice_trustgraphservice_submitwork",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L625",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice_trustgraphservice",
-      "target": "src_services_trustgraphservice_trustgraphservice_getsubmissions",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L652",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice_trustgraphservice",
-      "target": "src_services_trustgraphservice_trustgraphservice_getpendingsubmissions",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L656",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice_trustgraphservice",
-      "target": "src_services_trustgraphservice_trustgraphservice_rejectsubmission",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L660",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice_trustgraphservice",
-      "target": "src_services_trustgraphservice_trustgraphservice_approvesubmission",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L673",
-      "weight": 1.0
-    },
-    {
-      "source": "src_services_trustgraphservice_trustgraphservice",
-      "target": "src_services_trustgraphservice_trustgraphservice_resetsandbox",
-      "relation": "method",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L686",
+      "source_location": "L813",
       "weight": 1.0
     },
     {
@@ -31819,7 +32367,29 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L83",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice",
+      "target": "src_services_trustgraphservice_trustgraphservice_revokeattestation",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L864",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice",
+      "target": "src_services_trustgraphservice_trustgraphservice_verifyevidencematch",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L890",
       "weight": 1.0
     },
     {
@@ -31830,7 +32400,73 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/services/trustGraphService.ts",
-      "source_location": "L87",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice",
+      "target": "src_services_trustgraphservice_trustgraphservice_submitwork",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L933",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice",
+      "target": "src_services_trustgraphservice_trustgraphservice_getsubmissions",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L960",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice",
+      "target": "src_services_trustgraphservice_trustgraphservice_getpendingsubmissions",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L964",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice",
+      "target": "src_services_trustgraphservice_trustgraphservice_rejectsubmission",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L968",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice",
+      "target": "src_services_trustgraphservice_trustgraphservice_approvesubmission",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L981",
+      "weight": 1.0
+    },
+    {
+      "source": "src_services_trustgraphservice_trustgraphservice",
+      "target": "src_services_trustgraphservice_trustgraphservice_resetsandbox",
+      "relation": "method",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "src/services/trustGraphService.ts",
+      "source_location": "L994",
       "weight": 1.0
     },
     {
@@ -32851,18 +33487,6 @@
       "weight": 1.0
     },
     {
-      "source": "readme_page_3_trust_graph_graph_address",
-      "target": "src_types_index_evidence",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "INFERRED",
-      "confidence_score": 0.95,
-      "context": "Evidence",
-      "source_file": "README.md",
-      "source_location": "L85",
-      "weight": 1.0
-    },
-    {
       "source": "project_audit_1_current_state",
       "target": "src_types_index_passport",
       "relation": "references",
@@ -32896,6 +33520,18 @@
       "context": "Passport",
       "source_file": "PROJECT_AUDIT.md",
       "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "readme_mathematical_state_machine_guardrails",
+      "target": "contracts_proofofworkregistry_contract_proofofworkregistry",
+      "relation": "references",
+      "_origin": "ast",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "context": "ProofOfWorkRegistry",
+      "source_file": "README.md",
+      "source_location": "L78",
       "weight": 1.0
     },
     {
@@ -33079,18 +33715,6 @@
       "weight": 1.0
     },
     {
-      "source": "readme_page_2_issue_attestation_issue",
-      "target": "contracts_trustgraphregistry_contract_trustgraphregistry_function_isissuer_1_address",
-      "relation": "references",
-      "_origin": "ast",
-      "confidence": "INFERRED",
-      "confidence_score": 0.95,
-      "context": "isIssuer()",
-      "source_file": "README.md",
-      "source_location": "L78",
-      "weight": 1.0
-    },
-    {
       "source": "project_audit_1_current_state",
       "target": "contracts_proofofworkregistry_contract_proofofworkregistry_function_isverifier_1_address",
       "relation": "references",
@@ -33248,5 +33872,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c569e01ef502ac06475b01f86ab764492581b624"
+  "built_at_commit": "41372993b3283f0be7058a641004e349d01b78af"
 }

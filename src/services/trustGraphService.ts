@@ -1,4 +1,4 @@
-import { createPublicClient, http, isAddress } from 'viem';
+import { createPublicClient, http, isAddress, zeroAddress } from 'viem';
 import { Attestation, ClaimType, IssuerProfile, TrustProfile, ValidityStatus, WorkSubmission } from '../types';
 import { 
   CONTRACT_CONFIG, 
@@ -6,9 +6,12 @@ import {
   MONAD_TESTNET_CHAIN_ID, 
   TRUST_GRAPH_REGISTRY_ADDRESS, 
   REGISTRY_ADDRESS_CONFIGURED, 
+  PROOF_OF_WORK_REGISTRY_ADDRESS,
+  PROOF_OF_WORK_REGISTRY_CONFIGURED,
   monadTestnet 
 } from '../lib/contract/config';
-import { bytes32ToString, computeSha256 } from '../utils/formatters';
+import { ProofOfWorkRegistryABI } from '../lib/contract/abi';
+import { bytes32ToString, computeSha256, enumIndexToStatus, enumIndexToWorkType, shortenAddress } from '../utils/formatters';
 import { MOCK_ATTESTATIONS, MOCK_ISSUERS, getProfileForAddress } from '../data/mockData';
 
 
@@ -140,30 +143,110 @@ class TrustGraphService {
    * Check if contract has bytecode on Monad Testnet
    */
   public async hasContractBytecode(): Promise<boolean> {
-    if (!REGISTRY_ADDRESS_CONFIGURED) return false;
-    const chainId = await publicClient.getChainId();
-    if (chainId !== MONAD_TESTNET_CHAIN_ID) return false;
-    const bytecode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
-    return Boolean(bytecode && bytecode !== '0x');
+    if (!REGISTRY_ADDRESS_CONFIGURED && !PROOF_OF_WORK_REGISTRY_CONFIGURED) return false;
+    try {
+      const chainId = await publicClient.getChainId();
+      if (chainId !== MONAD_TESTNET_CHAIN_ID) return false;
+
+      if (PROOF_OF_WORK_REGISTRY_CONFIGURED) {
+        const bytecode = await publicClient.getBytecode({ address: PROOF_OF_WORK_REGISTRY_ADDRESS });
+        if (bytecode && bytecode !== '0x') return true;
+      }
+
+      if (REGISTRY_ADDRESS_CONFIGURED) {
+        const bytecode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
+        if (bytecode && bytecode !== '0x') return true;
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  }
+
+  public async getContractStatus(): Promise<{
+    status:
+      | 'BLOCKCHAIN_CONNECTED'
+      | 'CONTRACT_NOT_CONFIGURED'
+      | 'CONTRACT_NOT_DEPLOYED'
+      | 'CONTRACT_UNREADABLE'
+      | 'WRONG_NETWORK'
+      | 'RPC_UNAVAILABLE'
+      | 'CONTRACT_READY';
+    proofOfWorkReady: boolean;
+    trustGraphReady: boolean;
+    chainId: number;
+    error?: string;
+  }> {
+    try {
+      const chainId = await publicClient.getChainId();
+      if (chainId !== MONAD_TESTNET_CHAIN_ID) {
+        return { status: 'WRONG_NETWORK', proofOfWorkReady: false, trustGraphReady: false, chainId };
+      }
+
+      let powReady = false;
+      let tgReady = false;
+
+      if (PROOF_OF_WORK_REGISTRY_CONFIGURED) {
+        const code = await publicClient.getBytecode({ address: PROOF_OF_WORK_REGISTRY_ADDRESS });
+        powReady = Boolean(code && code !== '0x');
+      }
+
+      if (REGISTRY_ADDRESS_CONFIGURED) {
+        const code = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
+        tgReady = Boolean(code && code !== '0x');
+      }
+
+      if (powReady || tgReady) {
+        return { status: 'CONTRACT_READY', proofOfWorkReady: powReady, trustGraphReady: tgReady, chainId };
+      }
+
+      if (!PROOF_OF_WORK_REGISTRY_CONFIGURED && !REGISTRY_ADDRESS_CONFIGURED) {
+        return { status: 'CONTRACT_NOT_CONFIGURED', proofOfWorkReady: false, trustGraphReady: false, chainId };
+      }
+
+      return { status: 'CONTRACT_NOT_DEPLOYED', proofOfWorkReady: false, trustGraphReady: false, chainId };
+    } catch (err: unknown) {
+      return {
+        status: 'RPC_UNAVAILABLE',
+        proofOfWorkReady: false,
+        trustGraphReady: false,
+        chainId: 0,
+        error: err instanceof Error ? err.message : 'Monad RPC unavailable',
+      };
+    }
   }
 
   private async assertRegistryAvailable(): Promise<void> {
-    if (!REGISTRY_ADDRESS_CONFIGURED) {
-      throw new Error('Registry address is not configured. Live registry reads are unavailable.');
-    }
     const chainId = await publicClient.getChainId();
     if (chainId !== MONAD_TESTNET_CHAIN_ID) {
       throw new Error(`Registry RPC returned chain ID ${chainId}; expected Monad Testnet (${MONAD_TESTNET_CHAIN_ID}).`);
     }
-    const bytecode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
-    if (!bytecode || bytecode === '0x') {
+    const hasAny = await this.hasContractBytecode();
+    if (!hasAny) {
       throw new Error('No registry contract is deployed at the configured Monad Testnet address.');
     }
   }
 
   public async getRegistryOwner(): Promise<`0x${string}`> {
-    await this.assertRegistryAvailable();
-    return publicClient.readContract({ ...CONTRACT_CONFIG, functionName: 'owner' });
+    // If TrustGraphRegistry has bytecode, read owner from it
+    if (REGISTRY_ADDRESS_CONFIGURED) {
+      const tgCode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
+      if (tgCode && tgCode !== '0x') {
+        return publicClient.readContract({ ...CONTRACT_CONFIG, functionName: 'owner' });
+      }
+    }
+    // Otherwise read owner from deployed ProofOfWorkRegistry
+    if (PROOF_OF_WORK_REGISTRY_CONFIGURED) {
+      const powCode = await publicClient.getBytecode({ address: PROOF_OF_WORK_REGISTRY_ADDRESS });
+      if (powCode && powCode !== '0x') {
+        return publicClient.readContract({
+          address: PROOF_OF_WORK_REGISTRY_ADDRESS,
+          abi: ProofOfWorkRegistryABI,
+          functionName: 'owner',
+        });
+      }
+    }
+    throw new Error('No active registry contract is deployed at configured addresses.');
   }
 
   private async readOnChainAttestation(id: string): Promise<Attestation | null> {
@@ -312,9 +395,66 @@ class TrustGraphService {
 
   public async getAttestationById(id: string): Promise<Attestation | null> {
     if (this.isLiveMode) {
-      // This registry uses sequential uint256 IDs, not bytes32 work IDs.
-      if (id.startsWith('0x') && id.length === 66) return null;
-      return this.readOnChainAttestation(id);
+      // 1. Check deployed ProofOfWorkRegistry for 32-byte workId (0x...)
+      if (id.startsWith('0x') && id.length === 66 && PROOF_OF_WORK_REGISTRY_CONFIGURED) {
+        const powCode = await publicClient.getBytecode({ address: PROOF_OF_WORK_REGISTRY_ADDRESS });
+        if (powCode && powCode !== '0x') {
+          try {
+            const raw = await publicClient.readContract({
+              address: PROOF_OF_WORK_REGISTRY_ADDRESS,
+              abi: ProofOfWorkRegistryABI,
+              functionName: 'getWork',
+              args: [id as `0x${string}`],
+            });
+            if (raw.createdAt !== 0n) {
+              const statusEnum = Number(raw.status);
+              const isVerified = statusEnum === 1;
+              const isRevoked = statusEnum === 3;
+              const validity: ValidityStatus = isRevoked ? 'REVOKED' : isVerified ? 'VALID' : 'PENDING';
+              const workType = enumIndexToWorkType(Number(raw.workType));
+              const hasVerifier = raw.verifier !== zeroAddress;
+
+              return {
+                id: raw.workId,
+                issuer: raw.verifier,
+                issuerName: hasVerifier ? shortenAddress(raw.verifier) : 'Pending Reviewer',
+                issuerRole: 'Authorized Verifier',
+                issuerAuthorized: hasVerifier,
+                subject: raw.worker,
+                claimType: workType as ClaimType,
+                claimTitle: `${workType} Proof`,
+                claimDescription: `Proof of work recorded in ProofOfWorkRegistry on Monad Testnet.`,
+                evidenceHash: raw.evidenceHash,
+                evidenceUrl: raw.metadataUri,
+                evidenceManifest: `Evidence URI: ${raw.metadataUri}\nHash: ${raw.evidenceHash}`,
+                issuedAt: Number(raw.verifiedAt || raw.createdAt),
+                expiry: 0,
+                revoked: isRevoked,
+                revocationReason: raw.statusReason || undefined,
+                validity,
+                validityExplanation: isRevoked
+                  ? `Revoked: ${raw.statusReason || 'Revoked on Monad.'}`
+                  : isVerified
+                  ? 'Verified on-chain by authorized verifier on Monad Testnet.'
+                  : 'Pending verifier triage.',
+                isLiveOnChain: true,
+              };
+            }
+          } catch {
+            // Not found in ProofOfWorkRegistry
+          }
+        }
+      }
+
+      // 2. Check TrustGraphRegistry if deployed and valid integer ID
+      if (/^\d+$/.test(id) && BigInt(id) >= 1n && REGISTRY_ADDRESS_CONFIGURED) {
+        const tgCode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
+        if (tgCode && tgCode !== '0x') {
+          return this.readOnChainAttestation(id);
+        }
+      }
+
+      return null;
     }
 
     // Demo records and submissions are available only in explicit DEMO mode.
@@ -360,9 +500,81 @@ class TrustGraphService {
   public async getAllAttestations(): Promise<Attestation[]> {
     if (this.isLiveMode) {
       await this.assertRegistryAvailable();
-      const ids = await publicClient.readContract({ ...CONTRACT_CONFIG, functionName: 'getAllAttestationIds' });
-      const records = await this.readOnChainAttestationsBatch(ids as bigint[]);
-      return records.sort((a, b) => b.issuedAt - a.issuedAt);
+      const results: Attestation[] = [];
+
+      // 1. Read from deployed ProofOfWorkRegistry
+      if (PROOF_OF_WORK_REGISTRY_CONFIGURED) {
+        const powCode = await publicClient.getBytecode({ address: PROOF_OF_WORK_REGISTRY_ADDRESS });
+        if (powCode && powCode !== '0x') {
+          try {
+            const allWorkIds = await publicClient.readContract({
+              address: PROOF_OF_WORK_REGISTRY_ADDRESS,
+              abi: ProofOfWorkRegistryABI,
+              functionName: 'getAllWorkIds',
+            });
+            if (allWorkIds.length > 0) {
+              const works = await publicClient.readContract({
+                address: PROOF_OF_WORK_REGISTRY_ADDRESS,
+                abi: ProofOfWorkRegistryABI,
+                functionName: 'getWorks',
+                args: [allWorkIds as `0x${string}`[]],
+              });
+              for (const raw of works) {
+                const statusEnum = Number(raw.status);
+                const isVerified = statusEnum === 1;
+                const isRevoked = statusEnum === 3;
+                const validity: ValidityStatus = isRevoked ? 'REVOKED' : isVerified ? 'VALID' : 'PENDING';
+                const workType = enumIndexToWorkType(Number(raw.workType));
+                const hasVerifier = raw.verifier !== zeroAddress;
+
+                results.push({
+                  id: raw.workId,
+                  issuer: raw.verifier,
+                  issuerName: hasVerifier ? shortenAddress(raw.verifier) : 'Pending Verifier',
+                  issuerRole: 'Authorized Verifier',
+                  issuerAuthorized: hasVerifier,
+                  subject: raw.worker,
+                  claimType: workType as ClaimType,
+                  claimTitle: `${workType} Proof`,
+                  claimDescription: `Proof of work recorded on Monad Testnet with evidence digest ${raw.evidenceHash}`,
+                  evidenceHash: raw.evidenceHash,
+                  evidenceUrl: raw.metadataUri,
+                  evidenceManifest: `Evidence URI: ${raw.metadataUri}\nHash: ${raw.evidenceHash}`,
+                  issuedAt: Number(raw.verifiedAt || raw.createdAt),
+                  expiry: 0,
+                  revoked: isRevoked,
+                  revocationReason: raw.statusReason || undefined,
+                  validity,
+                  validityExplanation: isRevoked
+                    ? `Revoked: ${raw.statusReason || 'Revocation recorded on Monad.'}`
+                    : isVerified
+                    ? 'Verified on-chain by authorized verifier on Monad Testnet.'
+                    : 'Pending verifier triage.',
+                  isLiveOnChain: true,
+                });
+              }
+            }
+          } catch (powErr) {
+            console.warn('Failed reading ProofOfWorkRegistry in getAllAttestations:', powErr);
+          }
+        }
+      }
+
+      // 2. Read from TrustGraphRegistry if deployed
+      if (REGISTRY_ADDRESS_CONFIGURED) {
+        const tgCode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
+        if (tgCode && tgCode !== '0x') {
+          try {
+            const ids = await publicClient.readContract({ ...CONTRACT_CONFIG, functionName: 'getAllAttestationIds' });
+            const tgRecords = await this.readOnChainAttestationsBatch(ids as bigint[]);
+            results.push(...tgRecords);
+          } catch (tgErr) {
+            console.warn('Failed reading TrustGraphRegistry in getAllAttestations:', tgErr);
+          }
+        }
+      }
+
+      return results.sort((a, b) => b.issuedAt - a.issuedAt);
     }
     return [...this.demoAttestations];
   }
@@ -371,53 +583,115 @@ class TrustGraphService {
     const subject = (rawAddress.startsWith('0x') ? rawAddress : `0x${rawAddress}`) as `0x${string}`;
 
     if (this.isLiveMode) {
-      if (!isAddress(subject)) throw new Error('Enter a valid EVM wallet address.');
+      if (!isAddress(subject, { strict: false })) throw new Error('Enter a valid EVM wallet address.');
       await this.assertRegistryAvailable();
-      const ids = await publicClient.readContract({
-        ...CONTRACT_CONFIG,
-        functionName: 'getAttestationsBySubject',
-        args: [subject],
-      });
-      const attestations = (await this.readOnChainAttestationsBatch(ids as bigint[]))
-        .sort((a, b) => b.issuedAt - a.issuedAt);
+
+      const attestations: Attestation[] = [];
+
+      // 1. Fetch worker works from deployed ProofOfWorkRegistry
+      if (PROOF_OF_WORK_REGISTRY_CONFIGURED) {
+        const powCode = await publicClient.getBytecode({ address: PROOF_OF_WORK_REGISTRY_ADDRESS });
+        if (powCode && powCode !== '0x') {
+          try {
+            const workerWorkIds = await publicClient.readContract({
+              address: PROOF_OF_WORK_REGISTRY_ADDRESS,
+              abi: ProofOfWorkRegistryABI,
+              functionName: 'getWorksByWorker',
+              args: [subject],
+            });
+            if (workerWorkIds.length > 0) {
+              const works = await publicClient.readContract({
+                address: PROOF_OF_WORK_REGISTRY_ADDRESS,
+                abi: ProofOfWorkRegistryABI,
+                functionName: 'getWorks',
+                args: [workerWorkIds as `0x${string}`[]],
+              });
+              for (const raw of works) {
+                const statusEnum = Number(raw.status);
+                const isVerified = statusEnum === 1;
+                const isRevoked = statusEnum === 3;
+                const validity: ValidityStatus = isRevoked ? 'REVOKED' : isVerified ? 'VALID' : 'PENDING';
+                const workType = enumIndexToWorkType(Number(raw.workType));
+                const hasVerifier = raw.verifier !== zeroAddress;
+
+                attestations.push({
+                  id: raw.workId,
+                  issuer: raw.verifier,
+                  issuerName: hasVerifier ? shortenAddress(raw.verifier) : 'Pending Reviewer',
+                  issuerRole: 'Authorized Verifier',
+                  issuerAuthorized: hasVerifier,
+                  subject: raw.worker,
+                  claimType: workType as ClaimType,
+                  claimTitle: `${workType} Proof`,
+                  claimDescription: `Proof of work recorded on Monad Testnet with evidence digest ${raw.evidenceHash}`,
+                  evidenceHash: raw.evidenceHash,
+                  evidenceUrl: raw.metadataUri,
+                  evidenceManifest: `Evidence URI: ${raw.metadataUri}\nHash: ${raw.evidenceHash}`,
+                  issuedAt: Number(raw.verifiedAt || raw.createdAt),
+                  expiry: 0,
+                  revoked: isRevoked,
+                  revocationReason: raw.statusReason || undefined,
+                  validity,
+                  validityExplanation: isRevoked
+                    ? `Revoked: ${raw.statusReason || 'Revocation recorded on Monad.'}`
+                    : isVerified
+                    ? 'Verified on-chain by authorized verifier on Monad Testnet.'
+                    : 'Pending verifier triage.',
+                  isLiveOnChain: true,
+                });
+              }
+            }
+          } catch (powErr) {
+            console.warn('Failed reading worker works from ProofOfWorkRegistry:', powErr);
+          }
+        }
+      }
+
+      // 2. Fetch from TrustGraphRegistry if deployed
+      if (REGISTRY_ADDRESS_CONFIGURED) {
+        const tgCode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
+        if (tgCode && tgCode !== '0x') {
+          try {
+            const ids = await publicClient.readContract({
+              ...CONTRACT_CONFIG,
+              functionName: 'getAttestationsBySubject',
+              args: [subject],
+            });
+            const tgRecords = await this.readOnChainAttestationsBatch(ids as bigint[]);
+            attestations.push(...tgRecords);
+          } catch (tgErr) {
+            console.warn('Failed reading subject attestations from TrustGraphRegistry:', tgErr);
+          }
+        }
+      }
+
+      attestations.sort((a, b) => b.issuedAt - a.issuedAt);
+
       const byClaimType = Object.fromEntries(claimTypes.map((type) => [
         type,
         attestations.filter((attestation) => attestation.claimType === type).length,
       ])) as Record<ClaimType, number>;
-      const uniqueIssuers = [...new Set(attestations.map((attestation) => attestation.issuer))];
 
-      // Multicall issuer authorizations in 1 batch
-      const authResults = await publicClient.multicall({
-        contracts: uniqueIssuers.map((issuer) => ({
-          ...CONTRACT_CONFIG,
-          functionName: 'isIssuer',
-          args: [issuer],
-        })),
-        allowFailure: true,
-      });
-
-      const trustedIssuers: IssuerProfile[] = uniqueIssuers.map((issuer, idx) => {
-        const isAuth = authResults[idx]?.status === 'success' ? Boolean(authResults[idx].result) : false;
-        return {
-          address: issuer,
-          name: issuer,
-          organization: 'Unspecified on-chain',
-          role: 'Registry issuer',
-          isAuthorized: isAuth,
-          attestationsIssuedCount: attestations.filter((attestation) => attestation.issuer === issuer).length,
-        };
-      });
+      const uniqueIssuers = [...new Set(attestations.map((a) => a.issuer).filter((i) => i !== zeroAddress))];
+      const trustedIssuers: IssuerProfile[] = uniqueIssuers.map((issuer) => ({
+        address: issuer,
+        name: shortenAddress(issuer),
+        organization: 'Monad Ecosystem Verifier',
+        role: 'Authorized Verifier',
+        isAuthorized: true,
+        attestationsIssuedCount: attestations.filter((a) => a.issuer.toLowerCase() === issuer.toLowerCase()).length,
+      }));
 
       return {
         address: subject,
         alias: undefined,
-        firstSeenAt: attestations.length ? Math.min(...attestations.map((attestation) => attestation.issuedAt)) : undefined,
+        firstSeenAt: attestations.length ? Math.min(...attestations.map((a) => a.issuedAt)) : undefined,
         stats: {
           totalAttestations: attestations.length,
-          validAttestations: attestations.filter((attestation) => attestation.validity === 'VALID').length,
-          revokedAttestations: attestations.filter((attestation) => attestation.validity === 'REVOKED').length,
-          expiredAttestations: attestations.filter((attestation) => attestation.validity === 'EXPIRED').length,
-          invalidIssuerAttestations: attestations.filter((attestation) => attestation.validity === 'INVALID_ISSUER').length,
+          validAttestations: attestations.filter((a) => a.validity === 'VALID').length,
+          revokedAttestations: attestations.filter((a) => a.validity === 'REVOKED').length,
+          expiredAttestations: attestations.filter((a) => a.validity === 'EXPIRED').length,
+          invalidIssuerAttestations: attestations.filter((a) => a.validity === 'INVALID_ISSUER').length,
           evidenceMismatchAttestations: 0,
           byClaimType,
         },
@@ -431,10 +705,45 @@ class TrustGraphService {
 
   public async isIssuerAuthorized(address: `0x${string}` | string): Promise<boolean> {
     if (this.isLiveMode) {
-      if (!isAddress(address)) throw new Error('Enter a valid issuer address.');
-      await this.assertRegistryAvailable();
-      return publicClient.readContract({ ...CONTRACT_CONFIG, functionName: 'isIssuer', args: [address as `0x${string}`] });
+      if (!isAddress(address, { strict: false })) throw new Error('Enter a valid issuer address.');
+
+      // Check deployed ProofOfWorkRegistry first
+      if (PROOF_OF_WORK_REGISTRY_CONFIGURED) {
+        const powCode = await publicClient.getBytecode({ address: PROOF_OF_WORK_REGISTRY_ADDRESS });
+        if (powCode && powCode !== '0x') {
+          try {
+            const isVer = await publicClient.readContract({
+              address: PROOF_OF_WORK_REGISTRY_ADDRESS,
+              abi: ProofOfWorkRegistryABI,
+              functionName: 'isVerifier',
+              args: [address as `0x${string}`],
+            });
+            if (isVer) return true;
+          } catch {
+            // Fallthrough
+          }
+        }
+      }
+
+      // Check TrustGraphRegistry if deployed
+      if (REGISTRY_ADDRESS_CONFIGURED) {
+        const tgCode = await publicClient.getBytecode({ address: TRUST_GRAPH_REGISTRY_ADDRESS });
+        if (tgCode && tgCode !== '0x') {
+          try {
+            return await publicClient.readContract({
+              ...CONTRACT_CONFIG,
+              functionName: 'isIssuer',
+              args: [address as `0x${string}`],
+            });
+          } catch {
+            return false;
+          }
+        }
+      }
+
+      return false;
     }
+
     const addr = address.toLowerCase();
     if (addr === DEMO_WALLETS.ORGANIZER.address.toLowerCase()) return true;
     const issuer = this.demoIssuers.find((i) => i.address.toLowerCase() === addr);
@@ -444,27 +753,26 @@ class TrustGraphService {
   public async getIssuers(): Promise<IssuerProfile[]> {
     if (this.isLiveMode) {
       const attestations = await this.getAllAttestations();
-      const addresses = [...new Set(attestations.map((attestation) => attestation.issuer))];
-      const authResults = await publicClient.multicall({
-        contracts: addresses.map((addr) => ({
-          ...CONTRACT_CONFIG,
-          functionName: 'isIssuer',
-          args: [addr],
-        })),
-        allowFailure: true,
-      });
+      const addresses = [...new Set(attestations.map((a) => a.issuer).filter((i) => i !== zeroAddress))];
+      const authMap = new Map<string, boolean>();
 
-      return addresses.map((address, index) => {
-        const isAuth = authResults[index]?.status === 'success' ? Boolean(authResults[index].result) : false;
-        return {
-          address,
-          name: address,
-          organization: 'Unspecified on-chain',
-          role: 'Registry issuer',
-          isAuthorized: isAuth,
-          attestationsIssuedCount: attestations.filter((attestation) => attestation.issuer === address).length,
-        };
-      });
+      for (const addr of addresses) {
+        try {
+          const auth = await this.isIssuerAuthorized(addr);
+          authMap.set(addr.toLowerCase(), auth);
+        } catch {
+          authMap.set(addr.toLowerCase(), false);
+        }
+      }
+
+      return addresses.map((addr) => ({
+        address: addr,
+        name: shortenAddress(addr),
+        organization: 'Monad Ecosystem Reviewer',
+        role: 'Authorized Verifier',
+        isAuthorized: authMap.get(addr.toLowerCase()) ?? false,
+        attestationsIssuedCount: attestations.filter((a) => a.issuer.toLowerCase() === addr.toLowerCase()).length,
+      }));
     }
     return [...this.demoIssuers];
   }

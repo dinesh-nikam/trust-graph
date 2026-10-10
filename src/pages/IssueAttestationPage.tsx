@@ -14,7 +14,7 @@ import {
   RefreshCw,
   FileCheck
 } from 'lucide-react';
-import { useIssueAttestation, useIssuerStatus } from '../hooks/useTrustGraph';
+import { useIssueAttestation, useIssuerStatus, useContractStatus } from '../hooks/useTrustGraph';
 import { ClaimType } from '../types';
 import { computeSha256, shortenAddress } from '../utils/formatters';
 import { MONAD_TESTNET_CHAIN_ID, getExplorerTxUrl } from '../lib/contract/config';
@@ -27,6 +27,8 @@ export const IssueAttestationPage: React.FC = () => {
   const { switchChain } = useSwitchChain();
   const { isAuthorized, isLoading: isCheckingAuth, error: issuerCheckError } = useIssuerStatus(address);
   const { issue, txStep, errorMessage, txHash, createdAttestation, reset } = useIssueAttestation();
+  const { data: contractStatus } = useContractStatus();
+  const isTrustGraphDeployed = contractStatus?.trustGraphReady ?? false;
 
   // Form states
   const [subject, setSubject] = useState('');
@@ -176,6 +178,35 @@ export const IssueAttestationPage: React.FC = () => {
 
         </div>
       </div>
+
+      {/* Advisory Banner when TrustGraphRegistry is pending deployment */}
+      {trustGraphService.getMode() === 'LIVE' && !isTrustGraphDeployed && (
+        <div role="status" className="mb-8 p-5 rounded-2xl bg-amber-950/40 border border-amber-800 text-xs text-amber-200 space-y-2">
+          <div className="flex items-center gap-2 font-semibold text-amber-300">
+            <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0" />
+            <span>Attestation Registry Pending Deployment on Monad Testnet</span>
+          </div>
+          <p className="text-amber-300/90 leading-relaxed text-[11px]">
+            Direct attestation issuance is currently unavailable on Monad Testnet because <code>TrustGraphRegistry</code> is pending contract deployment (blocked by external dependency: missing deployer private key).
+            Meanwhile, the active <code>ProofOfWorkRegistry</code> (0xca65ada83f1f7765a712b28a6b79ca323395f8ac) is fully operational for work submissions and verifier triage.
+          </p>
+          <div className="pt-2 flex flex-wrap items-center gap-3">
+            <Link
+              to="/verify"
+              className="px-3.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-mono transition-colors flex items-center gap-1.5"
+            >
+              <span>Go to ProofOfWork Verifier Queue (/verify)</span>
+              <ArrowRight className="h-3 w-3" />
+            </Link>
+            <Link
+              to="/submit"
+              className="px-3.5 py-1.5 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-300 text-xs font-mono transition-colors"
+            >
+              <span>Submit Proof of Work (/submit)</span>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Success Banner */}
       {txStep === 'confirmed' && createdAttestation && (
@@ -451,8 +482,19 @@ export const IssueAttestationPage: React.FC = () => {
 
           <button
             type="submit"
-            disabled={!isConnected || !isAuthorized || isCheckingAuth || isWrongNetwork || isComputingHash || txStep === 'preparing' || txStep === 'waiting-wallet' || txStep === 'submitted' || txStep === 'confirming'}
-            className="btn-primary w-full sm:w-auto px-6 py-3 text-xs sm:text-sm"
+            disabled={
+              !isConnected ||
+              !isAuthorized ||
+              isCheckingAuth ||
+              isWrongNetwork ||
+              isComputingHash ||
+              (trustGraphService.getMode() === 'LIVE' && !isTrustGraphDeployed) ||
+              txStep === 'preparing' ||
+              txStep === 'waiting-wallet' ||
+              txStep === 'submitted' ||
+              txStep === 'confirming'
+            }
+            className="btn-primary w-full sm:w-auto px-6 py-3 text-xs sm:text-sm disabled:opacity-50"
           >
             {txStep === 'waiting-wallet' && (
               <>
@@ -468,10 +510,17 @@ export const IssueAttestationPage: React.FC = () => {
             )}
             {txStep === 'confirming' && <><RefreshCw className="h-4 w-4 animate-spin" /><span>Waiting for Monad confirmation...</span></>}
             {(txStep === 'idle' || txStep === 'confirmed' || txStep === 'error') && (
-              <>
-                <PlusCircle className="h-4 w-4" />
-                <span>Issue & Record Attestation</span>
-              </>
+              trustGraphService.getMode() === 'LIVE' && !isTrustGraphDeployed ? (
+                <>
+                  <AlertTriangle className="h-4 w-4 text-amber-400" />
+                  <span>Registry Pending Deployment</span>
+                </>
+              ) : (
+                <>
+                  <PlusCircle className="h-4 w-4" />
+                  <span>Issue & Record Attestation</span>
+                </>
+              )
             )}
           </button>
         </div>

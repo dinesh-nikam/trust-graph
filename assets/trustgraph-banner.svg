@@ -1,0 +1,300 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080412" />
+      <stop offset="45%" stop-color="#0f0724" />
+      <stop offset="80%" stop-color="#170d38" />
+      <stop offset="100%" stop-color="#090417" />
+    </linearGradient>
+
+    <radialGradient id="meshGlowLeft" cx="15%" cy="30%" r="50%">
+      <stop offset="0%" stop-color="#836EF9" stop-opacity="0.35" />
+      <stop offset="60%" stop-color="#836EF9" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#836EF9" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="meshGlowRight" cx="85%" cy="65%" r="60%">
+      <stop offset="0%" stop-color="#00F2FE" stop-opacity="0.25" />
+      <stop offset="50%" stop-color="#836EF9" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="centerBurst" cx="50%" cy="50%" r="40%">
+      <stop offset="0%" stop-color="#A0055D" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#A0055D" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Card & Border Gradients -->
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e133d" stop-opacity="0.75" />
+      <stop offset="100%" stop-color="#110926" stop-opacity="0.85" />
+    </linearGradient>
+
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#836EF9" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#00F2FE" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#A0055D" stop-opacity="0.8" />
+    </linearGradient>
+
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="35%" stop-color="#E2D9FF" />
+      <stop offset="70%" stop-color="#A78BFA" />
+      <stop offset="100%" stop-color="#00F2FE" />
+    </linearGradient>
+
+    <linearGradient id="monadBadgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#836EF9" />
+      <stop offset="100%" stop-color="#5538EE" />
+    </linearGradient>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="softGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    .radar-dot {
+      animation: pulseRadar 2s infinite ease-in-out;
+    }
+    .radar-ring {
+      animation: ringExpand 2s infinite cubic-bezier(0.2, 0.6, 0.35, 1);
+      transform-origin: 320px 72px;
+    }
+    .spin-ring {
+      animation: spinRing 20s linear infinite;
+      transform-origin: 1040px 220px;
+    }
+    .spin-ring-rev {
+      animation: spinRingRev 15s linear infinite;
+      transform-origin: 1040px 220px;
+    }
+    .pulse-shield {
+      animation: floatShield 4s ease-in-out infinite;
+    }
+    .flow-line {
+      stroke-dasharray: 8 6;
+      animation: dashScroll 30s linear infinite;
+    }
+    .pulse-glow {
+      animation: breathingGlow 5s ease-in-out infinite alternate;
+    }
+    .chip-hover {
+      transition: all 0.3s ease;
+    }
+    .chip-hover:hover {
+      filter: drop-shadow(0 0 12px rgba(131, 110, 249, 0.6));
+    }
+
+    @keyframes pulseRadar {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+    @keyframes ringExpand {
+      0% { r: 5px; opacity: 0.9; }
+      100% { r: 16px; opacity: 0; }
+    }
+    @keyframes spinRing {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    @keyframes spinRingRev {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+    @keyframes floatShield {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes dashScroll {
+      to { stroke-dashoffset: -1000; }
+    }
+    @keyframes breathingGlow {
+      0% { opacity: 0.35; transform: scale(0.98); }
+      100% { opacity: 0.75; transform: scale(1.02); }
+    }
+  </style>
+
+  <!-- Canvas Background -->
+  <rect width="1200" height="440" rx="16" fill="url(#bgGrad)" />
+
+  <!-- Background Glow Meshes -->
+  <circle cx="180" cy="130" r="320" fill="url(#meshGlowLeft)" />
+  <circle cx="1020" cy="280" r="350" fill="url(#meshGlowRight)" />
+  <circle cx="600" cy="220" r="300" fill="url(#centerBurst)" />
+
+  <!-- Background Subtle Grid Pattern -->
+  <g opacity="0.12" class="flow-line" stroke="#836EF9" stroke-width="1">
+    <line x1="60" y1="0" x2="60" y2="440" />
+    <line x1="180" y1="0" x2="180" y2="440" />
+    <line x1="300" y1="0" x2="300" y2="440" />
+    <line x1="420" y1="0" x2="420" y2="440" />
+    <line x1="540" y1="0" x2="540" y2="440" />
+    <line x1="660" y1="0" x2="660" y2="440" />
+    <line x1="780" y1="0" x2="780" y2="440" />
+    <line x1="900" y1="0" x2="900" y2="440" />
+    <line x1="1020" y1="0" x2="1020" y2="440" />
+    <line x1="1140" y1="0" x2="1140" y2="440" />
+    <line x1="0" y1="60" x2="1200" y2="60" />
+    <line x1="0" y1="140" x2="1200" y2="140" />
+    <line x1="0" y1="220" x2="1200" y2="220" />
+    <line x1="0" y1="300" x2="1200" y2="300" />
+    <line x1="0" y1="380" x2="1200" y2="380" />
+  </g>
+
+  <!-- Ambient Border / Frame Highlight -->
+  <rect x="1.5" y="1.5" width="1197" height="437" rx="15" fill="none" stroke="url(#borderGrad)" stroke-width="1.5" opacity="0.6" />
+
+  <!-- LEFT / MAIN CONTENT AREA -->
+  <g transform="translate(60, 0)">
+    <!-- Top Live Network Badge -->
+    <g transform="translate(0, 50)">
+      <rect x="0" y="0" width="310" height="38" rx="19" fill="#180e36" stroke="#836EF9" stroke-width="1.2" opacity="0.9" />
+      <circle class="radar-ring" cx="24" cy="19" r="6" fill="none" stroke="#10B981" stroke-width="1.5" />
+      <circle class="radar-dot" cx="24" cy="19" r="5" fill="#10B981" />
+      <text x="40" y="24" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#E2E8F0" letter-spacing="1">
+        MONAD TESTNET <tspan fill="#836EF9">|</tspan> <tspan fill="#A78BFA">CHAIN ID 10143</tspan>
+      </text>
+    </g>
+
+    <!-- Main Title -->
+    <g transform="translate(0, 150)">
+      <text font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="56" font-weight="900" fill="url(#titleGrad)" letter-spacing="-1.5">
+        TRUSTGRAPH
+      </text>
+      <text x="430" y="-12" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#00F2FE" letter-spacing="2">
+        v0.1.0 • EVM
+      </text>
+    </g>
+
+    <!-- Subtitle Banner -->
+    <g transform="translate(0, 195)">
+      <text font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="20" font-weight="600" fill="#E9D5FF" letter-spacing="0.5">
+        Evidence-Backed Proof-of-Work Passport
+      </text>
+    </g>
+
+    <!-- Project Axiom Quote -->
+    <g transform="translate(0, 240)">
+      <rect x="0" y="0" width="620" height="42" rx="8" fill="#1a1038" stroke="#372570" stroke-width="1" />
+      <line x1="0" y1="0" x2="0" y2="42" stroke="#836EF9" stroke-width="4" />
+      <text x="20" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="500" fill="#CBD5E1" font-style="italic">
+        &ldquo;Trust the evidence, not the profile. Show what you&apos;ve actually done.&rdquo;
+      </text>
+    </g>
+
+    <!-- Feature Pillars / Badges -->
+    <g transform="translate(0, 316)">
+      <!-- Pill 1: Deterministic SHA-256 -->
+      <g class="chip-hover" transform="translate(0, 0)">
+        <rect width="186" height="42" rx="10" fill="#170f33" stroke="#836EF9" stroke-width="1" />
+        <circle cx="22" cy="21" r="9" fill="#2d1c61" />
+        <path d="M19 21l2 2 4-4" stroke="#00F2FE" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+        <text x="40" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#F1F5F9">
+          SHA-256 Evidence
+        </text>
+      </g>
+
+      <!-- Pill 2: Zero Mocks -->
+      <g class="chip-hover" transform="translate(198, 0)">
+        <rect width="186" height="42" rx="10" fill="#170f33" stroke="#836EF9" stroke-width="1" />
+        <circle cx="22" cy="21" r="9" fill="#2d1c61" />
+        <path d="M18 21h8M22 17v8" stroke="#10B981" stroke-width="2" fill="none" stroke-linecap="round" />
+        <text x="40" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#F1F5F9">
+          Zero Fake Mocks
+        </text>
+      </g>
+
+      <!-- Pill 3: Wallet-Free Audit -->
+      <g class="chip-hover" transform="translate(396, 0)">
+        <rect width="194" height="42" rx="10" fill="#170f33" stroke="#836EF9" stroke-width="1" />
+        <circle cx="22" cy="21" r="9" fill="#2d1c61" />
+        <circle cx="22" cy="21" r="4" stroke="#A78BFA" stroke-width="1.5" fill="none" />
+        <text x="40" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#F1F5F9">
+          Public Walletless Audit
+        </text>
+      </g>
+
+      <!-- Pill 4: Immutable History -->
+      <g class="chip-hover" transform="translate(602, 0)">
+        <rect width="186" height="42" rx="10" fill="#170f33" stroke="#836EF9" stroke-width="1" />
+        <circle cx="22" cy="21" r="9" fill="#2d1c61" />
+        <path d="M18 24V18h6v6z" stroke="#F59E0B" stroke-width="1.5" fill="none" />
+        <text x="40" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#F1F5F9">
+          Immutable Provenance
+        </text>
+      </g>
+    </g>
+
+    <!-- Bottom Contract Address Callout -->
+    <g transform="translate(0, 386)">
+      <text font-family="'SF Mono', 'Cascadia Code', Consolas, monospace" font-size="11" font-weight="600" fill="#94A3B8">
+        REGISTRY: <tspan fill="#A78BFA">0x4a679253410272dd5232b3ff7cf5dbb88f295319</tspan> <tspan fill="#64748B">• HARDHAT &amp; MONAD DUAL-TARGET</tspan>
+      </text>
+    </g>
+  </g>
+
+  <!-- RIGHT SIDE: ANIMATED CRYPTOGRAPHIC SHIELD EMBLEM & GRAPH -->
+  <g class="pulse-shield" transform="translate(1000, 220)">
+    <!-- Ambient Soft Glow Backdrop -->
+    <circle cx="0" cy="0" r="140" fill="#836EF9" opacity="0.15" filter="url(#softGlow)" />
+    
+    <!-- Outer Orbit Ring (Counter Clockwise) -->
+    <g class="spin-ring-rev">
+      <circle cx="0" cy="0" r="125" fill="none" stroke="#836EF9" stroke-width="1.5" stroke-dasharray="14 10 4 10" opacity="0.4" />
+      <circle cx="0" cy="-125" r="5" fill="#00F2FE" filter="url(#glow)" />
+      <circle cx="0" cy="125" r="4" fill="#A0055D" />
+    </g>
+
+    <!-- Middle Orbit Ring (Clockwise) -->
+    <g class="spin-ring">
+      <circle cx="0" cy="0" r="100" fill="none" stroke="#00F2FE" stroke-width="1.2" stroke-dasharray="24 16" opacity="0.6" />
+      <circle cx="100" cy="0" r="6" fill="#836EF9" filter="url(#glow)" />
+      <circle cx="-100" cy="0" r="4" fill="#10B981" />
+    </g>
+
+    <!-- Innermost Octagon Boundary -->
+    <polygon points="0,-78 55,-55 78,0 55,55 0,78 -55,55 -78,0 -55,-55" fill="#150a30" stroke="#836EF9" stroke-width="2" filter="url(#glow)" />
+
+    <!-- TrustGraph Interconnected Nodes (Mini Evidence Graph) -->
+    <!-- Node Connectors -->
+    <line x1="0" y1="-35" x2="-35" y2="10" stroke="#836EF9" stroke-width="2" opacity="0.8" />
+    <line x1="0" y1="-35" x2="35" y2="10" stroke="#836EF9" stroke-width="2" opacity="0.8" />
+    <line x1="-35" y1="10" x2="0" y2="40" stroke="#00F2FE" stroke-width="2" opacity="0.8" />
+    <line x1="35" y1="10" x2="0" y2="40" stroke="#00F2FE" stroke-width="2" opacity="0.8" />
+    <line x1="-35" y1="10" x2="35" y2="10" stroke="#A78BFA" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.6" />
+
+    <!-- Center Hub: Monad Proof Engine -->
+    <circle cx="0" cy="0" r="14" fill="#836EF9" filter="url(#glow)" />
+    <circle cx="0" cy="0" r="8" fill="#FFFFFF" />
+
+    <!-- Node 1: Top (Work / Claim) -->
+    <circle cx="0" cy="-35" r="9" fill="#00F2FE" />
+    <circle cx="0" cy="-35" r="4" fill="#080412" />
+
+    <!-- Node 2: Left (Evidence Hash) -->
+    <circle cx="-35" cy="10" r="9" fill="#A78BFA" />
+    <circle cx="-35" cy="10" r="4" fill="#080412" />
+
+    <!-- Node 3: Right (Authorized Verifier) -->
+    <circle cx="35" cy="10" r="9" fill="#10B981" />
+    <circle cx="35" cy="10" r="4" fill="#080412" />
+
+    <!-- Node 4: Bottom (On-Chain Proof) -->
+    <circle cx="0" cy="40" r="9" fill="#E2E8F0" />
+    <circle cx="0" cy="40" r="4" fill="#080412" />
+
+    <!-- Satellite Floating Sparks -->
+    <circle cx="70" cy="-60" r="2" fill="#00F2FE" opacity="0.8" />
+    <circle cx="-75" cy="-45" r="2.5" fill="#836EF9" opacity="0.8" />
+    <circle cx="-60" cy="65" r="2" fill="#10B981" opacity="0.8" />
+    <circle cx="80" cy="50" r="3" fill="#A0055D" opacity="0.8" />
+  </g>
+</svg>

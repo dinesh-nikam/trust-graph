@@ -1,7 +1,7 @@
 {
-  "0": "useWorkRegistry.ts",
+  "0": "trustGraphService.ts",
   "1": "TrustGraphRegistry",
-  "2": "trustGraphService.ts",
+  "2": "trustGraphService",
   "3": "para CLI — behavioral notes",
   "4": "para CLI —— 行为说明",
   "5": "Frontend Design (Distinctive, Production-Grade)",
@@ -71,5 +71,9 @@
   "69": "postcss.config.js",
   "70": "tailwind.config.js",
   "71": "1. Project Identity",
-  "72": "ref"
+  "72": "main.tsx",
+  "73": "Attestation",
+  "74": "ValidityStatus",
+  "75": "onlyOwner",
+  "76": "issueAttestation"
 }

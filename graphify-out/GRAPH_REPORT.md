@@ -1,24 +1,24 @@
 # Graph Report - trust-graph  (2026-10-10)
 
 ## Corpus Check
-- 108 files · ~92,426 words
+- 107 files · ~98,290 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 5 file(s) not represented in the graph (top: (none) 3, .example 1, .css 1)
+- Unclassified: 4 file(s) not represented in the graph (top: (none) 3, .css 1)
 
 ## Summary
-- 1170 nodes · 1648 edges · 73 communities (63 shown, 10 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 38 edges (avg confidence: 0.95)
+- 1182 nodes · 1689 edges · 77 communities (67 shown, 10 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 37 edges (avg confidence: 0.95)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c569e01e`
+- Built from commit: `41372993`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- useWorkRegistry.ts
-- TrustGraphRegistry
 - trustGraphService.ts
+- TrustGraphRegistry
+- trustGraphService
 - para CLI — behavioral notes
 - para CLI —— 行为说明
 - Frontend Design (Distinctive, Production-Grade)
@@ -84,47 +84,52 @@
 - vite-env.d.ts
 - 13. Multi-Tenant Migration — Primary Current Phase
 - 1. Project Identity
+- main.tsx
+- Attestation
+- ValidityStatus
+- onlyOwner
+- issueAttestation
 
 ## God Nodes (most connected - your core abstractions)
 1. `ProofOfWorkRegistryComprehensiveTest` - 39 edges
-2. `ProofOfWorkRegistry` - 37 edges
-3. `trustGraphService` - 36 edges
+2. `ProofOfWorkRegistry` - 38 edges
+3. `trustGraphService` - 37 edges
 4. `TrustGraphRegistry` - 34 edges
 5. `TrustGraphRegistryComprehensiveTest` - 26 edges
 6. `82. Final Report Format` - 26 edges
-7. `compilerOptions` - 18 edges
-8. `react` - 17 edges
-9. `scripts` - 16 edges
-10. `VerifyPage()` - 16 edges
+7. `shortenAddress()` - 22 edges
+8. `compilerOptions` - 18 edges
+9. `react` - 17 edges
+10. `VerificationDetailPage()` - 17 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Page 3 — Trust Graph (`/graph/:address`)` --references--> `Evidence`  [INFERRED]
-  README.md → src/types/index.ts
 - `Doctor` --references--> `run()`  [INFERRED]
   .agents/skills/create-verification-skill/references/example/verify-playground/SKILL.md → test/integration.test.ts
 - `Flags` --references--> `run()`  [INFERRED]
   .agents/skills/e2e/references/explore.md → test/integration.test.ts
 - `Reading the result` --references--> `run()`  [INFERRED]
   .agents/skills/e2e/references/explore.md → test/integration.test.ts
+- `🔄 Mathematical State Machine & Guardrails` --references--> `ProofOfWorkRegistry`  [INFERRED]
+  README.md → contracts/ProofOfWorkRegistry.sol
 - `1. Current State` --references--> `approveVerifier()`  [INFERRED]
   PROJECT_AUDIT.md → contracts/ProofOfWorkRegistry.sol
 
 ## Import Cycles
 - None detected.
 
-## Communities (73 total, 10 thin omitted)
+## Communities (77 total, 10 thin omitted)
 
-### Community 0 - "useWorkRegistry.ts"
+### Community 0 - "trustGraphService.ts"
 Cohesion: 0.06
-Nodes (89): Presentation & Business Logic Coupling, lucide-react, react, react-dom, react-router-dom, @tanstack/react-query, viem, wagmi (+81 more)
+Nodes (91): Presentation & Business Logic Coupling, lucide-react, react, react-router-dom, viem, wagmi, App(), AppLayout() (+83 more)
 
 ### Community 1 - "TrustGraphRegistry"
-Cohesion: 0.04
-Nodes (36): TrustGraphRegistry, ValidityStatus, EXPIRED, INVALID_ISSUER, NOT_FOUND, REVOKED, VALID, AttestationIssued (+28 more)
+Cohesion: 0.07
+Nodes (13): TrustGraphRegistry, AttestationIssued, AttestationRevoked, IssuerApproved, IssuerRemoved, OwnershipTransferred, allAttestationIds, attestations (+5 more)
 
-### Community 2 - "trustGraphService.ts"
-Cohesion: 0.09
-Nodes (21): getProfileForAddress(), MOCK_ATTESTATIONS, MOCK_ISSUERS, MOCK_PASSPORTS, MOCK_VERIFIERS, MOCK_WORKS, DEMO_WALLETS, REGISTRY_ADDRESS_CONFIGURED (+13 more)
+### Community 2 - "trustGraphService"
+Cohesion: 0.10
+Nodes (14): getProfileForAddress(), MOCK_ATTESTATIONS, MOCK_ISSUERS, MOCK_PASSPORTS, MOCK_VERIFIERS, MOCK_WORKS, SelectedNode, decodeClaimType() (+6 more)
 
 ### Community 3 - "para CLI — behavioral notes"
 Cohesion: 0.05
@@ -167,8 +172,8 @@ Cohesion: 0.10
 Nodes (12): 异步执行, 区块状态, EIP-7702（委托 EOA）, 执行事件和共识事件, 并行执行, 1. Geth 兼容 WebSocket 事件, 2. Monad 扩展 WebSocket 事件, 3. 执行事件 SDK（C/C++/Rust） (+4 more)
 
 ### Community 13 - "TrustGraph"
-Cohesion: 0.10
-Nodes (19): isIssuer(), 1. Product Model, 2. Core User Roles, 3. Supported Claim Types, 4. Four Primary MVP Pages, 5. Smart Contract Architecture, 6. Testing & Verification, 7. Demo Personas (+11 more)
+Cohesion: 0.06
+Nodes (30): 1. Clone & Install Dependencies, 1. Trust Profile (`/profile/:address`), 2. Configure Environment, 2. Work Registration & Attestation (`/submit` & `/issue`), 3. Interactive Trust Graph Canvas (`/graph/:address`), 3. Run the Development Server, 4. Verifier Portal & Deep Audit (`/verify` & `/verify/:id`), ⚡ Architecture & Protocol Lifecycle (+22 more)
 
 ### Community 14 - "scaffold/SKILL.md"
 Cohesion: 0.12
@@ -223,7 +228,7 @@ Cohesion: 0.15
 Nodes (13): act: one goal, Agent steps, assert, waitFor, extract: one question, Beyond the built-in agent, Budgets and cost, Choose an agent, Configure a model, In CI (+5 more)
 
 ### Community 27 - "Writing tests"
-Cohesion: 0.14
+Cohesion: 0.15
 Nodes (13): A complete file, Actions, app, expect, Fixtures, Habits, Locators, Reads (+5 more)
 
 ### Community 28 - "Skills"
@@ -366,25 +371,41 @@ Nodes (4): rejectWork(), revokeWork(), verifyWork(), onlyVerifier()
 Cohesion: 0.67
 Nodes (3): 10.1 GitNexus — Mandatory Before Editing, 10.2 GitNexus — Mandatory Before Commit, 10. Mandatory Code Intelligence Workflow
 
+### Community 72 - "main.tsx"
+Cohesion: 0.25
+Nodes (6): react-dom, @tanstack/react-query, config, Register, wagmi, queryClient
+
+### Community 73 - "Attestation"
+Cohesion: 0.18
+Nodes (11): Attestation, claimType, evidenceHash, evidenceUri, expiry, id, issuedAt, issuer (+3 more)
+
+### Community 74 - "ValidityStatus"
+Cohesion: 0.33
+Nodes (6): ValidityStatus, EXPIRED, INVALID_ISSUER, NOT_FOUND, REVOKED, VALID
+
+### Community 75 - "onlyOwner"
+Cohesion: 0.50
+Nodes (4): approveIssuer(), removeIssuer(), transferOwnership(), onlyOwner()
+
 ## Knowledge Gaps
 - **24 isolated node(s):** `SMART_CONTRACT`, `GITHUB_CONTRIBUTION`, `HACKATHON_PROJECT`, `PENDING`, `VERIFIED` (+19 more)
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 796 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 807 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
 - **10 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `viem` connect `useWorkRegistry.ts` to `deploy.cjs`, `package.json`, `trustGraphService.ts`, `integration.test.ts`?**
-  _High betweenness centrality (0.070) - this node is a cross-community bridge._
+- **Why does `viem` connect `trustGraphService.ts` to `deploy.cjs`, `package.json`, `integration.test.ts`?**
+  _High betweenness centrality (0.061) - this node is a cross-community bridge._
 - **What connects `SMART_CONTRACT`, `GITHUB_CONTRIBUTION`, `HACKATHON_PROJECT` to the rest of the system?**
   _24 weakly-connected nodes found - possible documentation gaps or missing edges._
-- **Should `useWorkRegistry.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.06019283746556474 - nodes in this community are weakly interconnected._
-- **Why does `Evidence` connect `index.ts` to `TrustGraph`?**
-  _High betweenness centrality (0.060) - this node is a cross-community bridge._
-- **Should `TrustGraphRegistry` be split into smaller, more focused modules?**
-  _Cohesion score 0.04421768707482993 - nodes in this community are weakly interconnected._
 - **Should `trustGraphService.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08687943262411348 - nodes in this community are weakly interconnected._
-- **Should `para CLI — behavioral notes` be split into smaller, more focused modules?**
-  _Cohesion score 0.04878048780487805 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06487603305785124 - nodes in this community are weakly interconnected._
+- **Why does `ProofOfWorkRegistry` connect `ProofOfWorkRegistry` to `Work`, `TrustGraph`, `index.ts`, `Status`, `WorkType`, `approveVerifier`, `onlyVerifier`?**
+  _High betweenness centrality (0.052) - this node is a cross-community bridge._
+- **Should `TrustGraphRegistry` be split into smaller, more focused modules?**
+  _Cohesion score 0.07407407407407407 - nodes in this community are weakly interconnected._
+- **Why does `6. Recommended Changes (Phase 1 & Onward)` connect `index.ts` to `approveVerifier`?**
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+- **Should `trustGraphService` be split into smaller, more focused modules?**
+  _Cohesion score 0.09634146341463415 - nodes in this community are weakly interconnected._

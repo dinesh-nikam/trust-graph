@@ -24,10 +24,10 @@
     "semantic_hash": "caf5df57a8307708bf64479eeafded0c"
   },
   "package.json": {
-    "mtime": 1791623087.3801172,
-    "seen": 1791623306.136618,
-    "ast_hash": "8cca6f5b3895631fec6a373e9fa26c26",
-    "semantic_hash": "8cca6f5b3895631fec6a373e9fa26c26"
+    "mtime": 1791630482.1221817,
+    "seen": 1791632439.8847544,
+    "ast_hash": "a80c64632420243c13cb4c5cb876c048",
+    "semantic_hash": ""
   },
   "postcss.config.js": {
     "mtime": 1791612713.479415,
@@ -36,10 +36,10 @@
     "semantic_hash": "ef3ba2a81ba19f8ea5ddf625521e96f0"
   },
   "scripts/deploy.cjs": {
-    "mtime": 1791617972.267102,
-    "seen": 1791618182.6658506,
-    "ast_hash": "02550e5ac28d51d9a36f3f44c512bdc1",
-    "semantic_hash": "02550e5ac28d51d9a36f3f44c512bdc1"
+    "mtime": 1791630482.1238718,
+    "seen": 1791632439.8849974,
+    "ast_hash": "1ac6e3304e04c74ddbfc7ba607dfa854",
+    "semantic_hash": ""
   },
   "skills-lock.json": {
     "mtime": 1791618361.0951192,
@@ -54,9 +54,9 @@
     "semantic_hash": ""
   },
   "src/components/layout/AppLayout.tsx": {
-    "mtime": 1791624727.0809968,
-    "seen": 1791625048.3118706,
-    "ast_hash": "1b3c893fc684cd9645f5d90e71136748",
+    "mtime": 1791630482.1254609,
+    "seen": 1791632439.885361,
+    "ast_hash": "acd3d5efe3af5101dc7cfd7fdc71d846",
     "semantic_hash": ""
   },
   "src/components/layout/Footer.tsx": {
@@ -66,9 +66,9 @@
     "semantic_hash": ""
   },
   "src/components/layout/Navbar.tsx": {
-    "mtime": 1791624709.0066276,
-    "seen": 1791625048.3118813,
-    "ast_hash": "b7f81a8411875b1281d072abf478455b",
+    "mtime": 1791630482.1270113,
+    "seen": 1791632439.8855393,
+    "ast_hash": "9159e454668214a86ced3c0e878cca77",
     "semantic_hash": ""
   },
   "src/config/chain.ts": {
@@ -102,9 +102,9 @@
     "semantic_hash": ""
   },
   "src/hooks/useWorkRegistry.ts": {
-    "mtime": 1791624362.6984484,
-    "seen": 1791624522.995629,
-    "ast_hash": "f161d6800ae29eb2149e9e61abfe96d0",
+    "mtime": 1791630482.1284962,
+    "seen": 1791632439.886689,
+    "ast_hash": "a6e1c4117258090fe55967b1f22eb09c",
     "semantic_hash": ""
   },
   "src/lib/blockchain/chain.ts": {
@@ -114,15 +114,15 @@
     "semantic_hash": "58c3dc42212bb74b9d8a084c90ec4e20"
   },
   "src/lib/contract/abi.ts": {
-    "mtime": 1791624224.44398,
-    "seen": 1791624522.9956481,
-    "ast_hash": "bcac4cf370558249525a7624a467d22e",
+    "mtime": 1791630482.1299493,
+    "seen": 1791632439.8868647,
+    "ast_hash": "b9c26bf8524e79a1089b1148fd1dab5e",
     "semantic_hash": ""
   },
   "src/lib/contract/config.ts": {
-    "mtime": 1791624249.4634604,
-    "seen": 1791624522.995657,
-    "ast_hash": "35f3cc83b581d5e4b06f047f35d94407",
+    "mtime": 1791630482.130956,
+    "seen": 1791632439.8868682,
+    "ast_hash": "2ebe399a328ddbbf259b144b97aa4422",
     "semantic_hash": ""
   },
   "src/main.tsx": {
@@ -180,9 +180,9 @@
     "semantic_hash": ""
   },
   "src/pages/VerifyPage.tsx": {
-    "mtime": 1791624680.241349,
-    "seen": 1791625048.3120039,
-    "ast_hash": "69a8e3f891f7ce42cc12e75f9b9edc29",
+    "mtime": 1791630482.1325822,
+    "seen": 1791632439.8883915,
+    "ast_hash": "777eaf1a1eb8cfbb4985c872e946b715",
     "semantic_hash": ""
   },
   "src/services/workService.ts": {
@@ -198,8 +198,8 @@
     "semantic_hash": ""
   },
   "src/utils/formatters.ts": {
-    "mtime": 1791624297.6341608,
-    "seen": 1791624522.9958153,
+    "mtime": 1791630482.1341794,
+    "seen": 1791632439.8887453,
     "ast_hash": "5622b89185232e40a11c7618cf1fe9db",
     "semantic_hash": ""
   },
@@ -216,15 +216,15 @@
     "semantic_hash": ""
   },
   "test/trustGraph.test.ts": {
-    "mtime": 1791624424.102156,
-    "seen": 1791624522.9958606,
+    "mtime": 1791630482.138758,
+    "seen": 1791632439.8891008,
     "ast_hash": "92d00fb45d1d4dd3c0d8eb52b27b5aed",
     "semantic_hash": ""
   },
   "tests/navigation.e2e.ts": {
-    "mtime": 1791624854.955762,
-    "seen": 1791625048.312054,
-    "ast_hash": "96cfbb2a04549ae166a1b40e425422f5",
+    "mtime": 1791630482.13927,
+    "seen": 1791632439.8891044,
+    "ast_hash": "1d58f6c61aefbd82c6d1f9e1dbe06472",
     "semantic_hash": ""
   },
   "tsconfig.json": {
@@ -246,28 +246,28 @@
     "semantic_hash": "813f12492ac2b6ecba2e0ff4c2ae9c63"
   },
   "contracts/ProofOfWorkRegistry.sol": {
-    "mtime": 1791624120.0522623,
-    "seen": 1791624522.995422,
-    "ast_hash": "a120f8ae3e8934b91eada5204b7ec12e",
+    "mtime": 1791630482.075933,
+    "seen": 1791632439.8839612,
+    "ast_hash": "6bb1a93e9ea00dec877ab83e2d196f2f",
     "semantic_hash": ""
   },
   "contracts/TrustGraphRegistry.sol": {
-    "mtime": 1791617612.7926898,
-    "seen": 1791618214.355512,
-    "ast_hash": "6f1600c3592615005301e7b73921c4fa",
-    "semantic_hash": "6f1600c3592615005301e7b73921c4fa"
+    "mtime": 1791630482.077489,
+    "seen": 1791632439.8841782,
+    "ast_hash": "25d51a42137fd9ed06c0a6e05012c484",
+    "semantic_hash": ""
   },
   "src/services/trustGraphService.ts": {
-    "mtime": 1791625041.0015163,
-    "seen": 1791625048.3120086,
-    "ast_hash": "fc13d944482661d29f80ae6304d17a6a",
+    "mtime": 1791632367.672028,
+    "seen": 1791632439.8883953,
+    "ast_hash": "6cd2d23b2781a77d0c8ff841c28196cd",
     "semantic_hash": ""
   },
   "test/TrustGraphRegistry.t.sol": {
-    "mtime": 1791617868.019027,
-    "seen": 1791618214.3607626,
-    "ast_hash": "4c4cef8d0e288937e76bde2ded0697f6",
-    "semantic_hash": "4c4cef8d0e288937e76bde2ded0697f6"
+    "mtime": 1791630482.1341794,
+    "seen": 1791632439.8890934,
+    "ast_hash": "babb4c4a2a742f1ff75cf6565b93fef2",
+    "semantic_hash": ""
   },
   ".agents/skills/addresses/SKILL.md": {
     "mtime": 1791613265.0660992,
@@ -600,21 +600,21 @@
     "semantic_hash": ""
   },
   "AGENTS.md": {
-    "mtime": 1791618384.6516342,
-    "seen": 1791618501.568918,
-    "ast_hash": "b354b6b6e1f8d2dd8d8a271228e0c5f1",
+    "mtime": 1791630482.0673933,
+    "seen": 1791632439.8991787,
+    "ast_hash": "6a352acda629fc58ee37f333aed8f297",
     "semantic_hash": ""
   },
   "PROJECT_AUDIT.md": {
-    "mtime": 1791613561.22376,
-    "seen": 1791618270.5242753,
+    "mtime": 1791630482.0710487,
+    "seen": 1791632439.8991828,
     "ast_hash": "515028dd2be4d3b05c250d52ca9acab4",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1791615433.553933,
-    "seen": 1791618270.524277,
-    "ast_hash": "0e91377f6b8748b10930b04db180139d",
+    "mtime": 1791632545.6632242,
+    "seen": 1791632617.9098437,
+    "ast_hash": "04b6a692eee58bb8f5c51cd3bb3d1f7a",
     "semantic_hash": ""
   },
   "index.html": {
@@ -636,15 +636,51 @@
     "semantic_hash": ""
   },
   "src/pages/SubmitWorkPage.tsx": {
-    "mtime": 1791624492.7355342,
-    "seen": 1791624522.9957294,
-    "ast_hash": "b5506dba7055dde513604262d1f1941b",
+    "mtime": 1791632575.9971297,
+    "seen": 1791632617.9097269,
+    "ast_hash": "5766b8e55da40e84a7d716d21b748f44",
     "semantic_hash": ""
   },
   "test/ProofOfWorkRegistry.t.sol": {
-    "mtime": 1791624166.1910498,
-    "seen": 1791624522.9958436,
-    "ast_hash": "01f078955b8b8fce0e0420e7642d7439",
+    "mtime": 1791630482.1341794,
+    "seen": 1791632439.889089,
+    "ast_hash": "ef0c682e3602572ded0f8911b13aa8be",
+    "semantic_hash": ""
+  },
+  "test/integration.test.ts": {
+    "mtime": 1791630482.138083,
+    "seen": 1791632439.8890972,
+    "ast_hash": "ce8b65be248302266d7639778c954813",
+    "semantic_hash": ""
+  },
+  "assets/trustgraph-banner.svg": {
+    "mtime": 1791632395.5080304,
+    "seen": 1791632439.8993537,
+    "ast_hash": "e0b83ff5ebee4320ce70b13f9a25d75b",
+    "semantic_hash": ""
+  },
+  "assets/trustgraph-architecture.svg": {
+    "mtime": 1791632433.406593,
+    "seen": 1791632617.909847,
+    "ast_hash": "058f93a2bd1407c47d28c23c20c8e62c",
+    "semantic_hash": ""
+  },
+  "assets/trustgraph-badges.svg": {
+    "mtime": 1791632505.8580725,
+    "seen": 1791632617.9098482,
+    "ast_hash": "b0722b3663a61cca348268f6eaba9050",
+    "semantic_hash": ""
+  },
+  "assets/trustgraph-features.svg": {
+    "mtime": 1791632490.2646697,
+    "seen": 1791632617.9098516,
+    "ast_hash": "05c686e4bd55df0bd8c362f5049e83fb",
+    "semantic_hash": ""
+  },
+  "assets/trustgraph-lifecycle.svg": {
+    "mtime": 1791632464.0360425,
+    "seen": 1791632617.909853,
+    "ast_hash": "f5b6a6d47918213b0a554fb54d835458",
     "semantic_hash": ""
   }
 }

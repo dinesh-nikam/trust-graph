@@ -60,6 +60,14 @@ export function useRegistryOwner() {
   return { owner: result.data, isLoading: result.isLoading, error: result.error };
 }
 
+export function useContractStatus() {
+  return useQuery({
+    queryKey: ['contractStatus'],
+    queryFn: () => trustGraphService.getContractStatus(),
+    refetchInterval: 30_000,
+  });
+}
+
 export type TxStep = 'idle' | 'preparing' | 'waiting-wallet' | 'submitted' | 'confirming' | 'confirmed' | 'error';
 
 function errorText(error: unknown, fallback: string): string {

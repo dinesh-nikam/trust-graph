@@ -5,11 +5,11 @@ import { getAddress, isAddress, zeroAddress } from 'viem';
 const configuredTrustGraphAddress = import.meta.env.VITE_TRUST_GRAPH_REGISTRY_ADDRESS;
 const configuredProofOfWorkAddress = import.meta.env.VITE_PROOF_OF_WORK_REGISTRY_ADDRESS;
 
-if (configuredTrustGraphAddress && !isAddress(configuredTrustGraphAddress)) {
+if (configuredTrustGraphAddress && !isAddress(configuredTrustGraphAddress, { strict: false })) {
   throw new Error('VITE_TRUST_GRAPH_REGISTRY_ADDRESS must be a valid EVM address.');
 }
 
-if (configuredProofOfWorkAddress && !isAddress(configuredProofOfWorkAddress)) {
+if (configuredProofOfWorkAddress && !isAddress(configuredProofOfWorkAddress, { strict: false })) {
   throw new Error('VITE_PROOF_OF_WORK_REGISTRY_ADDRESS must be a valid EVM address.');
 }
 
@@ -25,19 +25,19 @@ export const PROOF_OF_WORK_REGISTRY_CONFIGURED = PROOF_OF_WORK_REGISTRY_ADDRESS 
 // Demo Wallets for testing and guided inspection
 export const DEMO_WALLETS = {
   ORGANIZER: {
-    address: '0x72A14b98c368d19F58bFE4e7d4d4D91F2610A91F' as `0x${string}`,
+    address: '0x72A14B98C368D19f58BFE4E7d4d4D91F2610A91f' as `0x${string}`,
     name: 'Hackathon Organizer / Admin',
     role: 'Registry Owner',
     description: 'Can authorize and revoke reviewer privileges across TrustGraph.',
   },
   REVIEWER: {
-    address: '0x92Fa656bE0656D1F08a6eD7D284976d8b948F721' as `0x${string}`,
+    address: '0x92fA656Be0656D1f08a6eD7d284976d8b948F721' as `0x${string}`,
     name: 'Ecosystem Technical Reviewer',
     role: 'Authorized Issuer',
     description: 'Authorized to review evidence manifests and issue on-chain attestations.',
   },
   DEVELOPER: {
-    address: '0x3a48Bf2c8d8E02d91B0c82Ae27909A4D517e92D1' as `0x${string}`,
+    address: '0x3a48bF2C8d8E02D91b0C82AE27909a4d517e92d1' as `0x${string}`,
     name: 'Developer Sarah',
     role: 'Subject',
     description: 'Active builder with claims backed by inspectable smart contract and commit evidence.',

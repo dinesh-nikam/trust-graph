@@ -531,7 +531,7 @@ export function useVerifierStatus(address?: string) {
   const query = useQuery({
     queryKey: ['isVerifier', address?.toLowerCase()],
     queryFn: async (): Promise<boolean> => {
-      if (!address || !isAddress(address)) return false;
+      if (!address || !isAddress(address, { strict: false })) return false;
       await assertProofOfWorkRegistry(publicClient);
       return publicClient.readContract({
         address: PROOF_OF_WORK_CONTRACT_CONFIG.address,
@@ -540,7 +540,7 @@ export function useVerifierStatus(address?: string) {
         args: [address],
       });
     },
-    enabled: Boolean(address && isAddress(address)),
+    enabled: Boolean(address && isAddress(address, { strict: false })),
     refetchInterval: 15_000,
   });
 
@@ -728,7 +728,7 @@ export function useWorksByWorkerPaginated(worker?: string, page = 0, pageSize = 
       total: number;
       totalPages: number;
     }> => {
-      if (!worker || !isAddress(worker) || !publicClient) {
+      if (!worker || !isAddress(worker, { strict: false }) || !publicClient) {
         return { items: [], total: 0, totalPages: 0 };
       }
       await assertProofOfWorkRegistry(publicClient);
@@ -763,7 +763,7 @@ export function useWorksByWorkerPaginated(worker?: string, page = 0, pageSize = 
         totalPages: Math.ceil(total / pageSize),
       };
     },
-    enabled: Boolean(worker && isAddress(worker)),
+    enabled: Boolean(worker && isAddress(worker, { strict: false })),
     refetchInterval: 15_000,
     refetchIntervalInBackground: false,
   });

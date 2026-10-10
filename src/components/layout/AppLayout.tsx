@@ -10,15 +10,20 @@ import {
   MONAD_TESTNET_CHAIN_ID,
 } from '../../lib/contract/config';
 import { trustGraphService } from '../../services/trustGraphService';
+import { useContractStatus } from '../../hooks/useTrustGraph';
 
 export const AppLayout: React.FC = () => {
   const [mode, setMode] = useState<'LIVE' | 'DEMO'>(trustGraphService.getMode());
+  const { data: contractStatus } = useContractStatus();
 
   useEffect(() => {
     const refreshMode = () => setMode(trustGraphService.getMode());
     window.addEventListener('storage', refreshMode);
     return () => window.removeEventListener('storage', refreshMode);
   }, []);
+
+  const powStatus = contractStatus?.proofOfWorkReady ? 'CONTRACT_READY' : 'VERIFYING...';
+  const tgStatus = contractStatus?.trustGraphReady ? 'CONTRACT_READY' : 'CONTRACT_NOT_DEPLOYED';
 
   return (
     <div className="relative min-h-screen flex flex-col bg-background isolate">
@@ -37,7 +42,7 @@ export const AppLayout: React.FC = () => {
         <div className="relative z-50 border-b border-white/[0.06] bg-neutral-950/80 backdrop-blur-md text-[11px] py-1.5 px-4 text-center text-neutral-400 font-mono truncate flex items-center justify-center gap-2">
           <span className="inline-block h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
           <span>
-            {`MONAD TESTNET (Chain ID: ${MONAD_TESTNET_CHAIN_ID}) · ATTESTATION REGISTRY: ${REGISTRY_ADDRESS_CONFIGURED ? TRUST_GRAPH_REGISTRY_ADDRESS : 'NOT CONFIGURED'} · WORK REGISTRY: ${PROOF_OF_WORK_REGISTRY_CONFIGURED ? PROOF_OF_WORK_REGISTRY_ADDRESS : 'NOT CONFIGURED'}`}
+            {`MONAD TESTNET (${MONAD_TESTNET_CHAIN_ID}) · WORK REGISTRY: ${powStatus} (${PROOF_OF_WORK_REGISTRY_CONFIGURED ? PROOF_OF_WORK_REGISTRY_ADDRESS : 'NOT CONFIGURED'}) · ATTESTATION REGISTRY: ${tgStatus}`}
           </span>
         </div>
       )}

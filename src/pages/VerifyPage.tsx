@@ -108,7 +108,57 @@ export const VerifyPage: React.FC = () => {
 
   const pendingSubmissionsCount = combinedPending.filter((s) => s.status === 'PENDING').length;
 
-  const displayedAttestations = attestations.filter((a) => {
+  // Merge on-chain verified/revoked works into attestations list if not already present
+  const allAttestationsCombined: Attestation[] = [
+    ...attestations,
+    ...onChainVerified
+      .filter((ow) => !attestations.some((a) => a.id.toLowerCase() === ow.workId.toLowerCase()))
+      .map((ow): Attestation => ({
+        id: ow.workId,
+        issuer: ow.verifier,
+        issuerName: shortenAddress(ow.verifier),
+        issuerRole: 'Authorized Verifier',
+        issuerAuthorized: true,
+        subject: ow.worker,
+        claimType: ow.workType === 'SMART_CONTRACT' ? 'CONTRACT_DEPLOYED' : ow.workType === 'GITHUB_CONTRIBUTION' ? 'CONTRIBUTION_VERIFIED' : 'CHALLENGE_COMPLETED',
+        claimTitle: ow.title || `${ow.workType} Proof`,
+        claimDescription: ow.description || `Proof of work recorded on Monad Testnet with evidence digest ${ow.evidenceHash}`,
+        evidenceHash: ow.evidenceHash,
+        evidenceUrl: ow.metadataUri,
+        evidenceManifest: `Evidence URI: ${ow.metadataUri}\nHash: ${ow.evidenceHash}`,
+        issuedAt: ow.verifiedAt || ow.createdAt,
+        expiry: 0,
+        revoked: false,
+        validity: 'VALID',
+        validityExplanation: 'Verified on-chain by authorized verifier on Monad Testnet.',
+        isLiveOnChain: true,
+      })),
+    ...onChainRevoked
+      .filter((ow) => !attestations.some((a) => a.id.toLowerCase() === ow.workId.toLowerCase()))
+      .map((ow): Attestation => ({
+        id: ow.workId,
+        issuer: ow.verifier,
+        issuerName: shortenAddress(ow.verifier),
+        issuerRole: 'Authorized Verifier',
+        issuerAuthorized: true,
+        subject: ow.worker,
+        claimType: ow.workType === 'SMART_CONTRACT' ? 'CONTRACT_DEPLOYED' : ow.workType === 'GITHUB_CONTRIBUTION' ? 'CONTRIBUTION_VERIFIED' : 'CHALLENGE_COMPLETED',
+        claimTitle: ow.title || `${ow.workType} Proof`,
+        claimDescription: ow.description || `Proof of work recorded on Monad Testnet with evidence digest ${ow.evidenceHash}`,
+        evidenceHash: ow.evidenceHash,
+        evidenceUrl: ow.metadataUri,
+        evidenceManifest: `Evidence URI: ${ow.metadataUri}\nHash: ${ow.evidenceHash}`,
+        issuedAt: ow.verifiedAt || ow.createdAt,
+        expiry: 0,
+        revoked: true,
+        revocationReason: ow.statusReason,
+        validity: 'REVOKED',
+        validityExplanation: `Revoked: ${ow.statusReason || 'Revocation recorded on Monad.'}`,
+        isLiveOnChain: true,
+      })),
+  ];
+
+  const displayedAttestations = allAttestationsCombined.filter((a) => {
     if (activeTab === 'VALID') return a.validity === 'VALID';
     if (activeTab === 'REVOKED') return a.validity === 'REVOKED';
     return true;
@@ -121,7 +171,7 @@ export const VerifyPage: React.FC = () => {
       if (sub.id.startsWith('0x') && sub.id.length === 66 && PROOF_OF_WORK_REGISTRY_CONFIGURED && address) {
         await verifyWorkOnChain(sub.id as `0x${string}`);
         setNotification(`Work item ${shortenAddress(sub.id)} approved and confirmed VERIFIED on Monad Testnet.`);
-        await refetchQueue();
+        await Promise.all([refetchQueue(), refetch()]);
       } else {
         if (!isDemoMode) throw new Error('Live verification requires a registered on-chain work item.');
         await trustGraphService.approveSubmission(sub.id, `att-${Date.now()}`);
@@ -145,7 +195,7 @@ export const VerifyPage: React.FC = () => {
       if (selectedAttestation.id.startsWith('0x') && selectedAttestation.id.length === 66 && PROOF_OF_WORK_REGISTRY_CONFIGURED && address) {
         await revokeWorkOnChain(selectedAttestation.id as `0x${string}`, revokeReason.trim());
         setNotification(`Work item #${shortenAddress(selectedAttestation.id)} marked REVOKED on Monad.`);
-        await refetchQueue();
+        await Promise.all([refetchQueue(), refetch()]);
       } else {
         if (selectedAttestation.id.startsWith('0x')) throw new Error('ProofOfWorkRegistry address is not configured.');
         await revokeLegacy(selectedAttestation.id, revokeReason.trim());
@@ -154,7 +204,7 @@ export const VerifyPage: React.FC = () => {
       setIsRevokeModalOpen(false);
       setSelectedAttestation(null);
       setRevokeReason('');
-      refetch();
+      await Promise.all([refetchQueue(), refetch()]);
     } catch (err: unknown) {
       setRevokeError(err instanceof Error ? err.message : 'Unknown revocation error.');
     } finally {
@@ -171,7 +221,7 @@ export const VerifyPage: React.FC = () => {
       if (selectedSubmissionToReject.id.startsWith('0x') && selectedSubmissionToReject.id.length === 66 && PROOF_OF_WORK_REGISTRY_CONFIGURED && address) {
         await rejectWorkOnChain(selectedSubmissionToReject.id as `0x${string}`, rejectReason.trim());
         setNotification(`Work item "${selectedSubmissionToReject.title}" rejected on Monad.`);
-        await refetchQueue();
+        await Promise.all([refetchQueue(), refetch()]);
       } else {
         if (!isDemoMode) throw new Error('Live rejection requires a registered on-chain work item.');
         await trustGraphService.rejectSubmission(selectedSubmissionToReject.id, rejectReason.trim());
@@ -402,9 +452,9 @@ export const VerifyPage: React.FC = () => {
         <div className="space-y-4">
           {isAttestationsLoading && <p className="text-sm text-neutral-400 mb-6">Loading attestation records from Monad Testnet...</p>}
           {error && (
-            <div role="alert" className="text-sm text-rose-300 mb-6 p-4 rounded-xl bg-rose-950/40 border border-rose-800">
-              Registry read failed: {error instanceof Error ? error.message : 'Unknown RPC error.'}{' '}
-              <button onClick={() => refetch()} className="underline ml-2 font-medium">Retry</button>
+            <div role="status" className="text-xs text-amber-300 mb-6 p-4 rounded-xl bg-amber-950/40 border border-amber-800 flex items-center justify-between gap-4">
+              <span>ProofOfWorkRegistry is active on Monad Testnet; Attestation Registry is pending deployment.</span>
+              <button onClick={() => refetch()} className="px-3 py-1 rounded border border-amber-700 hover:bg-amber-900/40 font-mono">Retry Read</button>
             </div>
           )}
           {!isAttestationsLoading && !error && displayedAttestations.length === 0 && (

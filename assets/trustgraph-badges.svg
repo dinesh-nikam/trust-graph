@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 56" width="100%" height="100%">
+  <defs>
+    <linearGradient id="badgeBarBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c071d" />
+      <stop offset="100%" stop-color="#070312" />
+    </linearGradient>
+
+    <linearGradient id="monadPurple" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#836EF9" />
+      <stop offset="100%" stop-color="#A78BFA" />
+    </linearGradient>
+
+    <filter id="badgeGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    .live-dot {
+      animation: livePulse 2s infinite ease-in-out;
+    }
+    .badge-item {
+      transition: all 0.25s ease;
+    }
+    .badge-item:hover {
+      filter: drop-shadow(0 0 6px rgba(131, 110, 249, 0.5));
+    }
+    @keyframes livePulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.8); }
+    }
+  </style>
+
+  <rect width="1200" height="56" rx="10" fill="url(#badgeBarBg)" stroke="#221440" stroke-width="1.2" />
+
+  <!-- Badge 1: Monad Testnet -->
+  <g class="badge-item" transform="translate(18, 10)">
+    <rect width="215" height="36" rx="8" fill="#170f36" stroke="#836EF9" stroke-width="1" />
+    <circle class="live-dot" cx="18" cy="18" r="4.5" fill="#10B981" />
+    <text x="32" y="22" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#E2E8F0">
+      MONAD TESTNET <tspan fill="#836EF9">#10143</tspan>
+    </text>
+  </g>
+
+  <!-- Badge 2: Solidity Contracts Passed -->
+  <g class="badge-item" transform="translate(245, 10)">
+    <rect width="215" height="36" rx="8" fill="#170f36" stroke="#10B981" stroke-width="1" />
+    <path d="M16 18l3 3 5-5" stroke="#10B981" stroke-width="2" fill="none" stroke-linecap="round" />
+    <text x="32" y="22" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#E2E8F0">
+      SOLIDITY 0.8.28 <tspan fill="#34D399">• 31 PASS</tspan>
+    </text>
+  </g>
+
+  <!-- Badge 3: Web Crypto SHA-256 -->
+  <g class="badge-item" transform="translate(472, 10)">
+    <rect width="225" height="36" rx="8" fill="#170f36" stroke="#00F2FE" stroke-width="1" />
+    <circle cx="18" cy="18" r="5" stroke="#00F2FE" stroke-width="1.5" fill="none" />
+    <text x="32" y="22" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#E2E8F0">
+      SHA-256 <tspan fill="#00F2FE">• DETERMINISTIC</tspan>
+    </text>
+  </g>
+
+  <!-- Badge 4: Zero Mocks / Real EVM -->
+  <g class="badge-item" transform="translate(709, 10)">
+    <rect width="230" height="36" rx="8" fill="#170f36" stroke="#F59E0B" stroke-width="1" />
+    <path d="M14 18h8M18 14v8" stroke="#F59E0B" stroke-width="1.8" stroke-linecap="round" fill="none" />
+    <text x="32" y="22" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#E2E8F0">
+      ZERO MOCKS <tspan fill="#FBBF24">• REAL STATE</tspan>
+    </text>
+  </g>
+
+  <!-- Badge 5: No Vanity Scores -->
+  <g class="badge-item" transform="translate(951, 10)">
+    <rect width="232" height="36" rx="8" fill="#170f36" stroke="#EC4899" stroke-width="1" />
+    <circle cx="18" cy="18" r="5" stroke="#EC4899" stroke-width="1.5" fill="none" />
+    <line x1="14" y1="14" x2="22" y2="22" stroke="#EC4899" stroke-width="1.5" />
+    <text x="32" y="22" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="700" fill="#E2E8F0">
+      NO VANITY SCORES <tspan fill="#F472B6">• FACTS ONLY</tspan>
+    </text>
+  </g>
+</svg>

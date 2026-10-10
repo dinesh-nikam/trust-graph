@@ -19,6 +19,7 @@ import {
   Calendar
 } from 'lucide-react';
 import { useAttestation, useRevokeAttestation, useRegistryOwner } from '../hooks/useTrustGraph';
+import { useRevokeWork, useVerifierStatus } from '../hooks/useWorkRegistry';
 import { 
   shortenAddress, 
   shortenHash, 
@@ -30,6 +31,8 @@ import {
 } from '../utils/formatters';
 import { 
   TRUST_GRAPH_REGISTRY_ADDRESS, 
+  PROOF_OF_WORK_REGISTRY_ADDRESS,
+  PROOF_OF_WORK_REGISTRY_CONFIGURED,
   getExplorerAddressUrl, 
   getExplorerTxUrl 
 } from '../lib/contract/config';
@@ -37,9 +40,12 @@ import {
 export const VerificationDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const activeId = id || '1';
+  const isOnChainWork = activeId.startsWith('0x') && activeId.length === 66;
   const { attestation, isLoading, error, refetch } = useAttestation(activeId);
   const { address } = useAccount();
-  const { revoke, txStep: revokeTxStep } = useRevokeAttestation();
+  const { revoke: revokeLegacy, txStep: revokeTxStep } = useRevokeAttestation();
+  const { revoke: revokeWorkOnChain, isConfirming: isRevokingWork } = useRevokeWork();
+  const { isVerifier } = useVerifierStatus(address);
   const { owner } = useRegistryOwner();
 
   // Local verification test state
@@ -88,13 +94,22 @@ export const VerificationDetailPage: React.FC = () => {
     if (!revokeReason.trim() || !attestation) return;
 
     setRevokeErrorMsg(null);
+    setIsRevoking(true);
     try {
-      await revoke(attestation.id, revokeReason.trim());
-      setIsRevoking(false);
-      setRevokeSuccessMsg('Attestation has been revoked on Monad. Historical record updated.');
-      refetch();
+      if (isOnChainWork && PROOF_OF_WORK_REGISTRY_CONFIGURED && address) {
+        await revokeWorkOnChain(attestation.id as `0x${string}`, revokeReason.trim());
+        setIsRevoking(false);
+        setRevokeSuccessMsg('Work item has been revoked on Monad Testnet. Historical record updated.');
+        refetch();
+      } else {
+        await revokeLegacy(attestation.id, revokeReason.trim());
+        setIsRevoking(false);
+        setRevokeSuccessMsg('Attestation has been revoked on Monad. Historical record updated.');
+        refetch();
+      }
     } catch (err: unknown) {
       setRevokeErrorMsg(`Revocation failed: ${err instanceof Error ? err.message : 'Unknown error.'}`);
+      setIsRevoking(false);
     }
   };
 
@@ -131,8 +146,10 @@ export const VerificationDetailPage: React.FC = () => {
   const canRevoke =
     !attestation.revoked &&
     address &&
-    (address.toLowerCase() === attestation.issuer.toLowerCase() ||
-      address.toLowerCase() === owner?.toLowerCase());
+    (isOnChainWork
+      ? isVerifier || (owner && address.toLowerCase() === owner.toLowerCase())
+      : address.toLowerCase() === attestation.issuer.toLowerCase() ||
+        (owner && address.toLowerCase() === owner.toLowerCase()));
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 pb-16">
@@ -406,12 +423,12 @@ export const VerificationDetailPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <span className="text-neutral-500">Registry Contract:</span>
               <a
-                href={getExplorerAddressUrl(TRUST_GRAPH_REGISTRY_ADDRESS)}
+                href={getExplorerAddressUrl(isOnChainWork ? PROOF_OF_WORK_REGISTRY_ADDRESS : TRUST_GRAPH_REGISTRY_ADDRESS)}
                 target="_blank"
                 rel="noreferrer"
                 className="text-neutral-300 hover:text-white flex items-center gap-1"
               >
-                <span>{shortenAddress(TRUST_GRAPH_REGISTRY_ADDRESS, 8)}</span>
+                <span>{shortenAddress(isOnChainWork ? PROOF_OF_WORK_REGISTRY_ADDRESS : TRUST_GRAPH_REGISTRY_ADDRESS, 8)}</span>
                 <ExternalLink className="h-3 w-3" />
               </a>
             </div>
@@ -466,10 +483,10 @@ export const VerificationDetailPage: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   type="submit"
-                  disabled={revokeTxStep === 'submitted' || revokeTxStep === 'waiting-wallet'}
+                  disabled={isRevokingWork || revokeTxStep === 'submitted' || revokeTxStep === 'waiting-wallet'}
                   className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs rounded-lg transition-colors"
                 >
-                  {revokeTxStep === 'waiting-wallet' ? 'Sign in Wallet...' : 'Confirm Revocation'}
+                  {isRevokingWork || revokeTxStep === 'waiting-wallet' ? 'Sign in Wallet...' : 'Confirm Revocation'}
                 </button>
                 <button
                   type="button"

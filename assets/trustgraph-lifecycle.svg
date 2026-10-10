@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="stateBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080414" />
+      <stop offset="50%" stop-color="#110729" />
+      <stop offset="100%" stop-color="#070312" />
+    </linearGradient>
+
+    <!-- State Gradients -->
+    <linearGradient id="pendingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#78350f" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#2a1205" stop-opacity="0.9" />
+    </linearGradient>
+
+    <linearGradient id="verifiedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#022c22" stop-opacity="0.9" />
+    </linearGradient>
+
+    <linearGradient id="rejectedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#881337" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#3b0717" stop-opacity="0.9" />
+    </linearGradient>
+
+    <linearGradient id="revokedGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#581c87" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#24073d" stop-opacity="0.9" />
+    </linearGradient>
+
+    <filter id="neonGlowState" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    .glow-pulse-pending {
+      animation: pulsePending 2.5s infinite ease-in-out;
+    }
+    .glow-pulse-verified {
+      animation: pulseVerified 2s infinite ease-in-out;
+    }
+    .forbidden-dash {
+      stroke-dasharray: 6 4;
+      animation: dashMove 12s linear infinite;
+    }
+    .allowed-dash {
+      stroke-dasharray: 8 6;
+      animation: dashMoveRev 15s linear infinite;
+    }
+
+    @keyframes pulsePending {
+      0%, 100% { filter: drop-shadow(0 0 2px #F59E0B); }
+      50% { filter: drop-shadow(0 0 10px #F59E0B); }
+    }
+    @keyframes pulseVerified {
+      0%, 100% { filter: drop-shadow(0 0 3px #10B981); }
+      50% { filter: drop-shadow(0 0 14px #10B981); }
+    }
+    @keyframes dashMove {
+      to { stroke-dashoffset: -200; }
+    }
+    @keyframes dashMoveRev {
+      to { stroke-dashoffset: 200; }
+    }
+  </style>
+
+  <!-- Frame Background -->
+  <rect width="1200" height="360" rx="16" fill="url(#stateBg)" stroke="#26174a" stroke-width="1.5" />
+
+  <!-- Title / Legend Header -->
+  <g transform="translate(50, 44)">
+    <text font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="800" fill="#836EF9" letter-spacing="2">
+      MATHEMATICAL STATE MACHINE
+    </text>
+    <text y="24" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="800" fill="#FFFFFF">
+      EVM Lifecycle &amp; Transition Guardrails
+    </text>
+  </g>
+
+  <!-- Legend in top-right -->
+  <g transform="translate(850, 38)">
+    <!-- Allowed transition legend -->
+    <line x1="0" y1="12" x2="30" y2="12" stroke="#10B981" stroke-width="2.5" />
+    <polygon points="30,9 36,12 30,15" fill="#10B981" />
+    <text x="44" y="16" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#94A3B8">Valid Transition</text>
+
+    <!-- Blocked transition legend -->
+    <line x1="160" y1="12" x2="190" y2="12" stroke="#EF4444" stroke-width="2" stroke-dasharray="4 3" />
+    <line x1="172" y1="7" x2="178" y2="17" stroke="#EF4444" stroke-width="2" />
+    <line x1="178" y1="7" x2="172" y2="17" stroke="#EF4444" stroke-width="2" />
+    <text x="204" y="16" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" font-weight="600" fill="#F87171">Strictly Reverts (EVM)</text>
+  </g>
+
+  <!-- TRANSITION PATHS & CONNECTORS -->
+  <g>
+    <!-- 1. UNREGISTERED -> PENDING (registerWork) -->
+    <path d="M140 180 L230 180" stroke="#836EF9" stroke-width="2.5" class="allowed-dash" />
+    <polygon points="230,175 240,180 230,185" fill="#836EF9" />
+    <text x="145" y="168" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#A78BFA">registerWork()</text>
+
+    <!-- 2. PENDING -> VERIFIED (verifyWork) -->
+    <path d="M430 160 L570 140" stroke="#10B981" stroke-width="2.5" class="allowed-dash" />
+    <polygon points="570,135 580,140 570,145" fill="#10B981" />
+    <text x="460" y="136" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#34D399">verifyWork(true)</text>
+
+    <!-- 3. PENDING -> REJECTED (rejectWork) -->
+    <path d="M430 200 L570 240" stroke="#EF4444" stroke-width="2.5" class="allowed-dash" />
+    <polygon points="570,235 580,240 570,245" fill="#EF4444" />
+    <text x="460" y="235" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#F87171">rejectWork(reason)</text>
+
+    <!-- 4. VERIFIED -> REVOKED (revokeWork) -->
+    <path d="M770 140 L910 160" stroke="#A855F7" stroke-width="2.5" class="allowed-dash" />
+    <polygon points="910,155 920,160 910,165" fill="#A855F7" />
+    <text x="800" y="136" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#C084FC">revokeWork(reason)</text>
+
+    <!-- FORBIDDEN TRANSITIONS (Blocked with Red Dashes and Crosses) -->
+    <!-- FORBIDDEN: REJECTED -> VERIFIED -->
+    <path d="M675 210 Q 675 190 675 180" stroke="#EF4444" stroke-width="2" class="forbidden-dash" />
+    <circle cx="675" cy="190" r="10" fill="#2d0b16" stroke="#EF4444" stroke-width="1.5" />
+    <line x1="671" y1="186" x2="679" y2="194" stroke="#EF4444" stroke-width="2" />
+    <line x1="679" y1="186" x2="671" y2="194" stroke="#EF4444" stroke-width="2" />
+    <text x="694" y="194" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" fill="#FCA5A5">TERMINAL (CANNOT RE-VERIFY)</text>
+
+    <!-- FORBIDDEN: REVOKED -> VERIFIED -->
+    <path d="M960 120 C 890 80 820 80 750 115" stroke="#EF4444" stroke-width="1.8" class="forbidden-dash" fill="none" />
+    <circle cx="855" cy="88" r="10" fill="#2d0b16" stroke="#EF4444" stroke-width="1.5" />
+    <line x1="851" y1="84" x2="859" y2="92" stroke="#EF4444" stroke-width="2" />
+    <line x1="859" y1="84" x2="851" y2="92" stroke="#EF4444" stroke-width="2" />
+    <text x="800" y="74" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="9" font-weight="700" fill="#FCA5A5">IMMUTABLE (CANNOT UN-REVOKE)</text>
+  </g>
+
+  <!-- STATE NODES -->
+
+  <!-- NODE 0: UNREGISTERED -->
+  <g transform="translate(50, 140)">
+    <rect width="90" height="80" rx="10" fill="#13092b" stroke="#4c1d95" stroke-width="1" />
+    <text x="16" y="36" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="800" fill="#A78BFA">NON-EXISTENT</text>
+    <text x="16" y="54" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="9" fill="#94A3B8">WorkId = 0</text>
+  </g>
+
+  <!-- NODE 1: PENDING -->
+  <g transform="translate(240, 130)" class="glow-pulse-pending">
+    <rect width="190" height="100" rx="12" fill="url(#pendingGrad)" stroke="#F59E0B" stroke-width="1.5" />
+    <circle cx="28" cy="30" r="10" fill="#451a03" />
+    <circle cx="28" cy="30" r="4" fill="#FBBF24" />
+    <text x="46" y="34" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#FEF3C7">PENDING</text>
+    <text x="18" y="60" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#FDE68A">• Worker registered</text>
+    <text x="18" y="76" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#FDE68A">• Evidence hash recorded</text>
+    <text x="18" y="92" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#F59E0B">isVerified = FALSE</text>
+  </g>
+
+  <!-- NODE 2: VERIFIED -->
+  <g transform="translate(580, 80)" class="glow-pulse-verified">
+    <rect width="190" height="100" rx="12" fill="url(#verifiedGrad)" stroke="#10B981" stroke-width="1.8" />
+    <circle cx="28" cy="30" r="10" fill="#064e3b" />
+    <path d="M24 30l3 3 5-5" stroke="#34D399" stroke-width="2" fill="none" stroke-linecap="round" />
+    <text x="46" y="34" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#D1FAE5">VERIFIED</text>
+    <text x="18" y="60" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#A7F3D0">• Verifier authorized</text>
+    <text x="18" y="76" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#A7F3D0">• Timestamped on-chain</text>
+    <text x="18" y="92" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#34D399">isVerified = TRUE</text>
+  </g>
+
+  <!-- NODE 3: REJECTED (Terminal) -->
+  <g transform="translate(580, 210)">
+    <rect width="190" height="100" rx="12" fill="url(#rejectedGrad)" stroke="#F43F5E" stroke-width="1.2" />
+    <circle cx="28" cy="30" r="10" fill="#4c0519" />
+    <line x1="24" y1="26" x2="32" y2="34" stroke="#FB7185" stroke-width="2" />
+    <line x1="32" y1="26" x2="24" y2="34" stroke="#FB7185" stroke-width="2" />
+    <text x="46" y="34" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#FFE4E6">REJECTED</text>
+    <text x="18" y="60" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#FECDD3">• Mandatory reason string</text>
+    <text x="18" y="76" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#FECDD3">• Terminal failure state</text>
+    <text x="18" y="92" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#F43F5E">isVerified = FALSE</text>
+  </g>
+
+  <!-- NODE 4: REVOKED (Historical Preservation) -->
+  <g transform="translate(920, 130)">
+    <rect width="210" height="100" rx="12" fill="url(#revokedGrad)" stroke="#A855F7" stroke-width="1.2" />
+    <circle cx="28" cy="30" r="10" fill="#3b0764" />
+    <path d="M24 33V27h8v6z" stroke="#C084FC" stroke-width="1.5" fill="none" />
+    <text x="46" y="34" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#F3E8FF">REVOKED</text>
+    <text x="18" y="60" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#E9D5FF">• Evidence preserved on-chain</text>
+    <text x="18" y="76" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#E9D5FF">• Revocation audit trail</text>
+    <text x="18" y="92" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" font-weight="700" fill="#C084FC">isVerified = FALSE</text>
+  </g>
+</svg>
