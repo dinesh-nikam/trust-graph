@@ -293,9 +293,20 @@ contract ProofOfWorkRegistry {
 
     // --- Admin Functions ---
 
+    /**
+     * @notice Transfer contract ownership to a new administrator.
+     * @dev The previous owner's explicit verifier authorization is revoked on
+     * transfer; ownership itself carried that grant via the constructor. The
+     * new owner remains a verifier through the implicit owner privilege.
+     */
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "Invalid new owner");
-        emit OwnershipTransferred(owner, newOwner);
+        address previousOwner = owner;
+        if (newOwner != previousOwner && authorizedVerifiers[previousOwner]) {
+            authorizedVerifiers[previousOwner] = false;
+            emit VerifierRemoved(previousOwner);
+        }
+        emit OwnershipTransferred(previousOwner, newOwner);
         owner = newOwner;
     }
 }
