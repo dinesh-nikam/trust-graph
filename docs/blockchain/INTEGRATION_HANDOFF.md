@@ -19,8 +19,12 @@ Related documents:
 | Canonical contract | `TrustGraphRegistry` (`contracts/TrustGraphRegistry.sol`) |
 | Secondary contract | `ProofOfWorkRegistry` (`contracts/ProofOfWorkRegistry.sol`) — hardened and tested, not part of the MVP integration path |
 | Contracts tested | 135 Mocha/ethers tests, 100% line + statement coverage on both contracts |
-| **Deployment** | **NOT DEPLOYED** — no transaction has been broadcast to Monad testnet. `deployments/monad-testnet.json` does not exist yet. |
-| Frontend hardcoded address `0x4386926019A8B74431eBDeF7c2718E340621B903` | **Verified empty on testnet** (no contract code, confirmed 2026-10-10 via `eth_getCode`). Do not rely on it. |
+| **Deployment** | **DEPLOYED** on Monad testnet at `0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E` |
+| Deployer | `0x132187B44d6dB6913BD2FB2C664A8c94C63485ac` |
+| Deployment transaction | `0xe99b2b0ae819c650820b698c06f09eebc50dc5e362afcd3a33624f28ec4485ff` |
+| Deployment block | `69802176` |
+| Deployed at | `2026-10-10T10:32:19.497Z` |
+| Frontend hardcoded address `0x4386926019A8B74431eBDeF7c2718E340621B903` | **Deprecated / empty** — replace with the deployed address below. |
 
 After the authorized deployment, `deployments/monad-testnet.json` becomes the single source of truth for the address, transaction hash, block number, and deployer.
 
@@ -132,14 +136,20 @@ Precedence order: `NOT_FOUND` > `REVOKED` > `EXPIRED` > `INVALID_ISSUER` > `VALI
 
 Fix (frontend team): replace the hand-written event entry with the one from `artifacts/contracts/TrustGraphRegistry.sol/TrustGraphRegistry.json`, or import the artifact ABI directly.
 
-### 9.2 Frontend contract address must be updated post-deployment
+### 9.2 Frontend contract address must be updated to the deployed address
 
-`src/lib/contract/config.ts` falls back to `0x4386926019A8B74431eBDeF7c2718E340621B903`, which has **no code on testnet** (verified 2026-10-10). Until the real address is wired in, every write call from the UI will fail. Options for the integration phase:
+`src/lib/contract/config.ts` currently falls back to `0x4386926019A8B74431eBDeF7c2718E340621B903`, which has **no code on testnet**. The live canonical registry is:
 
-- set `VITE_TRUST_GRAPH_REGISTRY_ADDRESS` to the address in `deployments/monad-testnet.json`, or
-- update the fallback constant after deployment.
+```text
+0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E
+```
 
-The blockchain team does not modify these files; the address will be provided in `deployments/monad-testnet.json` immediately after the authorized deployment.
+Options for the integration phase:
+
+- Set `VITE_TRUST_GRAPH_REGISTRY_ADDRESS=0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E` in `.env` and restart the dev server, or
+- Update the fallback constant in `src/lib/contract/config.ts` to `0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E`.
+
+The blockchain team does not modify `src/` files. The address is also recorded in `deployments/monad-testnet.json`.
 
 ### 9.3 Explorer hostname inconsistency
 
@@ -151,13 +161,15 @@ Frontend uses `testnet.monadexplorer.com`; deployment scripts and metadata use `
 
 ## 10. Post-deployment integration checklist
 
-1. Read `deployments/monad-testnet.json` → `address`, `transactionHash`, `blockNumber`, `deployedAt`.
-2. Independently confirm on the explorer (`<explorer>/address/<address>`) that code exists and the deployer transaction is in `blockNumber`.
-3. Run `npm run contracts:check:testnet` (no private key needed) — it must print `[OK] Contract is live`.
-4. Update the frontend address (§9.2) and fix the ABI event entry (§9.1).
-5. Wire the first owner-side action: `approveIssuer(<reviewer wallet>)` from the deployer wallet.
-6. Smoke the full lifecycle with two wallets: issue → `getValidityStatus == 1` → revoke → status `2` → history still queryable.
-7. Point indexer/log consumption at the events table in §6 (3 topics for `AttestationIssued`).
+- [x] Contract deployed to Monad testnet (`0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E`, block `69802176`).
+- [x] Deployment record written to `deployments/monad-testnet.json`.
+- [ ] Independently confirm on the explorer that code exists: `https://testnet.monadvision.com/address/0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E`.
+- [ ] Run `npm run contracts:check:testnet` (no private key needed) — it must print `[OK] Contract is live`.
+- [ ] Update the frontend contract address in `src/lib/contract/config.ts` (§9.2).
+- [ ] Fix the frontend ABI event entry for `AttestationIssued` in `src/lib/contract/abi.ts` (§9.1).
+- [ ] Wire the first owner-side action: `approveIssuer(<reviewer wallet>)` from the deployer wallet `0x132187B44d6dB6913BD2FB2C664A8c94C63485ac`.
+- [ ] Smoke the full lifecycle with two wallets: issue → `getValidityStatus == 1` → revoke → status `2` → history still queryable.
+- [ ] Point indexer/log consumption at the events table in §6 (3 topics for `AttestationIssued`).
 
 ## 11. If you need to verify anything yourself
 

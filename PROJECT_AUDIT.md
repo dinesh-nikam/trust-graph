@@ -1,3 +1,5 @@
+> **Update (2026-10-10):** TrustGraphRegistry has been deployed to Monad testnet at `0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E` (tx `0xe99b2b0ae819c650820b698c06f09eebc50dc5e362afcd3a33624f28ec4485ff`, block `69802176`). Hardhat tooling, 136 contract tests, and deployment scripts were added. Frontend/backend integration steps are documented in `docs/blockchain/INTEGRATION_HANDOFF.md`.
+
 # Proof-of-Work Passport — Project Audit (Phase 1)
 
 **Audit Date:** October 2026  
