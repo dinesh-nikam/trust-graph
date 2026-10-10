@@ -1,6 +1,6 @@
 import { describe, it } from "mocha";
 import { expect } from "chai";
-import { main } from "../../scripts/deploy.js";
+import { main } from "../../scripts/deploy-logic.js";
 
 describe("deploy.ts credential resolution", function () {
   it("aborts with a credential error when DEPLOYER_PRIVATE_KEY cannot be resolved", async function () {
