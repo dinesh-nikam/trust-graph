@@ -13,6 +13,18 @@
       "skillPath": "skills/concepts/SKILL.md",
       "computedHash": "e0f3ec33522d84aa8dff0dc62e9d3b806a24505a1bb0148264866e3f29572cc3"
     },
+    "create-verification-skill": {
+      "source": "tester-army/e2e",
+      "sourceType": "github",
+      "skillPath": "skills/create-verification-skill/SKILL.md",
+      "computedHash": "10cade154be03dea72caa2aaab316a93d89e1f8fe49622ccbfe8081c8ba9d6b7"
+    },
+    "e2e": {
+      "source": "tester-army/e2e",
+      "sourceType": "github",
+      "skillPath": "skills/e2e/SKILL.md",
+      "computedHash": "f324f5984a0975bf31dd38ff3b69e0511ea3fd8b2a45ebfdd714c12309255522"
+    },
     "gas": {
       "source": "therealharpaljadeja/monskills",
       "sourceType": "github",
