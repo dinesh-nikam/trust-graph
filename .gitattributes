@@ -1,0 +1,93 @@
+# ==============================================================================
+# TrustGraph — Production-Ready .gitattributes
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Default Line Ending Normalization
+# Set default behavior to normalize all text files to LF on checkout and commit.
+# Prevents Windows CRLF vs Linux/macOS LF discrepancies and warnings.
+# ------------------------------------------------------------------------------
+* text=auto eol=lf
+
+# ------------------------------------------------------------------------------
+# Source Code & Web Assets (Force LF)
+# ------------------------------------------------------------------------------
+*.ts            text eol=lf
+*.tsx           text eol=lf
+*.js            text eol=lf
+*.jsx           text eol=lf
+*.mjs           text eol=lf
+*.cjs           text eol=lf
+*.json          text eol=lf
+*.jsonc         text eol=lf
+*.html          text eol=lf
+*.css           text eol=lf
+*.scss          text eol=lf
+*.svg           text eol=lf
+*.md            text eol=lf
+*.txt           text eol=lf
+
+# ------------------------------------------------------------------------------
+# Smart Contracts & Configurations (Force LF)
+# ------------------------------------------------------------------------------
+*.sol           text eol=lf
+*.yaml          text eol=lf
+*.yml           text eol=lf
+*.toml          text eol=lf
+*.xml           text eol=lf
+.env*           text eol=lf
+.gitignore      text eol=lf
+.gitattributes  text eol=lf
+.editorconfig   text eol=lf
+
+# ------------------------------------------------------------------------------
+# Shell & Platform Scripts
+# ------------------------------------------------------------------------------
+*.sh            text eol=lf
+*.bash          text eol=lf
+*.zsh           text eol=lf
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+*.ps1           text eol=crlf
+
+# ------------------------------------------------------------------------------
+# Binary Assets (Prevent line ending conversion and corrupted data)
+# ------------------------------------------------------------------------------
+# Images
+*.png           binary
+*.jpg           binary
+*.jpeg          binary
+*.gif           binary
+*.ico           binary
+*.webp          binary
+*.avif          binary
+
+# Fonts
+*.woff          binary
+*.woff2         binary
+*.ttf           binary
+*.eot           binary
+*.otf           binary
+
+# Documents & Media
+*.pdf           binary
+*.mp4           binary
+*.webm          binary
+*.mp3           binary
+*.wav           binary
+
+# Archives & Binaries
+*.zip           binary
+*.tar.gz        binary
+*.tgz           binary
+*.wasm          binary
+*.exe           binary
+*.dll           binary
+
+# ------------------------------------------------------------------------------
+# GitHub Linguist Overrides (Collapse lockfiles & generated files in PR diffs)
+# ------------------------------------------------------------------------------
+package-lock.json   linguist-generated=true
+pnpm-lock.yaml      linguist-generated=true
+yarn.lock           linguist-generated=true
+skills-lock.json    linguist-generated=true
