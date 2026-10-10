@@ -1,0 +1,20 @@
+{
+  "network": "monadTestnet",
+  "chainId": 10143,
+  "rpcUrl": "https://testnet-rpc.monad.xyz",
+  "explorerUrl": "https://testnet.monadvision.com",
+  "contract": "TrustGraphRegistry",
+  "address": "0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E",
+  "deployer": "0x132187B44d6dB6913BD2FB2C664A8c94C63485ac",
+  "transactionHash": "0xe99b2b0ae819c650820b698c06f09eebc50dc5e362afcd3a33624f28ec4485ff",
+  "blockNumber": 69802176,
+  "deployedAt": "2026-10-10T10:32:19.497Z",
+  "compiler": {
+    "solc": "0.8.28",
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    }
+  },
+  "status": "deployed"
+}

@@ -290,10 +290,18 @@ contract TrustGraphRegistry {
 
     /**
      * @notice Transfer contract ownership to a new administrator.
+     * @dev The previous owner's explicit issuer authorization is revoked on
+     * transfer; ownership itself carried that grant via the constructor. The
+     * new owner remains an issuer through the implicit owner privilege.
      */
     function transferOwnership(address newOwner) external onlyOwner {
         require(newOwner != address(0), "Invalid new owner");
-        emit OwnershipTransferred(owner, newOwner);
+        address previousOwner = owner;
+        if (newOwner != previousOwner && authorizedIssuers[previousOwner]) {
+            authorizedIssuers[previousOwner] = false;
+            emit IssuerRemoved(previousOwner);
+        }
+        emit OwnershipTransferred(previousOwner, newOwner);
         owner = newOwner;
     }
 }
