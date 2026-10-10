@@ -2,20 +2,25 @@ import { monadTestnet, getExplorerTxUrl, getExplorerAddressUrl, MONAD_TESTNET_CH
 import { TrustGraphRegistryABI, ProofOfWorkRegistryABI } from './abi';
 import { getAddress, isAddress, zeroAddress } from 'viem';
 
-const configuredRegistryAddress = import.meta.env.VITE_TRUST_GRAPH_REGISTRY_ADDRESS ||
-  import.meta.env.VITE_PROOF_OF_WORK_REGISTRY_ADDRESS;
+const configuredTrustGraphAddress = import.meta.env.VITE_TRUST_GRAPH_REGISTRY_ADDRESS;
+const configuredProofOfWorkAddress = import.meta.env.VITE_PROOF_OF_WORK_REGISTRY_ADDRESS;
 
-if (configuredRegistryAddress && !isAddress(configuredRegistryAddress)) {
+if (configuredTrustGraphAddress && !isAddress(configuredTrustGraphAddress)) {
   throw new Error('VITE_TRUST_GRAPH_REGISTRY_ADDRESS must be a valid EVM address.');
 }
 
-export const TRUST_GRAPH_REGISTRY_ADDRESS = configuredRegistryAddress
-  ? getAddress(configuredRegistryAddress)
+if (configuredProofOfWorkAddress && !isAddress(configuredProofOfWorkAddress)) {
+  throw new Error('VITE_PROOF_OF_WORK_REGISTRY_ADDRESS must be a valid EVM address.');
+}
+
+export const TRUST_GRAPH_REGISTRY_ADDRESS = configuredTrustGraphAddress
+  ? getAddress(configuredTrustGraphAddress)
+  : zeroAddress;
+export const PROOF_OF_WORK_REGISTRY_ADDRESS = configuredProofOfWorkAddress
+  ? getAddress(configuredProofOfWorkAddress)
   : zeroAddress;
 export const REGISTRY_ADDRESS_CONFIGURED = TRUST_GRAPH_REGISTRY_ADDRESS !== zeroAddress;
-
-// Backwards compatibility alias
-export const PROOF_OF_WORK_REGISTRY_ADDRESS = TRUST_GRAPH_REGISTRY_ADDRESS;
+export const PROOF_OF_WORK_REGISTRY_CONFIGURED = PROOF_OF_WORK_REGISTRY_ADDRESS !== zeroAddress;
 
 // Demo Wallets for testing and guided inspection
 export const DEMO_WALLETS = {
@@ -46,9 +51,16 @@ export const CONTRACT_CONFIG = {
   abi: TrustGraphRegistryABI,
 } as const;
 
+export const PROOF_OF_WORK_CONTRACT_CONFIG = {
+  chainId: MONAD_TESTNET_CHAIN_ID,
+  chain: monadTestnet,
+  address: PROOF_OF_WORK_REGISTRY_ADDRESS,
+  abi: ProofOfWorkRegistryABI,
+} as const;
+
 export const CONTRACT_ADDRESSES = {
   TRUST_GRAPH_REGISTRY: TRUST_GRAPH_REGISTRY_ADDRESS,
-  PROOF_OF_WORK_REGISTRY: TRUST_GRAPH_REGISTRY_ADDRESS,
+  PROOF_OF_WORK_REGISTRY: PROOF_OF_WORK_REGISTRY_ADDRESS,
 } as const;
 
 export {

@@ -1,7 +1,13 @@
-import { describe, test } from '@e2e-dev/web';
+import { beforeEach, describe, test } from '@e2e-dev/web';
 import { expect } from 'e2e';
 
 describe('TrustGraph E2E Suite', () => {
+  beforeEach(async ({ browser }) => {
+    await browser.addInitScript(() => {
+      localStorage.setItem('trustgraph_mode_v2', 'DEMO');
+    });
+  });
+
   test('homepage renders hero heading and registry overview', async ({ app, screen }) => {
     await app.open('/');
     await expect(screen.getByRole('heading', { level: 1 })).toContainText('Trust the evidence');
@@ -53,4 +59,14 @@ describe('TrustGraph E2E Suite', () => {
     await expect(screen.getByRole('heading', { name: 'Trust Graph: Sarah (Demo Builder)' })).toBeVisible();
     await expect(screen.getByText('GRAPH EXPLORER')).toBeVisible();
   });
+
+  test('interactive developer submission flow computes canonical hash and creates pending claim', async ({ app, screen }) => {
+    await app.open('/submit');
+    await screen.getByRole('button', { name: /Load Demo Template/i }).click();
+    await expect(screen.getByText(/Deterministic Hash Computed/i)).toBeVisible();
+    await screen.getByRole('button', { name: /Submit Work Claim/i }).click();
+    await expect(screen.getByRole('heading', { name: /Work Claim Submitted Successfully/i })).toBeVisible();
+    await expect(screen.getByText('PENDING REVIEW')).toBeVisible();
+  });
 });
+

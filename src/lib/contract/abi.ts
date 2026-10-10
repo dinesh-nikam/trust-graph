@@ -87,6 +87,87 @@ export const TrustGraphRegistryABI = [
     inputs: [],
     outputs: [{ name: '', type: 'uint256[]' }],
   },
+  {
+    type: 'function',
+    name: 'getAttestations',
+    stateMutability: 'view',
+    inputs: [{ name: 'ids', type: 'uint256[]' }],
+    outputs: [
+      {
+        name: 'items',
+        type: 'tuple[]',
+        components: [
+          { name: 'id', type: 'uint256' },
+          { name: 'issuer', type: 'address' },
+          { name: 'subject', type: 'address' },
+          { name: 'claimType', type: 'bytes32' },
+          { name: 'evidenceHash', type: 'bytes32' },
+          { name: 'evidenceUri', type: 'string' },
+          { name: 'issuedAt', type: 'uint256' },
+          { name: 'expiry', type: 'uint256' },
+          { name: 'revoked', type: 'bool' },
+          { name: 'revocationReason', type: 'string' },
+        ],
+      },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'getAttestationsPaginated',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'offset', type: 'uint256' },
+      { name: 'limit', type: 'uint256' },
+    ],
+    outputs: [
+      {
+        name: 'items',
+        type: 'tuple[]',
+        components: [
+          { name: 'id', type: 'uint256' },
+          { name: 'issuer', type: 'address' },
+          { name: 'subject', type: 'address' },
+          { name: 'claimType', type: 'bytes32' },
+          { name: 'evidenceHash', type: 'bytes32' },
+          { name: 'evidenceUri', type: 'string' },
+          { name: 'issuedAt', type: 'uint256' },
+          { name: 'expiry', type: 'uint256' },
+          { name: 'revoked', type: 'bool' },
+          { name: 'revocationReason', type: 'string' },
+        ],
+      },
+      { name: 'total', type: 'uint256' },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'getAttestationsBySubjectPaginated',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'subject', type: 'address' },
+      { name: 'offset', type: 'uint256' },
+      { name: 'limit', type: 'uint256' },
+    ],
+    outputs: [
+      {
+        name: 'items',
+        type: 'tuple[]',
+        components: [
+          { name: 'id', type: 'uint256' },
+          { name: 'issuer', type: 'address' },
+          { name: 'subject', type: 'address' },
+          { name: 'claimType', type: 'bytes32' },
+          { name: 'evidenceHash', type: 'bytes32' },
+          { name: 'evidenceUri', type: 'string' },
+          { name: 'issuedAt', type: 'uint256' },
+          { name: 'expiry', type: 'uint256' },
+          { name: 'revoked', type: 'bool' },
+          { name: 'revocationReason', type: 'string' },
+        ],
+      },
+      { name: 'total', type: 'uint256' },
+    ],
+  },
 
   // --- Write Methods ---
   {
@@ -177,5 +258,302 @@ export const TrustGraphRegistryABI = [
   },
 ] as const;
 
-// Legacy alias for backwards compatibility
-export const ProofOfWorkRegistryABI = TrustGraphRegistryABI;
+export const ProofOfWorkRegistryABI = [
+  // --- Read Methods ---
+  {
+    type: 'function',
+    name: 'owner',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'address' }],
+  },
+  {
+    type: 'function',
+    name: 'authorizedVerifiers',
+    stateMutability: 'view',
+    inputs: [{ name: '', type: 'address' }],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    type: 'function',
+    name: 'isVerifier',
+    stateMutability: 'view',
+    inputs: [{ name: 'verifier', type: 'address' }],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    type: 'function',
+    name: 'getWork',
+    stateMutability: 'view',
+    inputs: [{ name: 'workId', type: 'bytes32' }],
+    outputs: [
+      {
+        name: '',
+        type: 'tuple',
+        components: [
+          { name: 'workId', type: 'bytes32' },
+          { name: 'worker', type: 'address' },
+          { name: 'workType', type: 'uint8' },
+          { name: 'evidenceHash', type: 'bytes32' },
+          { name: 'metadataUri', type: 'string' },
+          { name: 'verifier', type: 'address' },
+          { name: 'createdAt', type: 'uint256' },
+          { name: 'verifiedAt', type: 'uint256' },
+          { name: 'status', type: 'uint8' },
+          { name: 'statusReason', type: 'string' },
+        ],
+      },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'isVerified',
+    stateMutability: 'view',
+    inputs: [{ name: 'workId', type: 'bytes32' }],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    type: 'function',
+    name: 'getWorksByWorker',
+    stateMutability: 'view',
+    inputs: [{ name: 'worker', type: 'address' }],
+    outputs: [{ name: '', type: 'bytes32[]' }],
+  },
+  {
+    type: 'function',
+    name: 'getWorkerStats',
+    stateMutability: 'view',
+    inputs: [{ name: 'worker', type: 'address' }],
+    outputs: [
+      { name: 'totalVerified', type: 'uint256' },
+      { name: 'smartContracts', type: 'uint256' },
+      { name: 'githubContributions', type: 'uint256' },
+      { name: 'hackathonProjects', type: 'uint256' },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'getAllWorkIds',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'bytes32[]' }],
+  },
+  {
+    type: 'function',
+    name: 'getTotalWorkCount',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'getWorkCount',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    type: 'function',
+    name: 'getWorks',
+    stateMutability: 'view',
+    inputs: [{ name: 'ids', type: 'bytes32[]' }],
+    outputs: [
+      {
+        name: 'items',
+        type: 'tuple[]',
+        components: [
+          { name: 'workId', type: 'bytes32' },
+          { name: 'worker', type: 'address' },
+          { name: 'workType', type: 'uint8' },
+          { name: 'evidenceHash', type: 'bytes32' },
+          { name: 'metadataUri', type: 'string' },
+          { name: 'verifier', type: 'address' },
+          { name: 'createdAt', type: 'uint256' },
+          { name: 'verifiedAt', type: 'uint256' },
+          { name: 'status', type: 'uint8' },
+          { name: 'statusReason', type: 'string' },
+        ],
+      },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'getWorksPaginated',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'offset', type: 'uint256' },
+      { name: 'limit', type: 'uint256' },
+    ],
+    outputs: [
+      {
+        name: 'items',
+        type: 'tuple[]',
+        components: [
+          { name: 'workId', type: 'bytes32' },
+          { name: 'worker', type: 'address' },
+          { name: 'workType', type: 'uint8' },
+          { name: 'evidenceHash', type: 'bytes32' },
+          { name: 'metadataUri', type: 'string' },
+          { name: 'verifier', type: 'address' },
+          { name: 'createdAt', type: 'uint256' },
+          { name: 'verifiedAt', type: 'uint256' },
+          { name: 'status', type: 'uint8' },
+          { name: 'statusReason', type: 'string' },
+        ],
+      },
+      { name: 'total', type: 'uint256' },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'getWorksByWorkerPaginated',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'worker', type: 'address' },
+      { name: 'offset', type: 'uint256' },
+      { name: 'limit', type: 'uint256' },
+    ],
+    outputs: [
+      {
+        name: 'items',
+        type: 'tuple[]',
+        components: [
+          { name: 'workId', type: 'bytes32' },
+          { name: 'worker', type: 'address' },
+          { name: 'workType', type: 'uint8' },
+          { name: 'evidenceHash', type: 'bytes32' },
+          { name: 'metadataUri', type: 'string' },
+          { name: 'verifier', type: 'address' },
+          { name: 'createdAt', type: 'uint256' },
+          { name: 'verifiedAt', type: 'uint256' },
+          { name: 'status', type: 'uint8' },
+          { name: 'statusReason', type: 'string' },
+        ],
+      },
+      { name: 'total', type: 'uint256' },
+    ],
+  },
+
+  // --- Write Methods ---
+  {
+    type: 'function',
+    name: 'approveVerifier',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'verifier', type: 'address' }],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'removeVerifier',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'verifier', type: 'address' }],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'registerWork',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'workId', type: 'bytes32' },
+      { name: 'workType', type: 'uint8' },
+      { name: 'evidenceHash', type: 'bytes32' },
+      { name: 'metadataUri', type: 'string' },
+    ],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'verifyWork',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'workId', type: 'bytes32' }],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'rejectWork',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'workId', type: 'bytes32' },
+      { name: 'reason', type: 'string' },
+    ],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'revokeWork',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'workId', type: 'bytes32' },
+      { name: 'reason', type: 'string' },
+    ],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'transferOwnership',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'newOwner', type: 'address' }],
+    outputs: [],
+  },
+
+  // --- Events ---
+  {
+    type: 'event',
+    name: 'WorkSubmitted',
+    inputs: [
+      { name: 'workId', type: 'bytes32', indexed: true },
+      { name: 'worker', type: 'address', indexed: true },
+      { name: 'workType', type: 'uint8', indexed: true },
+      { name: 'evidenceHash', type: 'bytes32', indexed: false },
+      { name: 'metadataUri', type: 'string', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'WorkVerified',
+    inputs: [
+      { name: 'workId', type: 'bytes32', indexed: true },
+      { name: 'verifier', type: 'address', indexed: true },
+      { name: 'timestamp', type: 'uint256', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'WorkRejected',
+    inputs: [
+      { name: 'workId', type: 'bytes32', indexed: true },
+      { name: 'verifier', type: 'address', indexed: true },
+      { name: 'reason', type: 'string', indexed: false },
+      { name: 'timestamp', type: 'uint256', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'WorkRevoked',
+    inputs: [
+      { name: 'workId', type: 'bytes32', indexed: true },
+      { name: 'verifier', type: 'address', indexed: true },
+      { name: 'reason', type: 'string', indexed: false },
+      { name: 'timestamp', type: 'uint256', indexed: false },
+    ],
+  },
+  {
+    type: 'event',
+    name: 'VerifierApproved',
+    inputs: [{ name: 'verifier', type: 'address', indexed: true }],
+  },
+  {
+    type: 'event',
+    name: 'VerifierRemoved',
+    inputs: [{ name: 'verifier', type: 'address', indexed: true }],
+  },
+  {
+    type: 'event',
+    name: 'OwnershipTransferred',
+    inputs: [
+      { name: 'previousOwner', type: 'address', indexed: true },
+      { name: 'newOwner', type: 'address', indexed: true },
+    ],
+  },
+] as const;
+

@@ -13,13 +13,26 @@ import {
   Sparkles
 } from 'lucide-react';
 import { ClaimType } from '../types';
-import { computeSha256 } from '../utils/formatters';
+import { useRegisterWork } from '../hooks/useWorkRegistry';
+import { 
+  computeCanonicalEvidenceHash, 
+  computeDeterministicWorkId 
+} from '../utils/formatters';
 import { trustGraphService } from '../services/trustGraphService';
-import { DEMO_WALLETS } from '../lib/contract/config';
+import { DEMO_WALLETS, PROOF_OF_WORK_REGISTRY_CONFIGURED, getExplorerTxUrl } from '../lib/contract/config';
 
 export const SubmitWorkPage: React.FC = () => {
   const navigate = useNavigate();
-  const { address } = useAccount();
+  const { address, chainId } = useAccount();
+  const { 
+    register, 
+    txStep, 
+    txHash, 
+    errorMessage: txError, 
+    isConfirming, 
+    isConfirmed, 
+    reset: resetTx 
+  } = useRegisterWork();
 
   const [worker, setWorker] = useState<string>(address || DEMO_WALLETS.DEVELOPER.address);
   const [claimType, setClaimType] = useState<ClaimType>('CONTRACT_DEPLOYED');
@@ -30,7 +43,10 @@ export const SubmitWorkPage: React.FC = () => {
   const [evidenceHash, setEvidenceHash] = useState<`0x${string}` | ''>('');
   const [isComputingHash, setIsComputingHash] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState('');
+  const [submittedTxHash, setSubmittedTxHash] = useState<`0x${string}` | undefined>();
+  const [isDemoSubmission, setIsDemoSubmission] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Sync wallet address if connected
@@ -40,19 +56,29 @@ export const SubmitWorkPage: React.FC = () => {
     }
   }, [address]);
 
-  // Compute live deterministic SHA-256 evidence hash
+  // Compute live deterministic canonical evidence hash
   useEffect(() => {
     let active = true;
     const compute = async () => {
-      const payload = manifestText.trim() || primaryUrl.trim();
-      if (!payload) {
+      if (!primaryUrl.trim()) {
         setEvidenceHash('');
         return;
       }
       setIsComputingHash(true);
       try {
-        const hash = await computeSha256(payload);
+        const hash = await computeCanonicalEvidenceHash({
+          title: title.trim() || 'Work Submission',
+          workType: claimType,
+          primaryUrl: primaryUrl.trim(),
+          description: description.trim(),
+          worker: worker.trim() || address || DEMO_WALLETS.DEVELOPER.address,
+        });
         if (active) setEvidenceHash(hash);
+      } catch (err: unknown) {
+        if (active) {
+          setEvidenceHash('');
+          setError(err instanceof Error ? `Evidence hash generation failed: ${err.message}` : 'Evidence hash generation failed.');
+        }
       } finally {
         if (active) setIsComputingHash(false);
       }
@@ -61,7 +87,7 @@ export const SubmitWorkPage: React.FC = () => {
     return () => {
       active = false;
     };
-  }, [manifestText, primaryUrl]);
+  }, [manifestText, primaryUrl, title, claimType, worker, address]);
 
   const loadDemoData = () => {
     setWorker(DEMO_WALLETS.DEVELOPER.address);
@@ -79,6 +105,7 @@ export const SubmitWorkPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return;
     setError(null);
 
     if (!worker.trim() || !title.trim() || !primaryUrl.trim()) {
@@ -91,28 +118,65 @@ export const SubmitWorkPage: React.FC = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      const finalHash = evidenceHash || (await computeSha256(manifestText.trim() || primaryUrl.trim()));
-      const res = await trustGraphService.submitWork({
-        worker: worker.trim() as `0x${string}`,
-        claimType,
+      const canonicalHash = evidenceHash || (await computeCanonicalEvidenceHash({
         title: title.trim(),
+        workType: claimType,
+        primaryUrl: primaryUrl.trim(),
         description: description.trim(),
-        evidenceUrl: primaryUrl.trim(),
-        evidenceManifest: manifestText.trim() || primaryUrl.trim(),
-        evidenceHash: finalHash,
-      });
+        worker: worker.trim(),
+      }));
 
-      setSubmittedId(res.id);
-      setIsSubmitted(true);
+      const deterministicId = await computeDeterministicWorkId(worker.trim(), title.trim());
+
+      if (trustGraphService.getMode() === 'DEMO') {
+        // Local fixtures are permitted only when DEMO mode was explicitly selected.
+        setIsDemoSubmission(true);
+        const res = await trustGraphService.submitWork({
+          worker: worker.trim() as `0x${string}`,
+          claimType,
+          title: title.trim(),
+          description: description.trim(),
+          evidenceUrl: primaryUrl.trim(),
+          evidenceManifest: manifestText.trim() || primaryUrl.trim(),
+          evidenceHash: canonicalHash,
+        });
+        setSubmittedId(res.id);
+        setIsSubmitted(true);
+      } else {
+        if (!address) throw new Error('Connect a wallet on Monad Testnet to register work on-chain.');
+        if (!PROOF_OF_WORK_REGISTRY_CONFIGURED) throw new Error('ProofOfWorkRegistry address is not configured. Live submission is disabled.');
+        if (worker.trim().toLowerCase() !== address.toLowerCase()) {
+          throw new Error('Worker address must match the connected wallet that will submit this transaction.');
+        }
+        setIsDemoSubmission(false);
+        const result = await register({
+          workId: deterministicId,
+          workType: claimType,
+          evidenceHash: canonicalHash,
+          metadataUri: primaryUrl.trim(),
+        });
+
+        setSubmittedId(deterministicId);
+        setSubmittedTxHash(result.txHash);
+        setIsSubmitted(true);
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Submission failed.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   if (isSubmitted) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
+        {isDemoSubmission && (
+          <div className="mb-4 px-4 py-2 bg-amber-500/10 border border-amber-500/30 rounded-lg text-xs font-mono text-amber-400">
+            [DEMO MODE: LOCAL FIXTURES — NOT COMMITTED TO MONAD TESTNET]
+          </div>
+        )}
         <div className="p-8 rounded-2xl bg-neutral-900 border border-neutral-800 shadow-2xl">
           <div className="h-12 w-12 rounded-full bg-emerald-950/80 border border-emerald-700/60 flex items-center justify-center text-emerald-400 mx-auto mb-4">
             <CheckCircle2 className="h-6 w-6" />
@@ -124,13 +188,26 @@ export const SubmitWorkPage: React.FC = () => {
 
           <div className="p-4 rounded-xl bg-neutral-950 border border-neutral-800 text-left text-xs font-mono mb-6 space-y-2">
             <div className="flex justify-between items-center text-neutral-400">
-              <span>Submission Reference:</span>
-              <span className="text-white font-bold">{submittedId}</span>
+              <span>Work ID:</span>
+              <span className="text-white font-bold truncate max-w-[240px]">{submittedId}</span>
             </div>
             <div className="flex justify-between items-center text-neutral-400">
-              <span>Deterministic Hash:</span>
+              <span>Canonical Evidence Hash:</span>
               <span className="text-emerald-400 truncate max-w-[240px]">{evidenceHash}</span>
             </div>
+            {submittedTxHash && (
+              <div className="flex justify-between items-center text-neutral-400">
+                <span>Monad Testnet Tx:</span>
+                <a
+                  href={getExplorerTxUrl(submittedTxHash)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-indigo-400 hover:underline truncate max-w-[240px]"
+                >
+                  {submittedTxHash}
+                </a>
+              </div>
+            )}
             <div className="flex justify-between items-center text-neutral-400">
               <span>Status:</span>
               <span className="px-2 py-0.5 rounded text-[10px] bg-amber-950/80 text-amber-300 border border-amber-800">
@@ -148,7 +225,7 @@ export const SubmitWorkPage: React.FC = () => {
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
             <Link
-              to={`/profile/${worker}`}
+              to={`/passport/${worker}`}
               className="px-5 py-2.5 bg-neutral-800 hover:bg-neutral-700 text-neutral-200 text-xs rounded-lg transition-colors"
             >
               Back to Developer Passport
@@ -330,6 +407,7 @@ export const SubmitWorkPage: React.FC = () => {
 
           <button
             type="submit"
+            disabled={isSubmitting || isComputingHash || isConfirming || txStep === 'waiting-wallet' || txStep === 'submitted'}
             className="px-6 py-2.5 bg-neutral-100 hover:bg-white text-neutral-950 font-semibold text-xs rounded-lg transition-all shadow-sm active:scale-95 flex items-center gap-2"
           >
             <Send className="h-3.5 w-3.5" />

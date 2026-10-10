@@ -15,6 +15,14 @@ import {
 } from 'lucide-react';
 import { useAllAttestations, useRegistryOwner, useRevokeAttestation } from '../hooks/useTrustGraph';
 import { 
+  useVerifierQueue, 
+  useVerifyWork, 
+  useRejectWork, 
+  useRevokeWork, 
+  useVerifierStatus,
+  OnChainWork,
+} from '../hooks/useWorkRegistry';
+import { 
   shortenAddress, 
   formatDate, 
   formatDateTime,
@@ -23,13 +31,29 @@ import {
 } from '../utils/formatters';
 import { Attestation, WorkSubmission } from '../types';
 import { trustGraphService } from '../services/trustGraphService';
+import { PROOF_OF_WORK_REGISTRY_CONFIGURED, getExplorerTxUrl } from '../lib/contract/config';
 
 export const VerifyPage: React.FC = () => {
   const navigate = useNavigate();
-  const { data: attestations = [], isLoading, error, refetch } = useAllAttestations();
+  const { data: attestations = [], isLoading: isAttestationsLoading, error, refetch } = useAllAttestations();
   const { address } = useAccount();
   const { owner } = useRegistryOwner();
-  const { revoke } = useRevokeAttestation();
+  const { revoke: revokeLegacy } = useRevokeAttestation();
+
+  // On-chain Work Registry Hooks
+  const { isVerifier, isLoading: isVerifierLoading, error: verifierError } = useVerifierStatus(address);
+  const { 
+    pendingWorks: onChainPending, 
+    verifiedWorks: onChainVerified, 
+    rejectedWorks: onChainRejected, 
+    revokedWorks: onChainRevoked, 
+    isLoading: isQueueLoading,
+    error: queueError,
+    refetch: refetchQueue 
+  } = useVerifierQueue();
+  const { verify: verifyWorkOnChain, isConfirming: isVerifying } = useVerifyWork();
+  const { reject: rejectWorkOnChain, isConfirming: isRejecting } = useRejectWork();
+  const { revoke: revokeWorkOnChain, isConfirming: isRevokingWork } = useRevokeWork();
 
   const [activeTab, setActiveTab] = useState<'SUBMISSIONS' | 'ALL' | 'VALID' | 'REVOKED'>('SUBMISSIONS');
   
@@ -41,29 +65,75 @@ export const VerifyPage: React.FC = () => {
   const [isRevoking, setIsRevoking] = useState(false);
 
   // Submissions State
-  const [submissions, setSubmissions] = useState<WorkSubmission[]>(() => trustGraphService.getSubmissions());
+  const isDemoMode = trustGraphService.getMode() === 'DEMO';
+  const [localSubmissions, setLocalSubmissions] = useState<WorkSubmission[]>(() =>
+    isDemoMode ? trustGraphService.getSubmissions() : []
+  );
   const [selectedSubmissionToReject, setSelectedSubmissionToReject] = useState<WorkSubmission | null>(null);
   const [rejectReason, setRejectReason] = useState('');
   const [rejectError, setRejectError] = useState<string | null>(null);
+
+  // Action in progress state
+  const [approvingId, setApprovingId] = useState<string | null>(null);
 
   // Global UI Notification
   const [notification, setNotification] = useState<string | null>(null);
 
   useEffect(() => {
     const handleStorageUpdate = () => {
-      setSubmissions(trustGraphService.getSubmissions());
+      setLocalSubmissions(trustGraphService.getMode() === 'DEMO' ? trustGraphService.getSubmissions() : []);
     };
     window.addEventListener('storage', handleStorageUpdate);
     return () => window.removeEventListener('storage', handleStorageUpdate);
   }, []);
 
-  const pendingSubmissionsCount = submissions.filter((s) => s.status === 'PENDING').length;
+  // Merge on-chain pending items with local submissions (avoiding duplicate IDs)
+  const combinedPending: WorkSubmission[] = [
+    ...onChainPending.map((ow): WorkSubmission => ({
+      id: ow.workId,
+      worker: ow.worker,
+      claimType: ow.workType === 'SMART_CONTRACT' ? 'CONTRACT_DEPLOYED' : ow.workType === 'GITHUB_CONTRIBUTION' ? 'CONTRIBUTION_VERIFIED' : 'CHALLENGE_COMPLETED',
+      title: ow.title || `${ow.workType} (On-chain)`,
+      description: ow.description || `Proof of work registered on Monad Testnet with evidence hash ${ow.evidenceHash}`,
+      evidenceUrl: ow.metadataUri,
+      evidenceManifest: `Evidence URI: ${ow.metadataUri}\nHash: ${ow.evidenceHash}`,
+      evidenceHash: ow.evidenceHash,
+      submittedAt: ow.createdAt,
+      status: 'PENDING',
+    })),
+    ...(isDemoMode ? localSubmissions : []).filter(
+      (ls) => !onChainPending.some((ow) => ow.workId.toLowerCase() === ls.id.toLowerCase())
+    ),
+  ];
+
+  const pendingSubmissionsCount = combinedPending.filter((s) => s.status === 'PENDING').length;
 
   const displayedAttestations = attestations.filter((a) => {
     if (activeTab === 'VALID') return a.validity === 'VALID';
     if (activeTab === 'REVOKED') return a.validity === 'REVOKED';
     return true;
   });
+
+  const handleApproveSubmission = async (sub: WorkSubmission) => {
+    setApprovingId(sub.id);
+    setNotification(null);
+    try {
+      if (sub.id.startsWith('0x') && sub.id.length === 66 && PROOF_OF_WORK_REGISTRY_CONFIGURED && address) {
+        await verifyWorkOnChain(sub.id as `0x${string}`);
+        setNotification(`Work item ${shortenAddress(sub.id)} approved and confirmed VERIFIED on Monad Testnet.`);
+        await refetchQueue();
+      } else {
+        if (!isDemoMode) throw new Error('Live verification requires a registered on-chain work item.');
+        await trustGraphService.approveSubmission(sub.id, `att-${Date.now()}`);
+        setNotification(`Submission "${sub.title}" marked APPROVED in Reviewer Portal.`);
+        setLocalSubmissions(trustGraphService.getSubmissions());
+      }
+    } catch (err: unknown) {
+      setNotification(`Verification failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+    } finally {
+      setApprovingId(null);
+    }
+  };
 
   const handleRevokeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,8 +142,15 @@ export const VerifyPage: React.FC = () => {
     setIsRevoking(true);
     setRevokeError(null);
     try {
-      await revoke(selectedAttestation.id, revokeReason.trim());
-      setNotification(`Attestation #${selectedAttestation.id} marked REVOKED.`);
+      if (selectedAttestation.id.startsWith('0x') && selectedAttestation.id.length === 66 && PROOF_OF_WORK_REGISTRY_CONFIGURED && address) {
+        await revokeWorkOnChain(selectedAttestation.id as `0x${string}`, revokeReason.trim());
+        setNotification(`Work item #${shortenAddress(selectedAttestation.id)} marked REVOKED on Monad.`);
+        await refetchQueue();
+      } else {
+        if (selectedAttestation.id.startsWith('0x')) throw new Error('ProofOfWorkRegistry address is not configured.');
+        await revokeLegacy(selectedAttestation.id, revokeReason.trim());
+        setNotification(`Attestation #${selectedAttestation.id} marked REVOKED.`);
+      }
       setIsRevokeModalOpen(false);
       setSelectedAttestation(null);
       setRevokeReason('');
@@ -91,11 +168,18 @@ export const VerifyPage: React.FC = () => {
 
     setRejectError(null);
     try {
-      await trustGraphService.rejectSubmission(selectedSubmissionToReject.id, rejectReason.trim());
-      setNotification(`Submission "${selectedSubmissionToReject.title}" rejected.`);
+      if (selectedSubmissionToReject.id.startsWith('0x') && selectedSubmissionToReject.id.length === 66 && PROOF_OF_WORK_REGISTRY_CONFIGURED && address) {
+        await rejectWorkOnChain(selectedSubmissionToReject.id as `0x${string}`, rejectReason.trim());
+        setNotification(`Work item "${selectedSubmissionToReject.title}" rejected on Monad.`);
+        await refetchQueue();
+      } else {
+        if (!isDemoMode) throw new Error('Live rejection requires a registered on-chain work item.');
+        await trustGraphService.rejectSubmission(selectedSubmissionToReject.id, rejectReason.trim());
+        setNotification(`Submission "${selectedSubmissionToReject.title}" rejected.`);
+        setLocalSubmissions(trustGraphService.getSubmissions());
+      }
       setSelectedSubmissionToReject(null);
       setRejectReason('');
-      setSubmissions(trustGraphService.getSubmissions());
     } catch (err: unknown) {
       setRejectError(err instanceof Error ? err.message : 'Failed to reject submission.');
     }
@@ -136,6 +220,23 @@ export const VerifyPage: React.FC = () => {
           </Link>
         </div>
       </div>
+
+      {/* Access Control Advisory */}
+      {address && !isVerifier && !isVerifierLoading && !verifierError && (
+        <div role="status" className="mb-6 p-4 rounded-xl bg-amber-950/40 border border-amber-800 text-xs text-amber-300 flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 text-amber-400 shrink-0" />
+          <span>
+            Connected wallet ({shortenAddress(address)}) is not an authorized verifier. Reviewer privileges are required to verify or reject claims on Monad Testnet.
+          </span>
+        </div>
+      )}
+
+      {!isDemoMode && (queueError || verifierError) && (
+        <div role="alert" className="mb-6 p-4 rounded-xl bg-rose-950/40 border border-rose-800 text-xs text-rose-200 flex items-center justify-between gap-4">
+          <span>Could not read verifier authorization or work queue from the configured ProofOfWorkRegistry. {queueError instanceof Error ? queueError.message : verifierError instanceof Error ? verifierError.message : 'Retry the registry read.'}</span>
+          <button onClick={() => { void refetchQueue(); }} className="px-3 py-1.5 rounded border border-rose-700 hover:bg-rose-900/40">Retry</button>
+        </div>
+      )}
 
       {notification && (
         <div role="status" className="mb-6 p-4 rounded-xl bg-emerald-950/40 border border-emerald-800 text-xs text-emerald-300 flex items-center justify-between animate-fade-in">
@@ -185,17 +286,18 @@ export const VerifyPage: React.FC = () => {
       {/* SUBMISSIONS TAB CONTENT */}
       {activeTab === 'SUBMISSIONS' && (
         <div className="space-y-4">
-          {submissions.length === 0 ? (
+          {combinedPending.length === 0 ? (
             <div className="p-8 rounded-xl bg-neutral-900/40 border border-neutral-800 text-center text-xs text-neutral-400">
               No developer work submissions found. Developers can submit work at{' '}
               <Link to="/submit" className="text-emerald-400 hover:underline">/submit</Link>.
             </div>
           ) : (
-            submissions.map((sub) => {
+            combinedPending.map((sub) => {
               const claimType = getClaimTypeDetails(sub.claimType);
               const isPending = sub.status === 'PENDING';
               const isApproved = sub.status === 'APPROVED';
               const isRejected = sub.status === 'REJECTED';
+              const isItemApproving = approvingId === sub.id;
 
               return (
                 <div
@@ -218,7 +320,7 @@ export const VerifyPage: React.FC = () => {
                       >
                         {sub.status}
                       </span>
-                      <span className="text-neutral-500 font-mono text-xs">ID: {sub.id}</span>
+                      <span className="text-neutral-500 font-mono text-xs truncate max-w-[200px]">ID: {sub.id}</span>
                     </div>
 
                     <h3 className="text-sm font-semibold text-white">{sub.title}</h3>
@@ -227,7 +329,7 @@ export const VerifyPage: React.FC = () => {
                     </p>
 
                     <div className="text-xs text-neutral-400 font-mono flex flex-wrap items-center gap-x-4 gap-y-1 pt-1">
-                      <span>Developer: <Link to={`/profile/${sub.worker}`} className="text-neutral-300 hover:underline">{shortenAddress(sub.worker)}</Link></span>
+                      <span>Developer: <Link to={`/passport/${sub.worker}`} className="text-neutral-300 hover:underline">{shortenAddress(sub.worker)}</Link></span>
                       <span>Submitted: {formatDateTime(sub.submittedAt)}</span>
                       {sub.evidenceUrl && (
                         <a
@@ -257,22 +359,12 @@ export const VerifyPage: React.FC = () => {
                     {isPending && (
                       <>
                         <button
-                          onClick={() => {
-                            const query = new URLSearchParams({
-                              subject: sub.worker,
-                              type: sub.claimType,
-                              title: sub.title,
-                              description: sub.description,
-                              url: sub.evidenceUrl,
-                              manifest: sub.evidenceManifest,
-                              submissionId: sub.id,
-                            }).toString();
-                            navigate(`/issue?${query}`);
-                          }}
-                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-xs rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
+                          disabled={isItemApproving}
+                          onClick={() => handleApproveSubmission(sub)}
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white font-medium text-xs rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
                         >
-                          <span>Review & Issue</span>
-                          <ArrowRight className="h-3.5 w-3.5" />
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          <span>{isItemApproving ? 'Confirming...' : 'Approve & Verify'}</span>
                         </button>
 
                         <button
@@ -288,12 +380,12 @@ export const VerifyPage: React.FC = () => {
                       </>
                     )}
 
-                    {isApproved && sub.attestationId && (
+                    {isApproved && (
                       <Link
-                        to={`/verify/${sub.attestationId}`}
+                        to={`/proof/${sub.id}`}
                         className="px-3.5 py-1.5 bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-mono rounded-lg transition-colors flex items-center gap-1.5"
                       >
-                        <span>Audit Proof #{sub.attestationId}</span>
+                        <span>Audit Proof</span>
                         <ArrowRight className="h-3.5 w-3.5" />
                       </Link>
                     )}
@@ -308,14 +400,14 @@ export const VerifyPage: React.FC = () => {
       {/* ON-CHAIN ATTESTATIONS TAB CONTENT */}
       {activeTab !== 'SUBMISSIONS' && (
         <div className="space-y-4">
-          {isLoading && <p className="text-sm text-neutral-400 mb-6">Loading attestation records from Monad Testnet...</p>}
+          {isAttestationsLoading && <p className="text-sm text-neutral-400 mb-6">Loading attestation records from Monad Testnet...</p>}
           {error && (
             <div role="alert" className="text-sm text-rose-300 mb-6 p-4 rounded-xl bg-rose-950/40 border border-rose-800">
               Registry read failed: {error instanceof Error ? error.message : 'Unknown RPC error.'}{' '}
               <button onClick={() => refetch()} className="underline ml-2 font-medium">Retry</button>
             </div>
           )}
-          {!isLoading && !error && displayedAttestations.length === 0 && (
+          {!isAttestationsLoading && !error && displayedAttestations.length === 0 && (
             <p className="text-sm text-neutral-400 mb-6">No attestations match this filter.</p>
           )}
 

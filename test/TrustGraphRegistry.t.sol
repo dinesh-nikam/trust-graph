@@ -435,4 +435,64 @@ contract TrustGraphRegistryComprehensiveTest {
         uint256[] memory allAtts = registry.getAllAttestationIds();
         require(allAtts.length == 2, "All attestation IDs length must be 2");
     }
+
+    // 12. Batch and Paginated Scaling Queries
+    function test12_BatchAndPaginatedScalingQueries() public {
+        organizerActor.execute(
+            address(registry),
+            abi.encodeWithSelector(TrustGraphRegistry.approveIssuer.selector, reviewer)
+        );
+
+        reviewerActor.execute(
+            address(registry),
+            abi.encodeWithSelector(
+                TrustGraphRegistry.issueAttestation.selector,
+                developer,
+                CLAIM_CONTRACT_DEPLOYED,
+                EVIDENCE_HASH_1,
+                "uri1",
+                0
+            )
+        );
+        reviewerActor.execute(
+            address(registry),
+            abi.encodeWithSelector(
+                TrustGraphRegistry.issueAttestation.selector,
+                developer,
+                CLAIM_CHALLENGE,
+                EVIDENCE_HASH_1,
+                "uri2",
+                0
+            )
+        );
+
+        // Batch getAttestations
+        uint256[] memory idsToFetch = new uint256[](2);
+        idsToFetch[0] = 1;
+        idsToFetch[1] = 2;
+        TrustGraphRegistry.Attestation[] memory batchItems = registry.getAttestations(idsToFetch);
+        require(batchItems.length == 2, "Batch fetch must return 2 attestations");
+        require(batchItems[0].id == 1, "First attestation id must be 1");
+        require(batchItems[1].id == 2, "Second attestation id must be 2");
+
+        // getAttestationsPaginated
+        (TrustGraphRegistry.Attestation[] memory page1, uint256 total) = registry.getAttestationsPaginated(0, 1);
+        require(total == 2, "Total count must be 2");
+        require(page1.length == 1, "Page 1 length must be 1");
+        require(page1[0].id == 1, "Page 1 id must be 1");
+
+        (TrustGraphRegistry.Attestation[] memory page2, uint256 total2) = registry.getAttestationsPaginated(1, 10);
+        require(total2 == 2, "Total count must be 2");
+        require(page2.length == 1, "Page 2 length must be 1");
+        require(page2[0].id == 2, "Page 2 id must be 2");
+
+        // getAttestationsBySubjectPaginated
+        (TrustGraphRegistry.Attestation[] memory subPage, uint256 subTotal) = registry.getAttestationsBySubjectPaginated(developer, 0, 10);
+        require(subTotal == 2, "Subject total must be 2");
+        require(subPage.length == 2, "Subject page length must be 2");
+
+        (TrustGraphRegistry.Attestation[] memory emptyPage, uint256 emptyTotal) = registry.getAttestationsBySubjectPaginated(address(0x999), 0, 10);
+        require(emptyTotal == 0, "Non-existent subject total 0");
+        require(emptyPage.length == 0, "Non-existent subject page empty");
+    }
 }

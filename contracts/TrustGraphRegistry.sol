@@ -286,6 +286,72 @@ contract TrustGraphRegistry {
         return allAttestationIds;
     }
 
+    /**
+     * @notice Batch retrieve attestation records for an array of IDs.
+     * @dev Reduces N JSON-RPC round-trips to a single call.
+     */
+    function getAttestations(uint256[] calldata ids) external view returns (Attestation[] memory items) {
+        items = new Attestation[](ids.length);
+        for (uint256 i = 0; i < ids.length; i++) {
+            items[i] = attestations[ids[i]];
+        }
+    }
+
+    /**
+     * @notice Paginated retrieval of registered attestations.
+     * @param offset Starting index in allAttestationIds array.
+     * @param limit Maximum number of records to return (capped at 100).
+     */
+    function getAttestationsPaginated(uint256 offset, uint256 limit) external view returns (
+        Attestation[] memory items,
+        uint256 total
+    ) {
+        total = allAttestationIds.length;
+        if (offset >= total || limit == 0) {
+            return (new Attestation[](0), total);
+        }
+
+        uint256 count = limit;
+        if (offset + count > total) {
+            count = total - offset;
+        }
+        if (count > 100) {
+            count = 100;
+        }
+
+        items = new Attestation[](count);
+        for (uint256 i = 0; i < count; i++) {
+            items[i] = attestations[allAttestationIds[offset + i]];
+        }
+    }
+
+    /**
+     * @notice Paginated retrieval of attestations for a given subject.
+     */
+    function getAttestationsBySubjectPaginated(address subject, uint256 offset, uint256 limit) external view returns (
+        Attestation[] memory items,
+        uint256 total
+    ) {
+        uint256[] storage subIds = subjectAttestationIds[subject];
+        total = subIds.length;
+        if (offset >= total || limit == 0) {
+            return (new Attestation[](0), total);
+        }
+
+        uint256 count = limit;
+        if (offset + count > total) {
+            count = total - offset;
+        }
+        if (count > 100) {
+            count = 100;
+        }
+
+        items = new Attestation[](count);
+        for (uint256 i = 0; i < count; i++) {
+            items[i] = attestations[subIds[offset + i]];
+        }
+    }
+
     // --- Admin Operations ---
 
     /**
