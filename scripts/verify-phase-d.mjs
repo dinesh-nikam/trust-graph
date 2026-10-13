@@ -20,10 +20,14 @@ const watchConsole = (page) =>
   });
 
 const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const context = await browser.newContext();
+await context.addInitScript(() => {
+  localStorage.setItem('trustgraph_mode_v2', 'DEMO');
+});
 
 /* ── 1. Profile — desktop 1440 ─────────────────────────────── */
 {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const page = await context.newPage({ viewport: { width: 1440, height: 900 } });
   watchConsole(page);
   await page.goto(BASE + 'passport/0x3a48Bf2c8d8E02d91B0c82Ae27909A4D517e92D1', { waitUntil: 'networkidle' });
   await page.waitForTimeout(1400);
@@ -76,7 +80,7 @@ const browser = await chromium.launch({ channel: 'msedge', headless: true });
 
 /* ── 2. Profile — mobile 390 ───────────────────────────────── */
 {
-  const page = await browser.newPage({ viewport: { width: 390, height: 780 } });
+  const page = await context.newPage({ viewport: { width: 390, height: 780 } });
   watchConsole(page);
   await page.goto(BASE + 'passport/0x3a48Bf2c8d8E02d91B0c82Ae27909A4D517e92D1', { waitUntil: 'networkidle' });
   await page.waitForTimeout(1200);
@@ -88,7 +92,7 @@ const browser = await chromium.launch({ channel: 'msedge', headless: true });
 
 /* ── 3. Verify/1 — desktop 1440 ────────────────────────────── */
 {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const page = await context.newPage({ viewport: { width: 1440, height: 900 } });
   watchConsole(page);
   await page.goto(BASE + 'verify/1', { waitUntil: 'networkidle' });
   await page.waitForTimeout(1400);
@@ -132,7 +136,7 @@ const browser = await chromium.launch({ channel: 'msedge', headless: true });
 
 /* ── 4. Verify/1 — mobile 390 ──────────────────────────────── */
 {
-  const page = await browser.newPage({ viewport: { width: 390, height: 780 } });
+  const page = await context.newPage({ viewport: { width: 390, height: 780 } });
   watchConsole(page);
   await page.goto(BASE + 'verify/1', { waitUntil: 'networkidle' });
   await page.waitForTimeout(1200);
@@ -144,7 +148,7 @@ const browser = await chromium.launch({ channel: 'msedge', headless: true });
 
 /* ── 5. Reduced motion ─────────────────────────────────────── */
 {
-  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const page = await context.newPage({ viewport: { width: 1440, height: 900 } });
   watchConsole(page);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(BASE + 'passport/0x3a48Bf2c8d8E02d91B0c82Ae27909A4D517e92D1', { waitUntil: 'networkidle' });

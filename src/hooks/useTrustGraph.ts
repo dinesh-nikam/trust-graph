@@ -124,6 +124,7 @@ export function useIssueAttestation() {
         setTxStep('waiting-wallet');
 
         finalTxHash = await writeContractAsync({
+          chainId: MONAD_TESTNET_CHAIN_ID,
           address: TRUST_GRAPH_REGISTRY_ADDRESS,
           abi: CONTRACT_CONFIG.abi,
           functionName: 'issueAttestation',
@@ -234,6 +235,7 @@ export function useRevokeAttestation() {
         setTxStep('waiting-wallet');
 
         const hash = await writeContractAsync({
+          chainId: MONAD_TESTNET_CHAIN_ID,
           address: TRUST_GRAPH_REGISTRY_ADDRESS,
           abi: CONTRACT_CONFIG.abi,
           functionName: 'revokeAttestation',

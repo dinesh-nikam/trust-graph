@@ -26,6 +26,7 @@ export type ValidityStatus =
 // Developer work submission for verifier triage
 export interface WorkSubmission {
   id: string;
+  mongoId?: string;
   worker: `0x${string}`;
   claimType: ClaimType;
   title: string;

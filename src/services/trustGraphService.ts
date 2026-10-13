@@ -10,6 +10,7 @@ import {
 } from '../lib/contract/config';
 import { bytes32ToString, computeSha256 } from '../utils/formatters';
 import { MOCK_ATTESTATIONS, MOCK_ISSUERS, getProfileForAddress } from '../data/mockData';
+import { api } from './api';
 
 
 const STORAGE_KEY = 'trustgraph_attestations_v2';
@@ -28,6 +29,30 @@ const SEED_SUBMISSIONS: WorkSubmission[] = [
     evidenceManifest: 'Contract: MonadDEXRouter\nNetwork: Monad Testnet (10143)\nOptimization: Parallel storage pre-warming',
     evidenceHash: '0x4486926019A8B74431eBDeF7c2718E340621B903112233445566778899aabbcc',
     submittedAt: Math.floor(Date.now() / 1000) - 3600 * 4,
+    status: 'PENDING',
+  },
+  {
+    id: 'sub-2',
+    worker: DEMO_WALLETS.DEVELOPER.address,
+    claimType: 'CHALLENGE_COMPLETED',
+    title: 'Monad Madness Parallel State Merkle Tree Benchmark',
+    description: 'Achieved 10,000 TPS under async execution simulator reproducing zero state conflict benchmarks.',
+    evidenceUrl: 'https://devpost.com/software/monad-parallel-amm',
+    evidenceManifest: 'Hackathon: Monad Global Hackathon 2026\nBenchmark: 10,000 TPS on Monad EVM\nReproducibility: Confirmed',
+    evidenceHash: '0x72b1cccb70ea829072ee8c4bc9bca0043b3c47357af7e4cada1c2d6bce1c278f',
+    submittedAt: Math.floor(Date.now() / 1000) - 3600 * 18,
+    status: 'PENDING',
+  },
+  {
+    id: 'sub-3',
+    worker: DEMO_WALLETS.DEVELOPER.address,
+    claimType: 'CONTRIBUTION_VERIFIED',
+    title: 'EIP-7702 Delegation Auth Validator Patch for Monad Node',
+    description: 'Upstream pull request implementing gas-efficient account abstraction authorization verification.',
+    evidenceUrl: 'https://github.com/monad-developers/node/pull/482',
+    evidenceManifest: 'PR: https://github.com/monad-developers/node/pull/482\nCommit: a812f04e1984\nMerged: yes',
+    evidenceHash: '0x78176ec7dc8810e6ff4471dd7684e0cbf84e87dfcb2d68728c97b9fced0e13dd',
+    submittedAt: Math.floor(Date.now() / 1000) - 86400 * 2,
     status: 'PENDING',
   },
 ];
@@ -312,9 +337,69 @@ class TrustGraphService {
 
   public async getAttestationById(id: string): Promise<Attestation | null> {
     if (this.isLiveMode) {
-      // This registry uses sequential uint256 IDs, not bytes32 work IDs.
-      if (id.startsWith('0x') && id.length === 66) return null;
-      return this.readOnChainAttestation(id);
+      // 1. If numeric ID, check on-chain registry first
+      if (/^\d+$/.test(id)) {
+        const onChain = await this.readOnChainAttestation(id);
+        if (onChain) {
+          // Attempt to enrich with off-chain manifest from MongoDB if available
+          try {
+            const mongoRes = await api.submissions.getPublic();
+            if (mongoRes.success && Array.isArray(mongoRes.submissions)) {
+              const matched = mongoRes.submissions.find(
+                (s) =>
+                  s.evidenceHash?.toLowerCase() === onChain.evidenceHash?.toLowerCase() ||
+                  s.workId?.toLowerCase() === onChain.id.toLowerCase()
+              );
+              if (matched) {
+                onChain.claimTitle = matched.title || onChain.claimTitle;
+                onChain.claimDescription = matched.description || onChain.claimDescription;
+                onChain.evidenceManifest = matched.evidenceManifest || onChain.evidenceManifest;
+              }
+            }
+          } catch {
+            // Keep onChain as is
+          }
+          return onChain;
+        }
+      }
+
+      // 2. Query MongoDB by workId or mongo _id
+      try {
+        const mongoRes = await api.submissions.getById(id);
+        if (mongoRes.success && mongoRes.submission) {
+          const s = mongoRes.submission;
+          return {
+            id: s.workId || s._id,
+            issuer: (s.reviewedBy as `0x${string}`) || DEMO_WALLETS.REVIEWER.address,
+            issuerName: s.reviewedBy ? 'Authorized Verifier' : 'Pending Verification',
+            issuerRole: 'Verifier',
+            issuerAuthorized: !!s.reviewedBy,
+            subject: s.subjectAddress as `0x${string}`,
+            claimType: (s.workType as ClaimType) || 'CONTRACT_DEPLOYED',
+            claimTitle: s.title,
+            claimDescription: s.description,
+            evidenceHash: s.evidenceHash as `0x${string}`,
+            evidenceUrl: s.evidenceUrl,
+            evidenceManifest: s.evidenceManifest,
+            issuedAt: Math.floor(new Date(s.createdAt).getTime() / 1000),
+            expiry: 0,
+            revoked: s.status === 'REJECTED' || s.status === 'REVOKED',
+            revocationReason: s.statusReason,
+            validity: s.status === 'VERIFIED' ? 'VALID' : s.status === 'REJECTED' || s.status === 'REVOKED' ? 'REVOKED' : 'PENDING',
+            validityExplanation:
+              s.status === 'VERIFIED'
+                ? 'Work verified in TrustGraph registry.'
+                : s.status === 'REJECTED'
+                ? `Rejected: ${s.statusReason || 'Requirements not met'}`
+                : 'Pending reviewer verification.',
+            isLiveOnChain: !!s.transactionHash,
+          };
+        }
+      } catch {
+        // Not found in MongoDB
+      }
+
+      return null;
     }
 
     // Demo records and submissions are available only in explicit DEMO mode.
@@ -378,8 +463,49 @@ class TrustGraphService {
         functionName: 'getAttestationsBySubject',
         args: [subject],
       });
-      const attestations = (await this.readOnChainAttestationsBatch(ids as bigint[]))
+      const onChainAttestations = (await this.readOnChainAttestationsBatch(ids as bigint[]))
         .sort((a, b) => b.issuedAt - a.issuedAt);
+
+      // Query MongoDB submissions for this subject to retrieve off-chain evidence manifests
+      let mongoAttestations: Attestation[] = [];
+      try {
+        const mongoRes = await api.submissions.getPublic({ address: subject });
+        if (mongoRes.success && Array.isArray(mongoRes.submissions)) {
+          mongoAttestations = mongoRes.submissions
+            .filter((ms) => !onChainAttestations.some((oa) => oa.evidenceHash?.toLowerCase() === ms.evidenceHash?.toLowerCase()))
+            .map((ms): Attestation => ({
+              id: ms.workId || ms._id,
+              issuer: (ms.reviewedBy as `0x${string}`) || DEMO_WALLETS.REVIEWER.address,
+              issuerName: ms.reviewedBy ? 'Authorized Verifier' : 'Pending Verification',
+              issuerRole: 'Verifier',
+              issuerAuthorized: !!ms.reviewedBy,
+              subject: ms.subjectAddress as `0x${string}`,
+              claimType: (ms.workType as ClaimType) || 'CONTRACT_DEPLOYED',
+              claimTitle: ms.title,
+              claimDescription: ms.description,
+              evidenceHash: ms.evidenceHash as `0x${string}`,
+              evidenceUrl: ms.evidenceUrl,
+              evidenceManifest: ms.evidenceManifest,
+              issuedAt: Math.floor(new Date(ms.createdAt).getTime() / 1000),
+              expiry: 0,
+              revoked: ms.status === 'REJECTED' || ms.status === 'REVOKED',
+              revocationReason: ms.statusReason,
+              validity: ms.status === 'VERIFIED' ? 'VALID' : ms.status === 'REJECTED' || ms.status === 'REVOKED' ? 'REVOKED' : 'PENDING',
+              validityExplanation:
+                ms.status === 'VERIFIED'
+                  ? 'Work verified and confirmed.'
+                  : ms.status === 'REJECTED'
+                  ? `Rejected: ${ms.statusReason || 'Requirements not met'}`
+                  : 'Pending reviewer verification.',
+              isLiveOnChain: !!ms.transactionHash,
+            }));
+        }
+      } catch {
+        // Fallback to on-chain only
+      }
+
+      const attestations = [...onChainAttestations, ...mongoAttestations].sort((a, b) => b.issuedAt - a.issuedAt);
+
       const byClaimType = Object.fromEntries(claimTypes.map((type) => [
         type,
         attestations.filter((attestation) => attestation.claimType === type).length,

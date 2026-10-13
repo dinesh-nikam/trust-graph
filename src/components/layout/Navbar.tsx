@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAccount, useBalance, useSwitchChain, useConnect, useDisconnect } from 'wagmi';
+import { useAccount, useBalance, useSwitchChain, useConnect, useDisconnect, useSignMessage } from 'wagmi';
 import {
   GitGraph,
   Search,
@@ -20,6 +20,7 @@ import {
   LogOut,
   FileCheck,
   Cpu,
+  User,
 } from 'lucide-react';
 import { formatUnits } from 'viem';
 import { shortenAddress } from '../../utils/formatters';
@@ -28,6 +29,8 @@ import { DEMO_WALLETS } from '../../lib/contract/config';
 import { translateTxError } from '../../lib/blockchain/errors';
 import { cn } from '../../utils/cn';
 import { trustGraphService } from '../../services/trustGraphService';
+import { useAuth } from '../../contexts/AuthContext';
+import { AuthModal } from '../auth/AuthModal';
 
 export const Navbar: React.FC = () => {
   const location = useLocation();
@@ -40,6 +43,8 @@ export const Navbar: React.FC = () => {
   const { switchChain, isPending: isSwitching } = useSwitchChain();
   const { connect, connectors, error: connectError, isPending: isConnecting } = useConnect();
   const { disconnect } = useDisconnect();
+  const { signMessageAsync } = useSignMessage();
+  const { user, isAuthenticated, logout, linkWallet } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isWalletMenuOpen, setIsWalletMenuOpen] = useState(false);
@@ -49,6 +54,25 @@ export const Navbar: React.FC = () => {
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [showConnectHint, setShowConnectHint] = useState(false);
   const [appMode, setAppMode] = useState<'LIVE' | 'DEMO'>(() => trustGraphService.getMode());
+
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isLinkingWallet, setIsLinkingWallet] = useState(false);
+  const [walletLinkError, setWalletLinkError] = useState<string | null>(null);
+
+  const handleLinkWallet = async () => {
+    if (!address) return;
+    setIsLinkingWallet(true);
+    setWalletLinkError(null);
+    try {
+      await linkWallet(address, signMessageAsync);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to link wallet';
+      setWalletLinkError(msg);
+    } finally {
+      setIsLinkingWallet(false);
+    }
+  };
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const modalSearchInputRef = useRef<HTMLInputElement>(null);
@@ -94,12 +118,18 @@ export const Navbar: React.FC = () => {
       : null;
 
   const handleConnect = () => {
-    if (!hasInjectedWallet) {
+    if (!connectors.length) {
       setShowConnectHint(true);
       return;
     }
     setShowConnectHint(false);
-    connect({ connector: connectors[0] });
+    const targetConnector =
+      connectors.find(
+        (c) =>
+          c.name.toLowerCase().includes('metamask') ||
+          c.id.toLowerCase().includes('metamask')
+      ) || connectors[0];
+    connect({ connector: targetConnector });
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -310,6 +340,97 @@ export const Navbar: React.FC = () => {
               )}
             </div>
 
+            {/* Developer Auth Controls */}
+            {isAuthenticated && user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center gap-1.5 px-2.5 py-1.5 bg-surface-subtle border border-surface-border hover:border-surface-border-strong text-xs text-ink transition-colors"
+                >
+                  <User className="h-3.5 w-3.5 text-primary-bright" aria-hidden="true" />
+                  <span className="font-medium max-w-[90px] truncate">{user.name.split(' ')[0]}</span>
+                  {user.walletAddress && (
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" title="Wallet linked" />
+                  )}
+                  <ChevronDown className="h-3 w-3 text-ink-dim" aria-hidden="true" />
+                </button>
+
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-72 bg-surface-raised border border-surface-border-strong shadow-card py-2 z-50 animate-scale-up">
+                    <div className="px-3 py-2 border-b border-surface-border">
+                      <div className="text-xs font-semibold text-ink truncate">{user.name}</div>
+                      <div className="text-[11px] text-ink-dim truncate font-mono">{user.email}</div>
+                      {user.username && (
+                        <div className="text-[11px] text-primary-bright font-mono mt-0.5">@{user.username}</div>
+                      )}
+                    </div>
+
+                    {/* Linked Wallet Status */}
+                    <div className="px-3 py-2.5 border-b border-surface-border bg-surface-subtle/50 text-xs">
+                      <div className="text-[10px] font-mono text-ink-dim uppercase tracking-wider mb-1">
+                        Linked Monad Wallet
+                      </div>
+                      {user.walletAddress ? (
+                        <div className="flex items-center justify-between gap-1 text-[11px] font-mono text-emerald-400">
+                          <span className="truncate">{shortenAddress(user.walletAddress, 6)}</span>
+                          <span className="text-[9px] px-1 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+                            EIP-191 Verified
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="text-[11px] text-amber-300">No wallet linked yet</div>
+                      )}
+
+                      {/* Link Wallet Action if connected */}
+                      {isConnected && address && (!user.walletAddress || user.walletAddress.toLowerCase() !== address.toLowerCase()) && (
+                        <button
+                          onClick={handleLinkWallet}
+                          disabled={isLinkingWallet}
+                          className="mt-2 w-full py-1.5 px-2 bg-primary/20 hover:bg-primary/30 border border-primary/50 text-[11px] font-mono text-primary-bright transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <ShieldCheck className="h-3 w-3" />
+                          <span>{isLinkingWallet ? 'Signing Nonce…' : `Link Connected (${shortenAddress(address, 4)})`}</span>
+                        </button>
+                      )}
+                      {walletLinkError && (
+                        <div className="text-[10px] text-rose-400 mt-1">{walletLinkError}</div>
+                      )}
+                    </div>
+
+                    {/* Submissions Link */}
+                    <Link
+                      to="/submit"
+                      onClick={() => setIsUserMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-xs text-ink-muted hover:bg-surface-hover hover:text-ink transition-colors"
+                    >
+                      <FileCheck className="h-3.5 w-3.5 text-ink-dim" />
+                      <span>My Work Submissions</span>
+                    </Link>
+
+                    {/* Logout */}
+                    <button
+                      onClick={() => {
+                        logout();
+                        setIsUserMenuOpen(false);
+                      }}
+                      className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs text-rose-400 hover:bg-surface-hover transition-colors border-t border-surface-border mt-1"
+                    >
+                      <LogOut className="h-3.5 w-3.5" />
+                      <span>Log Out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-surface-subtle border border-surface-border hover:border-surface-border-strong text-xs text-ink font-medium transition-colors"
+              >
+                <User className="h-3.5 w-3.5 text-primary-bright" aria-hidden="true" />
+                <span className="hidden sm:inline">Sign In</span>
+              </button>
+            )}
+
             {/* Wallet Connect & State Detection */}
             <div className="relative">
               {isConnected && address ? (
@@ -434,14 +555,24 @@ export const Navbar: React.FC = () => {
                     <span>{isConnecting ? 'Connecting…' : 'Connect Wallet'}</span>
                   </button>
 
-                  {showConnectHint && connectMessage && (
+                  {(showConnectHint || Boolean(connectError)) && connectMessage && (
                     <div
                       role="alert"
-                      className="absolute right-0 top-full mt-2 w-72 bg-surface-raised border border-status-pending/40 shadow-card p-3 text-[11px] text-ink-muted leading-relaxed z-50"
+                      className="absolute right-0 top-full mt-2 w-72 bg-surface-raised border border-status-pending/40 shadow-card p-3 text-[11px] text-ink-muted leading-relaxed z-50 animate-fade-in"
                     >
-                      <div className="flex items-start gap-2">
-                        <AlertTriangle className="h-3.5 w-3.5 text-status-pending shrink-0 mt-0.5" aria-hidden="true" />
-                        <span>{connectMessage}</span>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start gap-2 min-w-0">
+                          <AlertTriangle className="h-3.5 w-3.5 text-status-pending shrink-0 mt-0.5" aria-hidden="true" />
+                          <span className="break-words">{connectMessage}</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setShowConnectHint(false)}
+                          className="text-ink-dim hover:text-ink text-xs shrink-0"
+                          aria-label="Dismiss error"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
                       </div>
                     </div>
                   )}
@@ -644,6 +775,9 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Developer Authentication Modal */}
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </>
   );
 };

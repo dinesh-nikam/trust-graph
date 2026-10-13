@@ -43,6 +43,11 @@ async function main(): Promise<void> {
     );
   }
 
+  if (!address) {
+    console.error("[ABORT] Missing contract address.");
+    process.exit(1);
+  }
+
   address = getAddress(address.toLowerCase());
 
   const rpcUrl = process.env.MONAD_TESTNET_RPC_URL ?? "https://testnet-rpc.monad.xyz";

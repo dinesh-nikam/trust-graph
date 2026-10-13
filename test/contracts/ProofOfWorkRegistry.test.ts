@@ -3,6 +3,7 @@ import { describe, it } from "mocha";
 import { expect } from "chai";
 import { encodeBytes32String, ZeroHash } from "ethers";
 import { network } from "hardhat";
+import "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 
 const { ethers, networkHelpers } = await network.getOrCreate();
 const { loadFixture, time } = networkHelpers;
@@ -35,7 +36,7 @@ describe("ProofOfWorkRegistry", function () {
     const [owner, verifier, secondVerifier, worker, otherWorker, attacker, newOwner] =
       await ethers.getSigners();
 
-    const registry = await ethers.deployContract("ProofOfWorkRegistry");
+    const registry = (await ethers.deployContract("ProofOfWorkRegistry")) as any;
     await registry.waitForDeployment();
 
     await registry.approveVerifier(verifier.address);
@@ -391,12 +392,12 @@ describe("ProofOfWorkRegistry", function () {
       expect(await registry.isVerified(id)).to.equal(false);
     });
 
-    it("records an empty rejection reason when none is provided", async function () {
+    it("reverts rejection when an empty reason is provided", async function () {
       const f = await loadFixture(pendingWorkFixture);
       const { registry, verifier, workId: id } = f;
-      await registry.connect(verifier).rejectWork(id, "");
-      const w = await registry.getWork(id);
-      expect(w.status).to.equal(STATUS.REJECTED);
+      await expect(
+        registry.connect(verifier).rejectWork(id, "")
+      ).to.be.revertedWith("Rejection reason cannot be empty");
     });
 
     it("reverts rejection by an unauthorized account", async function () {

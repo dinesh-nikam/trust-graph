@@ -22,6 +22,7 @@ import { translateTxError } from '../lib/blockchain/errors';
 import { Panel, SectionHeader } from '../components/ui/Panel';
 import { fadeRise, settleTransition, staggerParent } from '../lib/motion';
 import { cn } from '../utils/cn';
+import { trustGraphService } from '../services/trustGraphService';
 
 type ExpiryOption = 'perpetual' | '1year' | '30days';
 
@@ -68,10 +69,16 @@ export const IssueAttestationPage: React.FC = () => {
   const [evidenceHash, setEvidenceHash] = useState<`0x${string}` | ''>('');
   const [isComputingHash, setIsComputingHash] = useState(false);
   const [expiryOption, setExpiryOption] = useState<ExpiryOption>('perpetual');
-  const [isLiveTx, setIsLiveTx] = useState(false);
+  const [isLiveTx, setIsLiveTx] = useState(() => trustGraphService.getMode() === 'LIVE');
   // Tracks whether the in-flight/just-completed issuance is a real Monad tx,
   // so the on-chain lifecycle UI is only ever shown for genuine submissions.
   const [isLiveSubmit, setIsLiveSubmit] = useState(false);
+
+  useEffect(() => {
+    if (isConnected && trustGraphService.getMode() === 'LIVE') {
+      setIsLiveTx(true);
+    }
+  }, [isConnected]);
 
   // Pre-fill demo templates based on claim type
   const loadDemoTemplate = (type: ClaimType) => {

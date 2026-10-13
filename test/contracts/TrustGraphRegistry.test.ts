@@ -3,6 +3,7 @@ import { describe, it } from "mocha";
 import { expect } from "chai";
 import { encodeBytes32String, ZeroHash } from "ethers";
 import { network } from "hardhat";
+import "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 
 const { ethers, networkHelpers } = await network.getOrCreate();
 const { loadFixture, time } = networkHelpers;
@@ -28,7 +29,7 @@ describe("TrustGraphRegistry", function () {
     const [owner, issuer, secondIssuer, subject, otherSubject, attacker, newOwner] =
       await ethers.getSigners();
 
-    const registry = await ethers.deployContract("TrustGraphRegistry");
+    const registry = (await ethers.deployContract("TrustGraphRegistry")) as any;
     await registry.waitForDeployment();
 
     await registry.approveIssuer(issuer.address);

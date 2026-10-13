@@ -90,7 +90,7 @@ contract ProofOfWorkRegistryComprehensiveTest {
     }
 
     // 1. Deployer / owner is recognized
-    function test01_DeployerIsOwner() public {
+    function test01_DeployerIsOwner() public view {
         require(registry.owner() == owner, "Owner mismatch");
     }
 

@@ -3,7 +3,13 @@ import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { DemoModeBanner } from '../shared/DemoModeBanner';
-import { TRUST_GRAPH_REGISTRY_ADDRESS, REGISTRY_ADDRESS_CONFIGURED, MONAD_TESTNET_CHAIN_ID } from '../../lib/contract/config';
+import {
+  TRUST_GRAPH_REGISTRY_ADDRESS,
+  REGISTRY_ADDRESS_CONFIGURED,
+  MONAD_TESTNET_CHAIN_ID,
+  PROOF_OF_WORK_REGISTRY_ADDRESS,
+  PROOF_OF_WORK_REGISTRY_CONFIGURED,
+} from '../../lib/contract/config';
 import { shortenAddress } from '../../utils/formatters';
 import trustGraphService from '../../services/trustGraphService';
 

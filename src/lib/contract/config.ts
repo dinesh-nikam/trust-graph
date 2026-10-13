@@ -15,7 +15,7 @@ if (configuredProofOfWorkAddress && !isAddress(configuredProofOfWorkAddress)) {
 
 export const TRUST_GRAPH_REGISTRY_ADDRESS = configuredTrustGraphAddress
   ? getAddress(configuredTrustGraphAddress)
-  : zeroAddress;
+  : getAddress('0x2974750CDBc443f4c2cBe8cDb5A79169dB23654E');
 export const PROOF_OF_WORK_REGISTRY_ADDRESS = configuredProofOfWorkAddress
   ? getAddress(configuredProofOfWorkAddress)
   : zeroAddress;

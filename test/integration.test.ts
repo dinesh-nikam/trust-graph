@@ -106,8 +106,8 @@ let ADDR: `0x${string}`;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function c(fn: string, args: unknown[] = []) {
-  return { address: ADDR, abi, functionName: fn, args } as const;
+function c(fn: string, args: unknown[] = []): any {
+  return { address: ADDR, abi, functionName: fn, args };
 }
 
 async function getWork(id: `0x${string}`) {
@@ -145,13 +145,14 @@ async function ensureNode(): Promise<void> {
   }
 
   console.log('⚡ Starting local Hardhat node on port 8545...');
-  nodeProcess = spawn('npx', ['hardhat', 'node'], {
+  const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+  nodeProcess = spawn(npxCmd, ['hardhat', 'node'], {
     shell: true,
     stdio: 'ignore',
   });
 
   const start = Date.now();
-  while (Date.now() - start < 20000) {
+  while (Date.now() - start < 45000) {
     await new Promise((r) => setTimeout(r, 600));
     try {
       const res = await fetch('http://127.0.0.1:8545', {
@@ -187,7 +188,7 @@ async function run() {
 
   // 1. Deploy
   console.log('1. Deploying ProofOfWorkRegistry...');
-  const deployHash = await ownerW.deployContract({ abi, bytecode, args: [] });
+  const deployHash = await ownerW.deployContract({ abi, bytecode, args: [] } as any);
   const deployRx   = await pub.waitForTransactionReceipt({ hash: deployHash });
   assert.strictEqual(deployRx.status, 'success');
   ADDR = deployRx.contractAddress!;
@@ -372,10 +373,10 @@ async function run() {
 
   // 10. Ownership transfer
   console.log('10. transferOwnership...');
-  await expectRevert(attackerW.writeContract({ ...c('transferOwnership', [attackerAcct.address]), account: attackerAcct }), 'attacker transfer');
+  await expectRevert(attackerW.writeContract({ ...c('transferOwnership', [attackerAcct.address]), account: attackerAcct } as any), 'attacker transfer');
   console.log('    ✓ Attacker blocked');
 
-  h = await ownerW.writeContract({ ...c('transferOwnership', [verifierAcct.address]), account: ownerAcct });
+  h = await ownerW.writeContract({ ...c('transferOwnership', [verifierAcct.address]), account: ownerAcct } as any);
   await pub.waitForTransactionReceipt({ hash: h });
   const newOwner = await pub.readContract(c('owner')) as `0x${string}`;
   assert.strictEqual(newOwner.toLowerCase(), verifierAcct.address.toLowerCase());

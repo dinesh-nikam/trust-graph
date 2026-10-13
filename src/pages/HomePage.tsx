@@ -20,6 +20,8 @@ import { shortenAddress } from '../utils/formatters';
 import { AttestationCard } from '../components/shared/AttestationCard';
 import { SectionHeader } from '../components/ui/Panel';
 import { HeroNetwork } from '../components/three/HeroNetwork';
+import { useAllAttestations } from '../hooks/useTrustGraph';
+import { trustGraphService } from '../services/trustGraphService';
 import { fadeRise, staggerParent } from '../lib/motion';
 import { cn } from '../utils/cn';
 
@@ -89,7 +91,13 @@ export const HomePage: React.FC = () => {
     }
   };
 
-  const recentAttestations = MOCK_ATTESTATIONS.slice(0, 3);
+  const { data: allAttestations = [] } = useAllAttestations();
+  const isDemo = trustGraphService.getMode() === 'DEMO';
+  const recentAttestations = allAttestations.length > 0 
+    ? allAttestations.slice(0, 3) 
+    : isDemo 
+      ? MOCK_ATTESTATIONS.slice(0, 3) 
+      : [];
   const enter = shouldReduceMotion ? false : 'hidden';
 
   return (
@@ -139,7 +147,7 @@ export const HomePage: React.FC = () => {
               <div className="relative flex-1">
                 <input
                   type="text"
-                  placeholder="0x address, claim #, or &quot;sarah&quot;"
+                  placeholder='0x address, claim #, or "sarah"'
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   aria-label="Search by address or claim number"
@@ -301,7 +309,13 @@ export const HomePage: React.FC = () => {
           <SectionHeader
             index="03"
             title="Recent Attestations"
-            hint="Local fixture records — inspect each proof in full"
+            hint={
+              allAttestations.length > 0
+                ? "Live on-chain records from Monad Testnet (10143)"
+                : isDemo
+                ? "Local fixture records [DEMO MODE]"
+                : "Awaiting on-chain attestations on Monad Testnet"
+            }
             right={
               <Link
                 to={`/profile/${DEMO_WALLETS.DEVELOPER.address}`}

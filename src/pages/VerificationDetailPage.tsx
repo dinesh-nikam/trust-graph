@@ -77,11 +77,14 @@ export const VerificationDetailPage: React.FC = () => {
 
     setRevokeErrorMsg(null);
     try {
-      await revoke(attestation.id, revokeReason.trim());
+      const isLive = trustGraphService.getMode() === 'LIVE' && Boolean(address);
+      await revoke(attestation.id, revokeReason.trim(), { isLiveOnChain: isLive });
       setIsRevoking(false);
       setRevokeReason('');
       setRevokeSuccessMsg(
-        'Attestation marked REVOKED in the local sandbox. Historical record preserved — no Monad transaction was submitted.'
+        isLive
+          ? 'Attestation revoked on Monad Testnet — receipt confirmed. Historical record preserved on-chain.'
+          : 'Attestation marked REVOKED in the local sandbox. Historical record preserved — no Monad transaction was submitted.'
       );
       refetch();
     } catch {
@@ -371,7 +374,7 @@ export const VerificationDetailPage: React.FC = () => {
                         )}
                         <span>
                           {hashResult.matches
-                            ? 'MATCH — evidence text matches the recorded hash exactly.'
+                            ? 'MATCH — evidence text matches the on-chain hash exactly.'
                             : 'MISMATCH — computed hash does not match the recorded hash.'}
                         </span>
                       </motion.div>
@@ -394,7 +397,7 @@ export const VerificationDetailPage: React.FC = () => {
           <motion.div variants={fadeRise}>
             <SectionHeader
               index="03"
-              title="Lifecycle & Record Provenance"
+              title="Lifecycle & Monad Transaction"
               hint="When it was issued, whether it stands, and where to verify independently"
               className="mb-3"
             />
@@ -516,9 +519,9 @@ export const VerificationDetailPage: React.FC = () => {
                       {revokeTxStep === 'idle' && 'Ready'}
                       {revokeTxStep === 'preparing' && 'Preparing…'}
                       {revokeTxStep === 'waiting-wallet' && 'Awaiting wallet signature…'}
-                      {revokeTxStep === 'submitted' && 'Recording local fixture…'}
-                      {revokeTxStep === 'confirming' && 'Confirming…'}
-                      {revokeTxStep === 'confirmed' && 'Recorded (local sandbox)'}
+                      {revokeTxStep === 'submitted' && (trustGraphService.getMode() === 'LIVE' ? 'Broadcasting to Monad…' : 'Recording local fixture…')}
+                      {revokeTxStep === 'confirming' && 'Waiting for block confirmation…'}
+                      {revokeTxStep === 'confirmed' && (trustGraphService.getMode() === 'LIVE' ? 'Revoked on-chain (Monad 10143)' : 'Recorded (local sandbox)')}
                       {revokeTxStep === 'error' && 'Failed'}
                     </span>
                   </div>
